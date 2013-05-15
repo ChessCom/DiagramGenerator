@@ -5,10 +5,9 @@ namespace DiagramGenerator;
 class Config
 {
     const BOTTOM      = array(1, 0);
-    const COORDINATES = array(false, false);
+    // const COORDINATES = array(false, false);
 
     const DEFAULT_BOTTOM      = 0;
-    const DEFAULT_COORDINATES = 0;
 
     /**
      * @var string
@@ -43,7 +42,7 @@ class Config
     /**
      * @var integer
      */
-    protected $coordinates = 0;
+    // protected $coordinates = 0;
 
     /**
      * @var integer
@@ -216,14 +215,14 @@ class Config
      *
      * @return integer
      */
-    public function getCoordinates()
-    {
-        if ($this->coordinates < 0 || $this->coordinates >= count(self::COORDINATES)) {
-            return self::DEFAULT_COORDINATES;
-        };
+    // public function getCoordinates()
+    // {
+    //     if ($this->coordinates < 0 || $this->coordinates >= count(self::COORDINATES)) {
+    //         return self::DEFAULT_COORDINATES;
+    //     };
 
-        return $this->coordinates;
-    }
+    //     return $this->coordinates;
+    // }
 
     /**
      * Sets the value of coordinates.
@@ -232,12 +231,12 @@ class Config
      *
      * @return self
      */
-    public function setCoordinates($coordinates)
-    {
-        $this->coordinates = $coordinates;
+    // public function setCoordinates($coordinates)
+    // {
+    //     $this->coordinates = $coordinates;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Gets the value of bottom.
