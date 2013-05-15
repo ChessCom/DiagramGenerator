@@ -1,0 +1,22 @@
+{
+    "name": "chesscom/diagram-generator",
+    "description": "Library to dynamically generate chess diagrams",
+    "keywords": ["chess", "php", "diagram"],
+    "homepage": "https://github.com/ChessCom/digram-generator",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chess team",
+            "homepage": "http://www.chess.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/yaml": "~2.1",
+    },
+    "autoload": {
+        "psr-0": { "Chess\\DiagramGenerator": "" }
+    },
+    "target-dir": "Chess/DiagramGenerator"
+}
