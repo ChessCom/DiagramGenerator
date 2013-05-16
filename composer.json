@@ -4,17 +4,20 @@
     "keywords": ["chess", "php", "diagram"],
     "homepage": "https://github.com/ChessCom/digram-generator",
     "type": "library",
-    "license": "MIT",
+    "license": "proprietary",
     "authors": [
         {
-            "name": "Chess team",
-            "homepage": "http://www.chess.com"
+            "name": "Alex Kovalevych",
+            "email": "alexkovalevych@gmail.com",
+            "homepage": "https://github.com/AlexKovalevych",
+            "role": "Developer"
         }
     ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/yaml": "~2.1",
-        "jms/serializer": "0.12.*"
+        "jms/serializer": "~0.12",
+        "symfony/routing": "~2.1",
+        "symfony/yaml": "~2.1"
     },
     "autoload": {
         "psr-0": {"DiagramGenerator": "src/"}

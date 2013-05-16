@@ -4,7 +4,7 @@ namespace DiagramGenerator;
 
 use JMS\Serializer\Annotation\Type;
 
-class Config
+class GeneratorConfig
 {
     // const COORDINATES = array(false, false);
 
@@ -294,5 +294,14 @@ class Config
         $this->theme = $theme;
 
         return $this;
+    }
+
+    /**
+     * Returns all config properties in array key => value
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }
