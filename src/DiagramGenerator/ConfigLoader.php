@@ -53,10 +53,10 @@ class ConfigLoader
     {
         $this->themes = $this->sizes = array();
 
-        $themeConfigFile = file_get_contents(__DIR__.'/../Resources/config/theme.yml');
+        $themeConfigFile = file_get_contents(__DIR__.'/Resources/config/theme.yml');
         $this->loadThemeConfig($this->parser->parse($themeConfigFile));
 
-        $sizeConfigFile = file_get_contents(__DIR__.'/../Resources/config/size.yml');
+        $sizeConfigFile = file_get_contents(__DIR__.'/Resources/config/size.yml');
         $this->loadSizeConfig($this->parser->parse($sizeConfigFile));
     }
 
