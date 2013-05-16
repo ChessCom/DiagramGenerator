@@ -16,7 +16,6 @@
         "symfony/yaml": "~2.1"
     },
     "autoload": {
-        "psr-0": { "Chess\\DiagramGenerator": "" }
-    },
-    "target-dir": "Chess/DiagramGenerator"
+        "psr-0": {"DiagramGenerator": "src/"}
+    }
 }
