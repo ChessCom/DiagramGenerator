@@ -71,7 +71,7 @@ class GeneratorConfig
      */
     public function getFen()
     {
-        return $this->fen;
+        return $this->sanitizeFen($this->fen);
     }
 
     /**
@@ -83,7 +83,7 @@ class GeneratorConfig
      */
     public function setFen($fen)
     {
-        $this->fen = $fen;
+        $this->fen = $this->sanitizeFen($fen);
 
         return $this;
     }
@@ -303,5 +303,15 @@ class GeneratorConfig
     public function toArray()
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * Remove unused part from the fen
+     * @param  string $fen
+     * @return string
+     */
+    protected function sanitizeFen($fen)
+    {
+        return substr($fen, 0, strpos($fen, ' '));
     }
 }
