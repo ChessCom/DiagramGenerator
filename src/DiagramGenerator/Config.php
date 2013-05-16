@@ -2,6 +2,8 @@
 
 namespace DiagramGenerator;
 
+use JMS\Serializer\Annotation\Type;
+
 class Config
 {
     // const COORDINATES = array(false, false);
@@ -9,46 +11,55 @@ class Config
     const DEFAULT_BOTTOM = 0;
 
     /**
+     * @Type("string")
      * @var string
      */
     protected $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
     /**
+     * @Type("integer")
      * @var integer
      */
     protected $size = 0;
 
     /**
+     * @Type("string")
      * @var string
      */
     protected $caption = '';
 
     /**
+     * @Type("string")
      * @var string
      */
     protected $filename = '';
 
     /**
+     * @Type("string")
      * @var string
      */
     protected $light = 'eeeed2';
 
     /**
+     * @Type("string")
      * @var string
      */
     protected $dark = '769656';
 
     /**
+     * @Type("integer")
      * @var integer
      */
     // protected $coordinates = 0;
 
     /**
+     * @Type("boolean")
      * @var boolean
      */
     protected $bottom = false;
 
     /**
+     * @Type("integer")
      * @var integer
      */
     protected $theme = 2;
