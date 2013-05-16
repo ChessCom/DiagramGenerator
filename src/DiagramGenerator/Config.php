@@ -4,10 +4,9 @@ namespace DiagramGenerator;
 
 class Config
 {
-    const BOTTOM      = array(1, 0);
     // const COORDINATES = array(false, false);
 
-    const DEFAULT_BOTTOM      = 0;
+    const DEFAULT_BOTTOM = 0;
 
     /**
      * @var string
@@ -45,9 +44,9 @@ class Config
     // protected $coordinates = 0;
 
     /**
-     * @var integer
+     * @var boolean
      */
-    protected $bottom = 0;
+    protected $bottom = false;
 
     /**
      * @var integer
@@ -241,27 +240,23 @@ class Config
     /**
      * Gets the value of bottom.
      *
-     * @return integer
+     * @return boolean
      */
     public function getBottom()
     {
-        if ($this->bottom < 0 || $this->bottom >= count(self::BOTTOM)) {
-            return self::DEFAULT_BOTTOM;
-        }
-
         return $this->bottom;
     }
 
     /**
      * Sets the value of bottom.
      *
-     * @param integer $bottom the bottom
+     * @param boolean $bottom the bottom
      *
      * @return self
      */
     public function setBottom($bottom)
     {
-        $this->bottom = $bottom;
+        $this->bottom = (bool) $bottom;
 
         return $this;
     }
