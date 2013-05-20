@@ -2,13 +2,20 @@
 
 namespace DiagramGenerator;
 
+use DiagramGenerator\Size;
+use DiagramGenerator\Theme;
+use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\PostDeserialize;
+use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\Type;
 
+/**
+ * @ExclusionPolicy("none")
+ */
 class GeneratorConfig
 {
-    // const COORDINATES = array(false, false);
-
-    const DEFAULT_BOTTOM = 0;
+    // const DEFAULT_BOTTOM = 0;
 
     /**
      * @Type("string")
@@ -18,9 +25,29 @@ class GeneratorConfig
 
     /**
      * @Type("integer")
+     * @SerializedName("size")
      * @var integer
      */
-    protected $size = 0;
+    protected $sizeIndex = 0;
+
+    /**
+     * @Exclude()
+     * @var \DiagramGenerator\Size
+     */
+    protected $size;
+
+    /**
+     * @Type("integer")
+     * @SerializedName("theme")
+     * @var integer
+     */
+    protected $themeIndex = 2;
+
+    /**
+     * @Exclude()
+     * @var \DiagramGenerator\Theme
+     */
+    protected $theme;
 
     /**
      * @Type("string")
@@ -47,22 +74,16 @@ class GeneratorConfig
     protected $dark = '769656';
 
     /**
-     * @Type("integer")
-     * @var integer
+     * @Type("boolean")
+     * @var boolean
      */
-    // protected $coordinates = 0;
+    // protected $coordinates = false;
 
     /**
      * @Type("boolean")
      * @var boolean
      */
-    protected $bottom = false;
-
-    /**
-     * @Type("integer")
-     * @var integer
-     */
-    protected $theme = 2;
+    // protected $bottom = false;
 
     /**
      * Gets the value of fen.
@@ -89,9 +110,33 @@ class GeneratorConfig
     }
 
     /**
-     * Gets the value of size.
+     * Gets the value of sizeIndex.
      *
      * @return integer
+     */
+    public function getSizeIndex()
+    {
+        return $this->sizeIndex;
+    }
+
+    /**
+     * Sets the value of sizeIndex.
+     *
+     * @param integer $sizeIndex the sizeIndex
+     *
+     * @return self
+     */
+    public function setSizeIndex($sizeIndex)
+    {
+        $this->sizeIndex = $sizeIndex;
+
+        return $this;
+    }
+
+    /**
+     * Gets the value of size.
+     *
+     * @return \DiagramGenerator\Size
      */
     public function getSize()
     {
@@ -101,13 +146,61 @@ class GeneratorConfig
     /**
      * Sets the value of size.
      *
-     * @param integer $size the size
+     * @param \DiagramGenerator\Size $size the size
      *
      * @return self
      */
-    public function setSize($size)
+    public function setSize(Size $size)
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * Gets the value of themeIndex.
+     *
+     * @return integer
+     */
+    public function getThemeIndex()
+    {
+        return $this->themeIndex;
+    }
+
+    /**
+     * Sets the value of themeIndex.
+     *
+     * @param integer $themeIndex the themeIndex
+     *
+     * @return self
+     */
+    public function setThemeIndex($themeIndex)
+    {
+        $this->themeIndex = $themeIndex;
+
+        return $this;
+    }
+
+    /**
+     * Gets the value of theme.
+     *
+     * @return \DiagramGenerator\Theme
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * Sets the value of theme.
+     *
+     * @param \DiagramGenerator\Theme $theme the theme
+     *
+     * @return self
+     */
+    public function setTheme(Theme $theme)
+    {
+        $this->theme = $theme;
 
         return $this;
     }
@@ -167,13 +260,7 @@ class GeneratorConfig
      */
     public function getLight()
     {
-        $decimalLight = hexdec($this->light);
-
-        return array(
-            ($decimalLight >> 16) & 0xFF,
-            ($decimalLight >> 8) & 0xFF,
-            $decimalLight & 0xFF
-        );
+        return sprintf("#%s", ltrim($this->light, '#'));
     }
 
     /**
@@ -197,13 +284,7 @@ class GeneratorConfig
      */
     public function getDark()
     {
-        $decimalDark = hexdec($this->dark);
-
-        return array(
-            ($decimalDark >> 16) & 0xFF,
-            ($decimalDark >> 8) & 0xFF,
-            $decimalDark & 0xFF
-        );
+        return sprintf("#%s", ltrim($this->dark, '#'));
     }
 
     /**
@@ -253,10 +334,10 @@ class GeneratorConfig
      *
      * @return boolean
      */
-    public function getBottom()
-    {
-        return $this->bottom;
-    }
+    // public function getBottom()
+    // {
+    //     return $this->bottom;
+    // }
 
     /**
      * Sets the value of bottom.
@@ -265,44 +346,31 @@ class GeneratorConfig
      *
      * @return self
      */
-    public function setBottom($bottom)
-    {
-        $this->bottom = (bool) $bottom;
+    // public function setBottom($bottom)
+    // {
+    //     $this->bottom = (bool) $bottom;
 
-        return $this;
-    }
-
-    /**
-     * Gets the value of theme.
-     *
-     * @return integer
-     */
-    public function getTheme()
-    {
-        return $this->theme;
-    }
+    //     return $this;
+    // }
 
     /**
-     * Sets the value of theme.
-     *
-     * @param integer $theme the theme
-     *
-     * @return self
-     */
-    public function setTheme($theme)
-    {
-        $this->theme = $theme;
-
-        return $this;
-    }
-
-    /**
-     * Returns all config properties in array key => value
+     * Returns all urlencoded config properties in array key => value
      * @return array
      */
-    public function toArray()
+    public function encodeValues()
     {
-        return get_object_vars($this);
+        return array_map(function($value) { return urlencode($value); }, get_object_vars($this));
+    }
+
+    /**
+     * @PostDeserialize()
+     * @return null
+     */
+    public function decodeValues()
+    {
+        foreach (get_object_vars($this) as $key => $value) {
+            $this->{$key} = urldecode($value);
+        }
     }
 
     /**
@@ -312,6 +380,6 @@ class GeneratorConfig
      */
     protected function sanitizeFen($fen)
     {
-        return substr($fen, 0, strpos($fen, ' '));
+        return (strpos($fen, ' ') === false) ? $fen : substr($fen, 0, strpos($fen, ' '));
     }
 }

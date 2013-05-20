@@ -1,10 +1,10 @@
 0:
     width        : 178
     height       : 196
-    board_x      : 10
-    board_y      : 8
+    # board_x      : 10
+    # board_y      : 8
     cell         : 20
-    outline_thick: 1
+    # outline_thick: 1
     frame_thick  : 1
     coordinates:
         size: 7
@@ -17,10 +17,10 @@
 1:
     width        : 267
     height       : 294
-    board_x      : 16
-    board_y      : 11
+    # board_x      : 16
+    # board_y      : 11
     cell         : 30
-    outline_thick: 1
+    # outline_thick: 1
     frame_thick  : 1
     coordinates:
         size: 10
@@ -33,10 +33,10 @@
 2:
     width        : 540
     height       : 592
-    board_x      : 32
-    board_y      : 22
+    # board_x      : 32
+    # board_y      : 22
     cell         : 60
-    outline_thick: 1
+    # outline_thick: 1
     frame_thick  : 1
     coordinates:
         size: 20
@@ -49,10 +49,10 @@
 3:
     width        : 810
     height       : 888
-    board_x      : 48
-    board_y      : 33
+    # board_x      : 48
+    # board_y      : 33
     cell         : 90
-    outline_thick: 1
+    # outline_thick: 1
     frame_thick  : 1
     coordinates:
         size: 30

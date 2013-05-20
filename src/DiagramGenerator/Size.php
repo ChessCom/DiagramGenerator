@@ -20,12 +20,12 @@ class Size
     /**
      * @var integer
      */
-    protected $boardX;
+    // protected $boardX;
 
     /**
      * @var integer
      */
-    protected $boardY;
+    // protected $boardY;
 
     /**
      * @var integer
@@ -35,7 +35,7 @@ class Size
     /**
      * @var integer
      */
-    protected $outlineThick;
+    // protected $outlineThick;
 
     /**
      * @var integer
@@ -105,10 +105,10 @@ class Size
      *
      * @return integer
      */
-    public function getBoardX()
-    {
-        return $this->boardX;
-    }
+    // public function getBoardX()
+    // {
+    //     return $this->boardX;
+    // }
 
     /**
      * Sets the value of boardX.
@@ -117,22 +117,22 @@ class Size
      *
      * @return self
      */
-    public function setBoardX($boardX)
-    {
-        $this->boardX = $boardX;
+    // public function setBoardX($boardX)
+    // {
+    //     $this->boardX = $boardX;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Gets the value of boardY.
      *
      * @return integer
      */
-    public function getBoardY()
-    {
-        return $this->boardY;
-    }
+    // public function getBoardY()
+    // {
+    //     return $this->boardY;
+    // }
 
     /**
      * Sets the value of boardY.
@@ -141,12 +141,12 @@ class Size
      *
      * @return self
      */
-    public function setBoardY($boardY)
-    {
-        $this->boardY = $boardY;
+    // public function setBoardY($boardY)
+    // {
+    //     $this->boardY = $boardY;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Gets the value of cell.
@@ -177,10 +177,10 @@ class Size
      *
      * @return integer
      */
-    public function getOutlineThick()
-    {
-        return $this->outlineThick;
-    }
+    // public function getOutlineThick()
+    // {
+    //     return $this->outlineThick;
+    // }
 
     /**
      * Sets the value of outlineThick.
@@ -189,12 +189,12 @@ class Size
      *
      * @return self
      */
-    public function setOutlineThick($outlineThick)
-    {
-        $this->outlineThick = $outlineThick;
+    // public function setOutlineThick($outlineThick)
+    // {
+    //     $this->outlineThick = $outlineThick;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Gets the value of frameThick.

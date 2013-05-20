@@ -73,8 +73,8 @@ class ConfigLoader
                 ->setFont($value['font'])
                 ->setSize($value['size'])
                 ->setFigures($value['figures'])
-                ->setLeft($value['left'])
-                ->setBase($value['base'])
+                // ->setLeft($value['left'])
+                // ->setBase($value['base'])
             ;
             $this->themes[] = $theme;
         }
@@ -104,10 +104,10 @@ class ConfigLoader
             $size
                 ->setWidth($value['width'])
                 ->setHeight($value['height'])
-                ->setBoardX($value['board_x'])
-                ->setBoardY($value['board_y'])
+                // ->setBoardX($value['board_x'])
+                // ->setBoardY($value['board_y'])
                 ->setCell($value['cell'])
-                ->setOutlineThick($value['outline_thick'])
+                // ->setOutlineThick($value['outline_thick'])
                 ->setFrameThick($value['frame_thick'])
                 ->setCoordinates($coordinates)
                 ->setCaption($caption)

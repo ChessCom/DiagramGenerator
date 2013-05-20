@@ -2,6 +2,8 @@
 
 namespace DiagramGenerator;
 
+use DiagramGenerator\Theme\ThemeColor;
+
 class Theme
 {
     /**
@@ -23,12 +25,17 @@ class Theme
     /**
      * @var array
      */
-    protected $left;
+    // protected $left;
 
     /**
      * @var array
      */
-    protected $base;
+    // protected $base;
+
+    /**
+     * @var \DiagramGenerator\Theme\ThemeColor
+     */
+    protected $color;
 
     /**
      * Gets the font filename.
@@ -107,10 +114,10 @@ class Theme
      *
      * @return array
      */
-    public function getLeft()
-    {
-        return $this->left;
-    }
+    // public function getLeft()
+    // {
+    //     return $this->left;
+    // }
 
     /**
      * Sets the value of left.
@@ -119,22 +126,22 @@ class Theme
      *
      * @return self
      */
-    public function setLeft(array $left)
-    {
-        $this->left = $left;
+    // public function setLeft(array $left)
+    // {
+    //     $this->left = $left;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Gets the value of base.
      *
      * @return array
      */
-    public function getBase()
-    {
-        return $this->base;
-    }
+    // public function getBase()
+    // {
+    //     return $this->base;
+    // }
 
     /**
      * Sets the value of base.
@@ -143,9 +150,33 @@ class Theme
      *
      * @return self
      */
-    public function setBase(array $base)
+    // public function setBase(array $base)
+    // {
+    //     $this->base = $base;
+
+    //     return $this;
+    // }
+
+    /**
+     * Gets the value of color.
+     *
+     * @return \DiagramGenerator\Theme\ThemeColor
+     */
+    public function getColor()
     {
-        $this->base = $base;
+        return $this->color ?: new ThemeColor();
+    }
+
+    /**
+     * Sets the value of color.
+     *
+     * @param \DiagramGenerator\Theme\ThemeColor $color the color
+     *
+     * @return self
+     */
+    public function setColor(ThemeColor $color)
+    {
+        $this->color = $color;
 
         return $this;
     }
