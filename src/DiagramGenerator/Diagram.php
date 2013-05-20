@@ -4,6 +4,7 @@ namespace DiagramGenerator;
 
 use DiagramGenerator\GeneratorConfig;
 use DiagramGenerator\Theme\ThemeColor;
+use DiagramGenerator\Diagram\Board;
 
 /**
  * Class which represents diagram image
@@ -19,10 +20,10 @@ class Diagram
     /**
      * @var \Imagick
      */
-    protected $diagram;
+    protected $image;
 
     /**
-     * @var \Imagick
+     * @var \DiagramGenerator\Diagram\Board
      */
     protected $board;
 
@@ -31,11 +32,20 @@ class Diagram
      */
     protected $caption;
 
-    public function __construct(GeneratorConfig $config, \Imagick $board)
+    public function __construct(GeneratorConfig $config)
     {
-        $this->board   = $board;
-        $this->config  = $config;
-        $this->diagram = new \Imagick();
+        $this->config = $config;
+        $this->image  = new \Imagick();
+    }
+
+    /**
+     * Gets the value of image.
+     *
+     * @return \Imagick
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 
     /**
@@ -65,7 +75,7 @@ class Diagram
     /**
      * Gets the value of board.
      *
-     * @return \Imagick
+     * @return \DiagramGenerator\Diagram\Board
      */
     public function getBoard()
     {
@@ -75,11 +85,11 @@ class Diagram
     /**
      * Sets the value of board.
      *
-     * @param \Imagick $board the board
+     * @param \DiagramGenerator\Diagram\Board $board the board
      *
      * @return self
      */
-    public function setBoard(\Imagick $board)
+    public function setBoard(Board $board)
     {
         $this->board = $board;
 
@@ -112,6 +122,17 @@ class Diagram
 
     public function draw()
     {
+        if (!$this->board) {
+            throw new \InvalidArgumentException('Board must be set');
+        }
+
+        $this->image->newImage(
+            $this->board->getImage()->getImageWidth(),
+            $this->board->getImage()->getImageHeight(),
+            new \ImagickPixel($this->config->getTheme()->getColor()->getBackground())
+        );
+        $this->image->compositeImage($this->board->getImage(), \Imagick::COMPOSITE_DEFAULT, 0, 0);
+
         if ($this->caption) {
             // Attach caption
         }
@@ -120,9 +141,9 @@ class Diagram
             // Add coordinates
         }
 
-        $this->diagram->setImageFormat('jpeg');
+        $this->image->setImageFormat('jpeg');
 
-        return $this->diagram;
+        return $this;
     }
 
     /**

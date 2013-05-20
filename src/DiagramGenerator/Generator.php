@@ -51,18 +51,18 @@ class Generator
 
         // putenv('GDFONTPATH=' . realpath($FONTS_PATH));
         // var_dump($sizeConfig, $weight, $height);exit;
-        $board  = new Board($config);
-        $board->drawBoard();
-        $board->drawBorder();
-        header('Content-Type: image/jpeg');
-        echo $board->getBoard();exit;
+        $diagram = new Diagram($config);
+        $board   = new Board($config);
+        $board
+            ->drawBoard()
+            ->drawBorder()
+        ;
+        $diagram->setBoard($board);
+        $diagram->draw();
 
         header('Content-Type: image/jpeg');
-        echo $board;exit;
+        echo $diagram->getImage();exit;
 
-        $diagram = new Diagram();
-        $diagram->setBoard($board->draw());
-        $diagram->draw($config, $sizeConfig, $themeConfig);
         // $image = imagecreatetruecolor($dimensions['width'], $dimensions['height']);
 
         // $caption = str_replace("\'", "'", $caption);
@@ -102,7 +102,6 @@ class Generator
         // $outline_color      = imagecolorallocate($image, $OUTLINE_COLOR[0],     $OUTLINE_COLOR[1],      $OUTLINE_COLOR[2]);
         // $frame_color        = imagecolorallocate($image, $FRAME_COLOR[0],       $FRAME_COLOR[1],        $FRAME_COLOR[2]);
 
-        $diagram->createBackgroud($image);
         // exit;
         // imagefilledrectangle($image, 0, 0, $width - 1, $height - 1, $background_color);
         // imagefilledrectangle($image, $board_x - $outline_thick - $frame_thick, $board_y - $outline_thick - $frame_thick,
@@ -121,7 +120,6 @@ class Generator
         //     }
         // }
 
-        $diagram->createCells($image);
 
         // if ($coordinates) {
         //     for ($y = 0, $count = 0; $y < $board; $y += $cell, $count++) {

@@ -9,22 +9,22 @@ class Board
     /**
      * @var \Imagick
      */
-    protected $board;
+    protected $image;
 
     public function __construct(GeneratorConfig $config)
     {
-        $this->config  = $config;
-        $this->board = new \Imagick();
+        $this->config = $config;
+        $this->image  = new \Imagick();
     }
 
     /**
-     * Gets the value of board.
+     * Gets the value of image.
      *
      * @return \Imagick
      */
-    public function getBoard()
+    public function getImage()
     {
-        return $this->board;
+        return $this->image;
     }
 
     /**
@@ -34,15 +34,20 @@ class Board
     public function drawBoard()
     {
         $boardSize = $this->getCellSize() * 8;
-        $this->board->newImage(
+        $this->image->newImage(
             $boardSize,
             $boardSize,
             new \ImagickPixel($this->config->getTheme()->getColor()->getFrame())
         );
         $this->drawCells();
-        $this->board->setImageFormat('jpeg');
+        $this->image->setImageFormat('jpeg');
 
         return $this;
+    }
+
+    public function drawFigures()
+    {
+        # code...
     }
 
     /**
@@ -52,7 +57,7 @@ class Board
     public function drawBorder()
     {
         $borderThickness = $this->config->getSize()->getFrameThick();
-        $this->board->borderImage(
+        $this->image->borderImage(
             new \ImagickPixel($this->config->getTheme()->getColor()->getOutline()),
             $borderThickness,
             $borderThickness
@@ -78,8 +83,7 @@ class Board
                     $x * $this->getCellSize(),
                     $y * $this->getCellSize()
                 );
-                $this->board->drawImage($cell);
-
+                $this->image->drawImage($cell);
             }
         }
 

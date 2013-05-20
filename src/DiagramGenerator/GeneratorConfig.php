@@ -77,7 +77,7 @@ class GeneratorConfig
      * @Type("boolean")
      * @var boolean
      */
-    // protected $coordinates = false;
+    protected $coordinates = false;
 
     /**
      * @Type("boolean")
@@ -304,30 +304,26 @@ class GeneratorConfig
     /**
      * Gets the value of coordinates.
      *
-     * @return integer
+     * @return boolean
      */
-    // public function getCoordinates()
-    // {
-    //     if ($this->coordinates < 0 || $this->coordinates >= count(self::COORDINATES)) {
-    //         return self::DEFAULT_COORDINATES;
-    //     };
-
-    //     return $this->coordinates;
-    // }
+    public function getCoordinates()
+    {
+        return $this->coordinates;
+    }
 
     /**
      * Sets the value of coordinates.
      *
-     * @param integer $coordinates the coordinates
+     * @param boolean $coordinates the coordinates
      *
      * @return self
      */
-    // public function setCoordinates($coordinates)
-    // {
-    //     $this->coordinates = $coordinates;
+    public function setCoordinates($coordinates)
+    {
+        $this->coordinates = (bool) $coordinates;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     /**
      * Gets the value of bottom.
