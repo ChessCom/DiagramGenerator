@@ -29,7 +29,7 @@ class UrlHelper
      */
     public function getNonSecureUrl(Config $config, $routing)
     {
-        return $this->generateRoutingByScheme($routing, $config->toArray(), false);
+        return $this->generateRoutingByScheme($routing, $config->encodeValues(), false);
     }
 
     /**
@@ -40,7 +40,7 @@ class UrlHelper
      */
     public function getSecureUrl(Config $config, $routing)
     {
-        return $this->generateRoutingByScheme($routing, $config->toArray(), true);
+        return $this->generateRoutingByScheme($routing, $config->encodeValues(), true);
     }
 
     /**
