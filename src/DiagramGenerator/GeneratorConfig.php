@@ -353,20 +353,9 @@ class GeneratorConfig
      * Returns all urlencoded config properties in array key => value
      * @return array
      */
-    public function encodeValues()
+    public function toArray()
     {
-        return array_map(function($value) { return urlencode($value); }, get_object_vars($this));
-    }
-
-    /**
-     * @PostDeserialize()
-     * @return null
-     */
-    public function decodeValues()
-    {
-        foreach (get_object_vars($this) as $key => $value) {
-            $this->{$key} = urldecode($value);
-        }
+        return get_object_vars($this);
     }
 
     /**
