@@ -2,14 +2,26 @@
 
 namespace DiagramGenerator\Diagram;
 
+use DiagramGenerator\Generator;
 use DiagramGenerator\GeneratorConfig;
+use DiagramGenerator\Fen;
+use DiagramGenerator\Fen\Piece;
 
+/**
+ * Class responsible for drawing the board
+ * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ */
 class Board
 {
     /**
      * @var \Imagick
      */
     protected $image;
+
+    /**
+     * @var \DiagramGenerator\Diagram\GeneratorConfig
+     */
+    protected $config;
 
     public function __construct(GeneratorConfig $config)
     {
@@ -39,15 +51,52 @@ class Board
             $boardSize,
             new \ImagickPixel($this->config->getTheme()->getColor()->getFrame())
         );
-        $this->drawCells();
-        $this->image->setImageFormat('jpeg');
 
         return $this;
     }
 
+    /**
+     * Draws cells on the board
+     * @return self
+     */
+    public function drawCells()
+    {
+        for ($x = 1; $x <= 8; $x++) {
+            for ($y = 1; $y <= 8; $y++) {
+                $colorIndex = ($x + $y) % 2;
+                $cell = new \ImagickDraw();
+                $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
+                $cell->rectangle(
+                    ($x - 1) * $this->getCellSize(),
+                    ($y - 1) * $this->getCellSize(),
+                    $x * $this->getCellSize(),
+                    $y * $this->getCellSize()
+                );
+                $this->image->drawImage($cell);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add figures to the board
+     * @return self
+     */
     public function drawFigures()
     {
-        # code...
+        $fen = Fen::createFromString($this->config->getFen());
+        foreach ($fen->getPieces() as $piece) {
+            $pieceImage = new \Imagick($this->getPieceImagePath($piece));
+            $this->image->compositeImage(
+                $pieceImage,
+                \Imagick::COMPOSITE_DEFAULT,
+                $this->getCellSize() * $piece->getColumn(),
+                $this->getCellSize() * $piece->getRow()
+            );
+        }
+
+        return $this;
     }
 
     /**
@@ -67,25 +116,12 @@ class Board
     }
 
     /**
-     * Draws cells on the board
+     * Draws the board image
      * @return self
      */
-    protected function drawCells()
+    public function draw()
     {
-        for ($x = 1; $x <= 8; $x++) {
-            for ($y = 1; $y <= 8; $y++) {
-                $colorIndex = ($x + $y) % 2;
-                $cell = new \ImagickDraw();
-                $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
-                $cell->rectangle(
-                    ($x - 1) * $this->getCellSize(),
-                    ($y - 1) * $this->getCellSize(),
-                    $x * $this->getCellSize(),
-                    $y * $this->getCellSize()
-                );
-                $this->image->drawImage($cell);
-            }
-        }
+        $this->image->setImageFormat('jpeg');
 
         return $this;
     }
@@ -115,5 +151,22 @@ class Board
     protected function getDarkCellColor()
     {
         return new \ImagickPixel($this->config->getDark());
+    }
+
+    /**
+     * Returns piece image path
+     * @param  \DiagramGenerator\Fen\Piece  $piece
+     * @return string
+     */
+    protected function getPieceImagePath(Piece $piece)
+    {
+        $filename = sprintf("%s-%s-%s-%s.png",
+            $this->config->getTheme()->getFont(),
+            $this->getCellSize(),
+            $piece->getName(),
+            $piece->getColor()
+        );
+
+        return sprintf("%s/%s", Generator::getResourcesDir() . '/pieces', $filename);
     }
 }

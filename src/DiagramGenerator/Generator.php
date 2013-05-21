@@ -18,6 +18,11 @@ class Generator
         $this->configLoader = new ConfigLoader();
     }
 
+    public static function getResourcesDir()
+    {
+        return __DIR__.'/Resources';
+    }
+
     public function buildDiagram(Config $config)
     {
         $themes = $this->configLoader->getThemes();
@@ -34,34 +39,21 @@ class Generator
         $config->setTheme($themes[$config->getThemeIndex()]);
         $config->setSize($sizes[$config->getSizeIndex()]);
 
-        // $board = $sizeConfig->getCell() * 8;
-        // $board_x = ($sizeConfig->getWidth() - $board) / 2;
-
-        // $caption_base = $sizeConfig->getCaption()->getSize() - $sizeConfig->getCoordinates()->getSize() / 2;
-
-        // if (!$config->getCaption()) {
-        //     $board_y = $board_x = $sizeConfig->getFrameThick() + $sizeConfig->getOutlineThick();
-        // } else {
-        //     $board_y += $sizeConfig->getCoordinates()->getSize() / 2;
-        // }
-
-        // if (!$config->getCaption()) {
-        //     $height = $width = $board + 2 * ($sizeConfig->getFrameThick() + $sizeConfig->getOutlineThick());
-        // }
-
-        // putenv('GDFONTPATH=' . realpath($FONTS_PATH));
-        // var_dump($sizeConfig, $weight, $height);exit;
         $diagram = new Diagram($config);
         $board   = new Board($config);
         $board
             ->drawBoard()
+            ->drawCells()
+            ->drawFigures()
             ->drawBorder()
+            ->draw()
         ;
         $diagram->setBoard($board);
         $diagram->draw();
 
         header('Content-Type: image/jpeg');
-        echo $diagram->getImage();exit;
+        echo $diagram->getImage();
+        exit;
 
         // $image = imagecreatetruecolor($dimensions['width'], $dimensions['height']);
 
@@ -147,161 +139,5 @@ class Generator
         // $w = $box[2] - $box[0];
         // $left = $board_x + $board / 2 - $w / 2;
         // imagettftext($image, $caption_size, 0, $left, $caption_base, $caption_color, $CAPTION_FONT, $caption);
-
-        $fig = array();
-        $alpha_allocated = false;
-        $left = 0;
-        $base = 0;
-        for ($i = 0; $i < 12; $i++) {
-            $file = $piecesPath . "/" . $pieces_font . "-" . (string)$cell . "-" . $FILES[$i] . ".png";
-            $fig[$i] = @imagecreatefrompng($file);
-            $docache = ($fig[$i] == NULL);
-            if (!$docache) {
-                continue;
-            }
-
-            $fig[$i] = imagecreatetruecolor($cell, $cell);
-            imagesavealpha($fig[$i], true);
-
-            if (!$alpha_allocated) {
-                $clear = array();
-                for ($t = 0; $t < 128; $t++) {
-                    $clear[$t] = imagecolorallocatealpha($image, 0, 0, 0, $t);
-                }
-                $transparent = array();
-                for ($t = 0; $t < 256; $t++) {
-                    $transparent[$t] = imagecolorallocatealpha($image, $t, $t, $t, $t / 2);
-                }
-
-                $alpha_allocated = true;
-                $black = imagecolorallocate($image, 0, 0, 0);
-                $white = imagecolorallocate($image, 255, 255, 255);
-
-                if (!$chess_size) {
-                    for ($chess_size = 1; $chess_size < $cell ; $chess_size += 1) {
-                        $box = imagettfbbox($chess_size, 0, $pieces_font, chr(43));
-                        $w = $box[2] - $box[0] + 1;
-                        if ($w >= $cell) {
-                            break;
-                        }
-                    }
-                }
-
-                $box = imagettftext($fig[$i], $chess_size, 0, $left, $base, $black, $pieces_font, chr(43));
-                $dx = ($cell - ($box[2] - $box[0] + 1)) / 2;
-                $dy = ($cell - ($box[1] - $box[7] + 1)) / 2;
-                $left = $pieces_left - $box[0] + $dx;
-                $base = $pieces_base - $box[7] + $dy;
-                $box = imagettftext($fig[$i], $chess_size, 0, $left, $base, $black, $pieces_font, chr(43));
-            }
-
-            imagefilledrectangle($fig[$i], 0, 0, $cell - 1, $cell - 1, $white);
-            imagettftext($fig[$i], $chess_size, 0, $left, $base, $black, $pieces_font, $pieces_figures[$i]);
-            imagealphablending($fig[$i], false);
-
-            $qx = array(0);
-            $qy = array(0);
-            $sz = 1;
-            imagesetpixel($fig[$i], 0, 0, $transparent[255]);
-            for ($q = 0; $q < $sz; $q++) {
-                $x = $qx[$q];
-                $y = $qy[$q];
-                $rgb = imagecolorat($fig[$i], $x, $y);
-                $b = $rgb & 0xFF;
-                for ($dx = -1; $dx <= 1; $dx++) {
-                    for ($dy = -1; $dy <= 1; $dy++) {
-                        $xo = $x + $dx;
-                        $yo = $y + $dy;
-                        if ($xo < 0 || $xo >= $cell || $yo < 0 || $yo >= $cell || ($dx == 0 && $dy == 0)) continue;
-
-                        $rgbo = imagecolorat($fig[$i], $xo, $yo);
-                        $bo = $rgbo & 0xFF;
-                        if ($rgbo <= 0xffffff && $bo <= $b && $bo > 0) {
-                            imagesetpixel($fig[$i], $xo, $yo, $transparent[$bo]);
-                            $qx[$sz] = $xo;
-                            $qy[$sz] = $yo;
-                            $sz++;
-                        }
-                    }
-                }
-            }
-
-            for ($x = 0; $x < $cell; $x++) {
-                for ($y = 0; $y < $cell; $y++) {
-                    $rgb = imagecolorat($fig[$i], $x, $y);
-                    $t = ($rgb >> 24) & 0xFF;
-                    if ($t) imagesetpixel($fig[$i], $x, $y, $clear[$t]);
-                }
-            }
-
-            imagepng($fig[$i], $file);
-        }
-
-        $position = array(8);
-        $off = 0;
-        $enough = false;
-        for ($y = 0; $y < 8; $y++) {
-            $position[$y] = array(8);
-            $pos = strpos($fen, "/", $off);
-            if ($pos === FALSE) {
-                $pos = strpos($fen, " ", $off);
-                if ($pos === FALSE) break;
-
-                $enough = true;
-            }
-
-            for ($i = 0, $x = 0; $i < ($pos - $off) && $x < 8; $i++) {
-                switch ($fen[$off + $i]) {
-                default: break;
-
-                case 'r': $position[$y][$x++] = $pieces_figures[0]; break;
-                case 'n': $position[$y][$x++] = $pieces_figures[1]; break;
-                case 'b': $position[$y][$x++] = $pieces_figures[2]; break;
-                case 'q': $position[$y][$x++] = $pieces_figures[3]; break;
-                case 'k': $position[$y][$x++] = $pieces_figures[4]; break;
-                case 'p': $position[$y][$x++] = $pieces_figures[5]; break;
-
-                case 'R': $position[$y][$x++] = $pieces_figures[6]; break;
-                case 'N': $position[$y][$x++] = $pieces_figures[7]; break;
-                case 'B': $position[$y][$x++] = $pieces_figures[8]; break;
-                case 'Q': $position[$y][$x++] = $pieces_figures[9]; break;
-                case 'K': $position[$y][$x++] = $pieces_figures[10]; break;
-                case 'P': $position[$y][$x++] = $pieces_figures[11]; break;
-
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                    $position[$y][$x++] = ' ';
-                    $c = $fen[$off + $i];
-                    for ($s = 1; $s < (int)$c; $s++) {
-                        $n = (int)$c;
-                        $position[$y][$x++] = ' ';
-                    }
-                    break;
-                }
-            }
-
-            $off = $pos + 1;
-            if ($enough) break;
-        }
-
-        for ($x = 0; $x < 8; $x++) {
-            for ($y = 0; $y < 8; $y++) {
-                if ($bottom == 0) $d = 7 - $y; else $d = $y;
-                $f = strpos($pieces_figures, $position[$d][$x]);
-                if ($f === FALSE) continue;
-                imagecopy($image, $fig[$f],
-                    $board_x + $cell * $x, $board_y + $cell * $y,
-                    0, 0, $cell, $cell);
-            }
-        }
-
-        imagepng($image);
-        imagedestroy($image);
     }
 }
