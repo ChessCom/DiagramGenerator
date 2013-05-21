@@ -5,6 +5,7 @@ namespace DiagramGenerator;
 use DiagramGenerator\GeneratorConfig;
 use DiagramGenerator\Theme\ThemeColor;
 use DiagramGenerator\Diagram\Board;
+use DiagramGenerator\Diagram\Caption;
 
 /**
  * Class which represents diagram image
@@ -26,11 +27,6 @@ class Diagram
      * @var \DiagramGenerator\Diagram\Board
      */
     protected $board;
-
-    /**
-     * @var \Imagick
-     */
-    protected $caption;
 
     public function __construct(GeneratorConfig $config)
     {
@@ -59,20 +55,6 @@ class Diagram
     }
 
     /**
-     * Sets the value of config.
-     *
-     * @param \DiagramGenerator\GeneratorConfig $config the config
-     *
-     * @return self
-     */
-    public function setConfig(GeneratorConfig $config)
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    /**
      * Gets the value of board.
      *
      * @return \DiagramGenerator\Diagram\Board
@@ -97,29 +79,9 @@ class Diagram
     }
 
     /**
-     * Gets the value of caption.
-     *
-     * @return \Imagick
-     */
-    public function getCaption()
-    {
-        return $this->caption;
-    }
-
-    /**
-     * Sets the value of caption.
-     *
-     * @param \Imagick $caption the caption
-     *
+     * Draw diagram
      * @return self
      */
-    public function setCaption(\Imagick $caption)
-    {
-        $this->caption = $caption;
-
-        return $this;
-    }
-
     public function draw()
     {
         if (!$this->board) {
@@ -133,12 +95,24 @@ class Diagram
         );
         $this->image->compositeImage($this->board->getImage(), \Imagick::COMPOSITE_DEFAULT, 0, 0);
 
-        if ($this->caption) {
-            // Attach caption
+        if ($this->getCaptionText()) {
+            $caption = $this->createCaption();
+
+            // Add caption to diagram
+            $this->image->addImage($caption->getImage());
+            $this->image->resetIterator();
+            $this->image = $this->image->appendImages(true);
+
+            // Add border to diagram (image padding)
+            $this->image->borderImage(
+                new \ImagickPixel($this->config->getTheme()->getColor()->getBackground()),
+                $this->board->getCellSize() / 2,
+                $this->board->getCellSize() / 2
+            );
         }
 
         if ($this->config->getCoordinates()) {
-            // Add coordinates
+            // Add coordinates (not required)
         }
 
         $this->image->setImageFormat('jpeg');
@@ -147,27 +121,43 @@ class Diagram
     }
 
     /**
-     * Adds caption to image
-     * @param  GeneratorConfig $config
-     * @param  Size            $size
-     * @param  Theme           $theme
-     * @return null
+     * Creates caption
+     * @return \DiagramGenerator\Diagram\Caption
      */
-    protected function createCaption(GeneratorConfig $config, Size $size, Theme $theme)
+    public function createCaption()
     {
-        $textSize = $size->getCaption()->getSize();
-        $textBox  = imagettfbbox($textSize, 0, $this->getFont($theme->getFont()), $config->getCaption());
-        $pointX   = $this->dimensions['width'] - ($textBox[2] - $textBox[0]);
-        $pointY   = $dimensions['height'] -
-        imagettftext($image, $textSize, 0, $x, $caption_base, $caption_color, $CAPTION_FONT, $caption);
+        $caption = new Caption($this->config);
+        $draw    = $caption->getDraw();
+        $metrics = $caption->getMetrics($draw);
 
+        // Create image
+        $caption->getImage()->newImage(
+            $this->image->getImageWidth(),
+            $metrics['textHeight'] * 1.5,
+            new \ImagickPixel($this->config->getTheme()->getColor()->getBackground())
+        );
 
-        header('Content-Type: image/png');
-        imagepng($image);
-        exit;
+        // Add text
+        $caption->getImage()->annotateImage($draw, 0, 0, 0, $this->getCaptionText());
+        $caption->getImage()->setImageFormat('png');
 
+        return $caption;
     }
 
+    /**
+     * Returns caption text
+     * @return string
+     */
+    protected function getCaptionText()
+    {
+        return $this->config->getCaption();
+    }
+
+    /**
+     * Returns font path by font filename
+     * @param  string $filename
+     * @return string
+     */
     protected function getFont($filename)
     {
         return realpath(sprintf("%s/Resources/fonts/%s", __DIR__, $filename));

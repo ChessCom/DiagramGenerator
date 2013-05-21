@@ -130,7 +130,7 @@ class Board
      * Shortcut to get cell size
      * @return integer
      */
-    protected function getCellSize()
+    public function getCellSize()
     {
         return $this->config->getSize()->getCell();
     }

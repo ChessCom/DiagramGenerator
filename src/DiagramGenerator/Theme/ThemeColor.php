@@ -12,12 +12,12 @@ class ThemeColor
     /**
      * @var array
      */
-    protected $coordinates = array(119, 119, 119);
+    protected $coordinates = '#777777';
 
     /**
      * @var array
      */
-    protected $caption = array(0, 0, 0);
+    protected $caption = '#000000';
 
     /**
      * @var array
@@ -28,20 +28,6 @@ class ThemeColor
      * @var array
      */
     protected $frame = '#777777';
-
-    /**
-     * Allocates the image color
-     * @param  recource $image
-     * @param  array    $value
-     * @return integer
-     */
-    public static function allocateColor($image, array $value)
-    {
-        $colorArgs = $value;
-        array_unshift($colorArgs, $image);
-
-        return call_user_func_array('imagecolorallocate', $colorArgs);
-    }
 
     /**
      * Gets the value of background.
