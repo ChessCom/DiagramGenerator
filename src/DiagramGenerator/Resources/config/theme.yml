@@ -1,24 +1,8 @@
 0:
-    font   : DiaTTHab.ttf
-    figures: rnlqkpRNLQKP
-    size   : [0,0,0,0]
-    # left   : [0,0,0,0]
-    # base   : [2,1,1,1]
+    font: DiaTTHab.ttf
 1:
-    font   : DiaTTUSA.ttf
-    figures: rnlqkpRNLQKP
-    size   : [0,0,0,0]
-    # left   : [0,0,0,0]
-    # base   : [2,1,1,1]
+    font: DiaTTUSA.ttf
 2:
-    font   : cheq_tt.ttf
-    figures: tjnwlorhbqkp
-    size   : [0,0,0,0]
-    # left   : [0,0,0,0]
-    # base   : [1,0,0,0]
+    font: cheq_tt.ttf
 3:
-    font   : alpha.ttf
-    figures: tjnwlorhbqkp
-    size   : [0,0,0,0]
-    # left   : [0,0,0,0]
-    # base   : [0,0,0,0]
+    font: alpha.ttf

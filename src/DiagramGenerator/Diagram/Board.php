@@ -2,8 +2,8 @@
 
 namespace DiagramGenerator\Diagram;
 
+use DiagramGenerator\Config;
 use DiagramGenerator\Generator;
-use DiagramGenerator\GeneratorConfig;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
 
@@ -19,11 +19,11 @@ class Board
     protected $image;
 
     /**
-     * @var \DiagramGenerator\Diagram\GeneratorConfig
+     * @var \DiagramGenerator\Diagram\Config
      */
     protected $config;
 
-    public function __construct(GeneratorConfig $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
         $this->image  = new \Imagick();
@@ -49,7 +49,7 @@ class Board
         $this->image->newImage(
             $boardSize,
             $boardSize,
-            new \ImagickPixel($this->config->getTheme()->getColor()->getFrame())
+            new \ImagickPixel($this->config->getTheme()->getColor()->getBackground())
         );
 
         return $this;
@@ -105,9 +105,9 @@ class Board
      */
     public function drawBorder()
     {
-        $borderThickness = $this->config->getSize()->getFrameThick();
+        $borderThickness = $this->config->getSize()->getBorder();
         $this->image->borderImage(
-            new \ImagickPixel($this->config->getTheme()->getColor()->getOutline()),
+            new \ImagickPixel($this->config->getTheme()->getColor()->getBorder()),
             $borderThickness,
             $borderThickness
         );

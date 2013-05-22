@@ -2,8 +2,8 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\GeneratorConfig;
-use DiagramGenerator\Theme\ThemeColor;
+use DiagramGenerator\Config;
+use DiagramGenerator\Config\ThemeColor;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Diagram\Caption;
 
@@ -14,7 +14,7 @@ use DiagramGenerator\Diagram\Caption;
 class Diagram
 {
     /**
-     * @var \DiagramGenerator\GeneratorConfig
+     * @var \DiagramGenerator\Config
      */
     protected $config;
 
@@ -28,7 +28,7 @@ class Diagram
      */
     protected $board;
 
-    public function __construct(GeneratorConfig $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
         $this->image  = new \Imagick();
@@ -47,7 +47,7 @@ class Diagram
     /**
      * Gets the value of config.
      *
-     * @return \DiagramGenerator\GeneratorConfig
+     * @return \DiagramGenerator\Config
      */
     public function getConfig()
     {
@@ -111,9 +111,9 @@ class Diagram
             );
         }
 
-        if ($this->config->getCoordinates()) {
-            // Add coordinates (not required)
-        }
+        // TODO: Add coordinates
+        // if ($this->config->getCoordinates()) {
+        // }
 
         $this->image->setImageFormat('jpeg');
 

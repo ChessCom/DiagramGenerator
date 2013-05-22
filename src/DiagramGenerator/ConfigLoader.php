@@ -2,10 +2,9 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Theme;
-use DiagramGenerator\Size;
-use DiagramGenerator\Size\Caption;
-use DiagramGenerator\Size\Coordinates;
+use DiagramGenerator\Config\Theme;
+use DiagramGenerator\Config\Size;
+use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Yaml\Parser;
 
 /**
@@ -18,6 +17,11 @@ class ConfigLoader
      * @var \Symfony\Component\Yaml\Parser
      */
     protected $parser;
+
+    /**
+     * @var \JMS\Serializer\SerializerBuilder
+     */
+    protected $serializer;
 
     /**
      * @var array
@@ -35,11 +39,21 @@ class ConfigLoader
         $this->load();
     }
 
+    /**
+     * Gets the value of themes.
+     *
+     * @return array
+     */
     public function getThemes()
     {
         return $this->themes;
     }
 
+    /**
+     * Gets the value of sizes.
+     *
+     * @return array
+     */
     public function getSizes()
     {
         return $this->sizes;
@@ -52,12 +66,15 @@ class ConfigLoader
     public function load()
     {
         $this->themes = $this->sizes = array();
+        $this->serializer = SerializerBuilder::create()->build();
 
-        $themeConfigFile = file_get_contents(__DIR__.'/Resources/config/theme.yml');
-        $this->loadThemeConfig($this->parser->parse($themeConfigFile));
-
-        $sizeConfigFile = file_get_contents(__DIR__.'/Resources/config/size.yml');
-        $this->loadSizeConfig($this->parser->parse($sizeConfigFile));
+        foreach (array(
+            'theme' => 'theme.yml',
+            'size'  => 'size.yml'
+        ) as $type => $file) {
+            $configFile = file_get_contents(sprintf("%s/Resources/config/%s", __DIR__, $file));
+            $this->{sprintf("load%sConfig", $type)}($this->parser->parse($configFile));
+        }
     }
 
     /**
@@ -68,15 +85,7 @@ class ConfigLoader
     protected function loadThemeConfig(array $config)
     {
         foreach ($config as $key => $value) {
-            $theme = new Theme();
-            $theme
-                ->setFont($value['font'])
-                ->setSize($value['size'])
-                ->setFigures($value['figures'])
-                // ->setLeft($value['left'])
-                // ->setBase($value['base'])
-            ;
-            $this->themes[] = $theme;
+            $this->themes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
         }
     }
 
@@ -88,31 +97,7 @@ class ConfigLoader
     protected function loadSizeConfig(array $config)
     {
         foreach ($config as $key => $value) {
-            $coordinates = new Coordinates();
-            $coordinates
-                ->setSize($value['coordinates']['size'])
-                ->setBase($value['coordinates']['base'])
-                ->setLeft($value['coordinates']['left'])
-            ;
-            $caption = new Caption();
-            $caption
-                ->setSize($value['caption']['size'])
-                ->setBase($value['caption']['base'])
-                ->setLeft($value['caption']['left'])
-            ;
-            $size = new Size();
-            $size
-                ->setWidth($value['width'])
-                ->setHeight($value['height'])
-                // ->setBoardX($value['board_x'])
-                // ->setBoardY($value['board_y'])
-                ->setCell($value['cell'])
-                // ->setOutlineThick($value['outline_thick'])
-                ->setFrameThick($value['frame_thick'])
-                ->setCoordinates($coordinates)
-                ->setCaption($caption)
-            ;
-            $this->sizes[] = $size;
+            $this->sizes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Size', 'json');
         }
     }
 }

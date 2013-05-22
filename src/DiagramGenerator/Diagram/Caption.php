@@ -2,17 +2,17 @@
 
 namespace DiagramGenerator\Diagram;
 
+use DiagramGenerator\Config;
 use DiagramGenerator\Generator;
-use DiagramGenerator\GeneratorConfig;
 
 class Caption
 {
     /**
-     * @var \DiagramGenerator\GeneratorConfig;
+     * @var \DiagramGenerator\Config;
      */
     protected $config;
 
-    public function __construct(GeneratorConfig $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
         $this->image  = new \Imagick();
@@ -39,7 +39,7 @@ class Caption
         $draw = new \ImagickDraw();
         $draw->setFont($this->getFont());
         $draw->setGravity(\Imagick::GRAVITY_CENTER);
-        $draw->setFontSize($this->config->getSize()->getCaption()->getSize());
+        $draw->setFontSize($this->config->getSize()->getCaption());
 
         return $draw;
     }

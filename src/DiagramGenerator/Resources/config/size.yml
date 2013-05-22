@@ -1,64 +1,16 @@
 0:
-    width        : 178
-    height       : 196
-    # board_x      : 10
-    # board_y      : 8
-    cell         : 20
-    # outline_thick: 1
-    frame_thick  : 1
-    coordinates:
-        size: 7
-        base: 4
-        left: 8
-    caption:
-        size: 8
-        base: 191
-        left: 0
+    cell   : 20
+    border : 1
+    caption: 8
 1:
-    width        : 267
-    height       : 294
-    # board_x      : 16
-    # board_y      : 11
-    cell         : 30
-    # outline_thick: 1
-    frame_thick  : 1
-    coordinates:
-        size: 10
-        base: 5
-        left: 13
-    caption:
-        size: 12
-        base: 284
-        left: 0
+    cell   : 30
+    border : 1
+    caption: 12
 2:
-    width        : 540
-    height       : 592
-    # board_x      : 32
-    # board_y      : 22
-    cell         : 60
-    # outline_thick: 1
-    frame_thick  : 1
-    coordinates:
-        size: 20
-        base: 9
-        left: 24
-    caption:
-        size: 24
-        base: 568
-        left: 0
+    cell   : 60
+    border : 1
+    caption: 24
 3:
-    width        : 810
-    height       : 888
-    # board_x      : 48
-    # board_y      : 33
-    cell         : 90
-    # outline_thick: 1
-    frame_thick  : 1
-    coordinates:
-        size: 30
-        base: 14
-        left: 37
-    caption:
-        size: 36
-        base: 852
-        left: 0
+    cell   : 90
+    border : 1
+    caption: 36

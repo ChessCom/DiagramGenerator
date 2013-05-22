@@ -2,8 +2,8 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Size;
-use DiagramGenerator\Theme;
+use DiagramGenerator\Config\Size;
+use DiagramGenerator\Config\Theme;
 use JMS\Serializer\Annotation\Exclude;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\PostDeserialize;
@@ -13,10 +13,8 @@ use JMS\Serializer\Annotation\Type;
 /**
  * @ExclusionPolicy("none")
  */
-class GeneratorConfig
+class Config
 {
-    // const DEFAULT_BOTTOM = 0;
-
     /**
      * @Type("string")
      * @var string
@@ -32,7 +30,7 @@ class GeneratorConfig
 
     /**
      * @Exclude()
-     * @var \DiagramGenerator\Size
+     * @var \DiagramGenerator\Config\Size
      */
     protected $size;
 
@@ -41,11 +39,11 @@ class GeneratorConfig
      * @SerializedName("theme")
      * @var integer
      */
-    protected $themeIndex = 2;
+    protected $themeIndex = 3;
 
     /**
      * @Exclude()
-     * @var \DiagramGenerator\Theme
+     * @var \DiagramGenerator\Config\Theme
      */
     protected $theme;
 
@@ -59,12 +57,6 @@ class GeneratorConfig
      * @Type("string")
      * @var string
      */
-    protected $filename = '';
-
-    /**
-     * @Type("string")
-     * @var string
-     */
     protected $light = 'eeeed2';
 
     /**
@@ -72,18 +64,6 @@ class GeneratorConfig
      * @var string
      */
     protected $dark = '769656';
-
-    /**
-     * @Type("boolean")
-     * @var boolean
-     */
-    protected $coordinates = false;
-
-    /**
-     * @Type("boolean")
-     * @var boolean
-     */
-    // protected $bottom = false;
 
     /**
      * Gets the value of fen.
@@ -136,7 +116,7 @@ class GeneratorConfig
     /**
      * Gets the value of size.
      *
-     * @return \DiagramGenerator\Size
+     * @return \DiagramGenerator\Config\Size
      */
     public function getSize()
     {
@@ -146,7 +126,7 @@ class GeneratorConfig
     /**
      * Sets the value of size.
      *
-     * @param \DiagramGenerator\Size $size the size
+     * @param \DiagramGenerator\Config\Size $size the size
      *
      * @return self
      */
@@ -184,7 +164,7 @@ class GeneratorConfig
     /**
      * Gets the value of theme.
      *
-     * @return \DiagramGenerator\Theme
+     * @return \DiagramGenerator\Config\Theme
      */
     public function getTheme()
     {
@@ -194,7 +174,7 @@ class GeneratorConfig
     /**
      * Sets the value of theme.
      *
-     * @param \DiagramGenerator\Theme $theme the theme
+     * @param \DiagramGenerator\Config\Theme $theme the theme
      *
      * @return self
      */
@@ -225,30 +205,6 @@ class GeneratorConfig
     public function setCaption($caption)
     {
         $this->caption = $caption;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of filename.
-     *
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    /**
-     * Sets the value of filename.
-     *
-     * @param string $filename the filename
-     *
-     * @return self
-     */
-    public function setFilename($filename)
-    {
-        $this->filename = $filename;
 
         return $this;
     }
@@ -300,54 +256,6 @@ class GeneratorConfig
 
         return $this;
     }
-
-    /**
-     * Gets the value of coordinates.
-     *
-     * @return boolean
-     */
-    public function getCoordinates()
-    {
-        return $this->coordinates;
-    }
-
-    /**
-     * Sets the value of coordinates.
-     *
-     * @param boolean $coordinates the coordinates
-     *
-     * @return self
-     */
-    public function setCoordinates($coordinates)
-    {
-        $this->coordinates = (bool) $coordinates;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of bottom.
-     *
-     * @return boolean
-     */
-    // public function getBottom()
-    // {
-    //     return $this->bottom;
-    // }
-
-    /**
-     * Sets the value of bottom.
-     *
-     * @param boolean $bottom the bottom
-     *
-     * @return self
-     */
-    // public function setBottom($bottom)
-    // {
-    //     $this->bottom = (bool) $bottom;
-
-    //     return $this;
-    // }
 
     /**
      * Returns all urlencoded config properties in array key => value

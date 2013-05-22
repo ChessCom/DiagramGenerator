@@ -2,7 +2,7 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\GeneratorConfig as Config;
+use DiagramGenerator\Config;
 use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
 
