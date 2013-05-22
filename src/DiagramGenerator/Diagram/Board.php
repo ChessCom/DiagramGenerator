@@ -88,6 +88,7 @@ class Board
         $fen = Fen::createFromString($this->config->getFen());
         foreach ($fen->getPieces() as $piece) {
             $pieceImage = new \Imagick($this->getPieceImagePath($piece));
+            $pieceImage->scaleImage($this->getCellSize(), $this->getCellSize());
             $this->image->compositeImage(
                 $pieceImage,
                 \Imagick::COMPOSITE_DEFAULT,
@@ -155,16 +156,15 @@ class Board
 
     /**
      * Returns piece image path
-     * @param  \DiagramGenerator\Fen\Piece  $piece
+     * @param  \DiagramGenerator\Fen\Piece $piece
      * @return string
      */
     protected function getPieceImagePath(Piece $piece)
     {
-        $filename = sprintf("%s-%s-%s-%s.png",
-            $this->config->getTheme()->getFont(),
-            $this->getCellSize(),
-            $piece->getName(),
-            $piece->getColor()
+        $filename = sprintf("%s/%s%s.png",
+            $this->config->getTheme()->getName(),
+            substr($piece->getColor(), 0, 1),
+            $piece->getKey()
         );
 
         return sprintf("%s/%s", Generator::getResourcesDir() . '/pieces', $filename);

@@ -1,8 +1,8 @@
 0:
-    font: DiaTTHab.ttf
+    name: DiaTTHab
 1:
-    font: DiaTTUSA.ttf
+    name: DiaTTUSA
 2:
-    font: cheq_tt.ttf
+    name: cheq_tt
 3:
-    font: alpha.ttf
+    name: alpha

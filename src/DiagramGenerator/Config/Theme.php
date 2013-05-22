@@ -8,11 +8,11 @@ use JMS\Serializer\Annotation\Type;
 class Theme
 {
     /**
-     * Font filename
+     * Theme name
      * @Type("string")
      * @var string
      */
-    protected $font;
+    protected $name;
 
     /**
      * @Type("DiagramGenerator\Config\ThemeColor")
@@ -26,25 +26,25 @@ class Theme
     }
 
     /**
-     * Gets the font filename.
+     * Gets the Font filename.
      *
      * @return string
      */
-    public function getFont()
+    public function getName()
     {
-        return $this->font;
+        return $this->name;
     }
 
     /**
-     * Sets the font filename.
+     * Sets the Font filename.
      *
-     * @param string $font the font
+     * @param string $name the name
      *
      * @return self
      */
-    public function setFont($font)
+    public function setName($name)
     {
-        $this->font = $font;
+        $this->name = $name;
 
         return $this;
     }
