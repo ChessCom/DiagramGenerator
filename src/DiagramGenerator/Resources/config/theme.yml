@@ -1,8 +1,14 @@
 0:
-    name: DiaTTHab
+    name: classic
 1:
-    name: DiaTTUSA
-2:
     name: cheq_tt
-3:
+2:
     name: alpha
+3:
+    name: book
+4:
+    name: club
+5:
+    name: modern
+6:
+    name: vintage
