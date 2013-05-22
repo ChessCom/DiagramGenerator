@@ -6,6 +6,7 @@ use DiagramGenerator\Config;
 use DiagramGenerator\Config\ThemeColor;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Diagram\Caption;
+use DiagramGenerator\Diagram\Coordinate;
 
 /**
  * Class which represents diagram image
@@ -95,43 +96,83 @@ class Diagram
         );
         $this->image->compositeImage($this->board->getImage(), \Imagick::COMPOSITE_DEFAULT, 0, 0);
 
-        if ($this->getCaptionText()) {
-            // Add border to diagram (image padding)
-            $this->image->borderImage(
-                $this->getBackgroundColor(),
-                $this->getBorderThickness(),
-                $this->getBorderThickness()
-            );
+        if ($this->config->getCoordinates()) {
+            // Add border to diagram
+            $this->drawBorder();
 
+            // Add vertical coordinates
+            for ($x = 8; $x >= 1; $x--) {
+                $coordinate = $this->createCoordinate($this->getBorderThickness(), $this->board->getCellSize(), $x);
+                $this->image->compositeImage(
+                    $coordinate->getImage(),
+                    \Imagick::COMPOSITE_DEFAULT,
+                    0,
+                    $this->getBorderThickness() + $this->board->getCellSize() * abs($x - 8)
+                );
+            }
+
+            // Add horizontal coordinates
+            foreach (array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h') as $index => $y) {
+                $coordinate = $this->createCoordinate($this->board->getCellSize(), $this->getBorderThickness(), $y);
+                $this->image->compositeImage(
+                    $coordinate->getImage(),
+                    \Imagick::COMPOSITE_DEFAULT,
+                    $this->getBorderThickness() + $this->board->getCellSize() * $index,
+                    $this->getBorderThickness() + $this->board->getImage()->getImageHeight()
+                );
+            }
+        }
+
+        if ($this->getCaptionText()) {
+            // Add border to diagram
+            $this->drawBorder();
+
+            // Create and add caption to image
             $caption = $this->createCaption();
 
-            // Add caption to diagram
+            if ($this->config->getCoordinates()) {
+                $caption->getImage()->borderImage($this->getBackgroundColor(), 0, $caption->getImage()->getImageHeight() / 2);
+            }
+
             $this->image->addImage($caption->getImage());
 
             // Add bottom padding
-            $this->image->newImage(
-                $this->image->getImageWidth(),
-                $this->getBorderThickness(),
-                $this->getBackgroundColor()
-            );
+            if (!$this->config->getCoordinates()) {
+                $this->image->newImage(
+                    $this->image->getImageWidth(),
+                    $this->getBorderThickness(),
+                    $this->getBackgroundColor()
+                );
+            }
             $this->image->resetIterator();
             $this->image = $this->image->appendImages(true);
         }
-
-        // TODO: Add coordinates
-        // if ($this->config->getCoordinates()) {
-        // }
 
         $this->image->setImageFormat('jpeg');
 
         return $this;
     }
 
+    protected function createCoordinate($width, $height, $text)
+    {
+        $coordinate = new Coordinate($this->config);
+        $draw       = $coordinate->getDraw();
+
+        // Create image
+        $coordinate->getImage()->newImage($width, $height, $this->getBackgroundColor());
+
+        // Add text
+        $coordinate->getImage()->annotateImage($draw, 0, 0, 0, $text);
+        $coordinate->getImage()->setImageFormat('png');
+
+        return $coordinate;
+    }
+
     /**
      * Creates caption
      * @return \DiagramGenerator\Diagram\Caption
      */
-    public function createCaption()
+    protected function createCaption()
     {
         $caption = new Caption($this->config);
         $draw    = $caption->getDraw();
@@ -149,6 +190,24 @@ class Diagram
         $caption->getImage()->setImageFormat('png');
 
         return $caption;
+    }
+
+    /**
+     * Draws the image border
+     * @return null
+     */
+    public function drawBorder()
+    {
+        // Check if border has been already drawn
+        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
+            return;
+        }
+
+        $this->image->borderImage(
+            $this->getBackgroundColor(),
+            $this->getBorderThickness(),
+            $this->getBorderThickness()
+        );
     }
 
     /**

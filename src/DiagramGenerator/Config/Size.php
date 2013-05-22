@@ -28,6 +28,13 @@ class Size
     protected $caption;
 
     /**
+     * Coordinates fonts size
+     * @Type("integer")
+     * @var integer
+     */
+    protected $coordinates;
+
+    /**
      * Gets the value of cell.
      *
      * @return integer
@@ -95,6 +102,30 @@ class Size
     public function setCaption($caption)
     {
         $this->caption = $caption;
+
+        return $this;
+    }
+
+    /**
+     * Gets the Coordinates fonts size.
+     *
+     * @return integer
+     */
+    public function getCoordinates()
+    {
+        return $this->coordinates;
+    }
+
+    /**
+     * Sets the Coordinates fonts size.
+     *
+     * @param integer $coordinates the coordinates
+     *
+     * @return self
+     */
+    public function setCoordinates($coordinates)
+    {
+        $this->coordinates = $coordinates;
 
         return $this;
     }
