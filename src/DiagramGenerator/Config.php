@@ -57,7 +57,7 @@ class Config
      * @Type("boolean")
      * @var boolean
      */
-    protected $coordinates = true;
+    protected $coordinates = false;
 
     /**
      * @Type("string")
