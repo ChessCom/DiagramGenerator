@@ -19,6 +19,22 @@ class Coordinate
     }
 
     /**
+     * @return array
+     */
+    public static function getVerticalCoordinates()
+    {
+        return range(1, 8);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getHorizontalCoordinates()
+    {
+        return range('a', 'h');
+    }
+
+    /**
      * Gets the value of image.
      *
      * @return \Imagick

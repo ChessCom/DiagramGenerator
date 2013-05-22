@@ -45,6 +45,19 @@ class Caption
     }
 
     /**
+     * @param  \ImagickPixel $color
+     * @param  integer       $width
+     * @param  integer       $height
+     * @return self
+     */
+    public function drawBorder(\ImagickPixel $color, $width, $height)
+    {
+        $this->getImage()->borderImage($color, $width, $height);
+
+        return $this;
+    }
+
+    /**
      * @param  \ImagickDraw $draw
      * @return array
      */

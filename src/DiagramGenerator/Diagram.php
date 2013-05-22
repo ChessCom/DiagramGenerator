@@ -89,30 +89,24 @@ class Diagram
             throw new \InvalidArgumentException('Board must be set');
         }
 
-        $this->image->newImage(
-            $this->board->getImage()->getImageWidth(),
-            $this->board->getImage()->getImageHeight(),
-            $this->getBackgroundColor()
-        );
-        $this->image->compositeImage($this->board->getImage(), \Imagick::COMPOSITE_DEFAULT, 0, 0);
-
+        $this->image->addImage($this->board->getImage());
         if ($this->config->getCoordinates()) {
             // Add border to diagram
             $this->drawBorder();
 
             // Add vertical coordinates
-            for ($x = 8; $x >= 1; $x--) {
-                $coordinate = $this->createCoordinate($this->getBorderThickness(), $this->board->getCellSize(), $x);
+            foreach (Coordinate::getVerticalCoordinates() as $index => $x) {
+                $coordinate = $this->createCoordinate($this->getBorderThickness(), $this->board->getCellSize(), abs($x - 9));
                 $this->image->compositeImage(
                     $coordinate->getImage(),
                     \Imagick::COMPOSITE_DEFAULT,
                     0,
-                    $this->getBorderThickness() + $this->board->getCellSize() * abs($x - 8)
+                    $this->getBorderThickness() + $this->board->getCellSize() * $index
                 );
             }
 
             // Add horizontal coordinates
-            foreach (array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h') as $index => $y) {
+            foreach (Coordinate::getHorizontalCoordinates() as $index => $y) {
                 $coordinate = $this->createCoordinate($this->board->getCellSize(), $this->getBorderThickness(), $y);
                 $this->image->compositeImage(
                     $coordinate->getImage(),
@@ -130,8 +124,9 @@ class Diagram
             // Create and add caption to image
             $caption = $this->createCaption();
 
+            // Additional padding if coordinates were added
             if ($this->config->getCoordinates()) {
-                $caption->getImage()->borderImage($this->getBackgroundColor(), 0, $caption->getImage()->getImageHeight() / 2);
+                $caption->drawBorder($this->getBackgroundColor(), 0, $caption->getImage()->getImageHeight() / 2);
             }
 
             $this->image->addImage($caption->getImage());
@@ -153,6 +148,12 @@ class Diagram
         return $this;
     }
 
+    /**
+     * @param  integer $width
+     * @param  integer $height
+     * @param  string  $text
+     * @return \DiagramGenerator\Diagram\Coordinate
+     */
     protected function createCoordinate($width, $height, $text)
     {
         $coordinate = new Coordinate($this->config);
