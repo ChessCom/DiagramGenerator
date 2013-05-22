@@ -91,24 +91,31 @@ class Diagram
         $this->image->newImage(
             $this->board->getImage()->getImageWidth(),
             $this->board->getImage()->getImageHeight(),
-            new \ImagickPixel($this->config->getTheme()->getColor()->getBackground())
+            $this->getBackgroundColor()
         );
         $this->image->compositeImage($this->board->getImage(), \Imagick::COMPOSITE_DEFAULT, 0, 0);
 
         if ($this->getCaptionText()) {
+            // Add border to diagram (image padding)
+            $this->image->borderImage(
+                $this->getBackgroundColor(),
+                $this->getBorderThickness(),
+                $this->getBorderThickness()
+            );
+
             $caption = $this->createCaption();
 
             // Add caption to diagram
             $this->image->addImage($caption->getImage());
+
+            // Add bottom padding
+            $this->image->newImage(
+                $this->image->getImageWidth(),
+                $this->getBorderThickness(),
+                $this->getBackgroundColor()
+            );
             $this->image->resetIterator();
             $this->image = $this->image->appendImages(true);
-
-            // Add border to diagram (image padding)
-            $this->image->borderImage(
-                new \ImagickPixel($this->config->getTheme()->getColor()->getBackground()),
-                $this->board->getCellSize() / 2,
-                $this->board->getCellSize() / 2
-            );
         }
 
         // TODO: Add coordinates
@@ -133,8 +140,8 @@ class Diagram
         // Create image
         $caption->getImage()->newImage(
             $this->image->getImageWidth(),
-            $metrics['textHeight'] * 1.5,
-            new \ImagickPixel($this->config->getTheme()->getColor()->getBackground())
+            $metrics['textHeight'],
+            $this->getBackgroundColor()
         );
 
         // Add text
@@ -161,5 +168,21 @@ class Diagram
     protected function getFont($filename)
     {
         return realpath(sprintf("%s/Resources/fonts/%s", __DIR__, $filename));
+    }
+
+    /**
+     * @return \ImagickPixel
+     */
+    protected function getBackgroundColor()
+    {
+        return new \ImagickPixel($this->config->getTheme()->getColor()->getBackground());
+    }
+
+    /**
+     * @return integer
+     */
+    protected function getBorderThickness()
+    {
+        return $this->board->getCellSize() / 2;
     }
 }
