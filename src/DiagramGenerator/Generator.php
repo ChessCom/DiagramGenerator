@@ -5,6 +5,9 @@ namespace DiagramGenerator;
 use DiagramGenerator\Config;
 use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
+use DiagramGenerator\Exception\InvalidConfigException;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator;
 
 /**
  * Generator class
@@ -12,9 +15,20 @@ use DiagramGenerator\Diagram\Board;
  */
 class Generator
 {
-    public function __construct()
+    /**
+     * @var \DiagramGenerator\ConfigLoader;
+     */
+    protected $configLoader;
+
+    /**
+     * @var \Symfony\Component\Validator\Validator
+     */
+    protected $validator;
+
+    public function __construct(Validator $validator)
     {
         $this->configLoader = new ConfigLoader();
+        $this->validator = $validator;
     }
 
     /**
@@ -31,6 +45,11 @@ class Generator
      */
     public function buildDiagram(Config $config)
     {
+        $errors = $this->validator->validate($config);
+        if (count($errors) > 0) {
+            throw new InvalidConfigException($errors->__toString());
+        }
+
         $themes = $this->configLoader->getThemes();
         $sizes  = $this->configLoader->getSizes();
 

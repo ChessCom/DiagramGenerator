@@ -9,6 +9,10 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\PostDeserialize;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\Type;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * @ExclusionPolicy("none")
@@ -17,12 +21,14 @@ class Config
 {
     /**
      * @Type("string")
+     * @NotBlank()
      * @var string
      */
     protected $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
     /**
      * @Type("integer")
+     * @Range(min=0, max=3)
      * @SerializedName("size")
      * @var integer
      */
@@ -36,6 +42,7 @@ class Config
 
     /**
      * @Type("integer")
+     * @Range(min=0, max=6)
      * @SerializedName("theme")
      * @var integer
      */
@@ -49,6 +56,7 @@ class Config
 
     /**
      * @Type("string")
+     * @Length(max=30)
      * @var string
      */
     protected $caption = '';
@@ -61,12 +69,14 @@ class Config
 
     /**
      * @Type("string")
+     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Light color should be in hex format")
      * @var string
      */
     protected $light = 'eeeed2';
 
     /**
      * @Type("string")
+     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Dark color should be in hex format")
      * @var string
      */
     protected $dark = '769656';
