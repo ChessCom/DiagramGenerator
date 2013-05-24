@@ -4,6 +4,7 @@ namespace DiagramGenerator;
 
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Theme;
+use DiagramGenerator\Fen;
 use JMS\Serializer\Annotation\Exclude;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\PostDeserialize;
@@ -88,7 +89,7 @@ class Config
      */
     public function getFen()
     {
-        return $this->sanitizeFen($this->fen);
+        return Fen::sanitizeFenString($this->fen);
     }
 
     /**
@@ -100,7 +101,7 @@ class Config
      */
     public function setFen($fen)
     {
-        $this->fen = $this->sanitizeFen($fen);
+        $this->fen = Fen::sanitizeFenString($fen);
 
         return $this;
     }
@@ -304,15 +305,5 @@ class Config
     public function toArray()
     {
         return get_object_vars($this);
-    }
-
-    /**
-     * Remove unused part from the fen
-     * @param  string $fen
-     * @return string
-     */
-    protected function sanitizeFen($fen)
-    {
-        return (strpos($fen, ' ') === false) ? $fen : substr($fen, 0, strpos($fen, ' '));
     }
 }

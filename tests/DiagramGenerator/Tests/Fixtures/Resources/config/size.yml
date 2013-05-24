@@ -1,0 +1,10 @@
+0:
+    cell       : 10
+    border     : 1
+    caption    : 10
+    coordinates: 10
+1:
+    cell       : 20
+    border     : 2
+    caption    : 20
+    coordinates: 20

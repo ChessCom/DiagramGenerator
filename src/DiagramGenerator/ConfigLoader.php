@@ -35,8 +35,8 @@ class ConfigLoader
 
     public function __construct()
     {
-        $this->parser = new Parser();
-        $this->load();
+        $this->parser     = new Parser();
+        $this->serializer = SerializerBuilder::create()->build();
     }
 
     /**
@@ -60,32 +60,35 @@ class ConfigLoader
     }
 
     /**
-     * Method loads theme config file and converts it to array of Theme objects
+     */
+
+    /**
+     * Load and parse size config file
+     * @param  string $resourcesDir
      * @return null
      */
-    public function load()
+    public function loadSizeConfig($resourcesDir)
     {
-        $this->themes = $this->sizes = array();
-        $this->serializer = SerializerBuilder::create()->build();
-
-        foreach (array(
-            'theme' => 'theme.yml',
-            'size'  => 'size.yml'
-        ) as $type => $file) {
-            $configFile = file_get_contents(sprintf("%s/Resources/config/%s", __DIR__, $file));
-            $this->{sprintf("load%sConfig", $type)}($this->parser->parse($configFile));
+        $this->sizes = array();
+        if ($configFile = @file_get_contents(sprintf("%s/config/size.yml", $resourcesDir))) {
+            $this->parseSizeConfig($this->parser->parse($configFile));
+        } else {
+            throw new \RuntimeException('Size config not found');
         }
     }
 
     /**
-     * Method to convert array config to array of Theme objects
-     * @param  array  $config
+     * Load and parse theme config file
+     * @param  string $resourcesDir
      * @return null
      */
-    protected function loadThemeConfig(array $config)
+    public function loadThemeConfig($resourcesDir)
     {
-        foreach ($config as $key => $value) {
-            $this->themes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
+        $this->themes = array();
+        if ($configFile = @file_get_contents(sprintf("%s/config/theme.yml", $resourcesDir))) {
+            $this->parseThemeConfig($this->parser->parse($configFile));
+        } else {
+            throw new \RuntimeException('Theme config not found');
         }
     }
 
@@ -94,10 +97,22 @@ class ConfigLoader
      * @param  array  $config Parsed yaml config
      * @return null
      */
-    protected function loadSizeConfig(array $config)
+    protected function parseSizeConfig(array $config)
     {
         foreach ($config as $key => $value) {
             $this->sizes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Size', 'json');
+        }
+    }
+
+    /**
+     * Method to convert array config to array of Theme objects
+     * @param  array  $config
+     * @return null
+     */
+    protected function parseThemeConfig(array $config)
+    {
+        foreach ($config as $key => $value) {
+            $this->themes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
         }
     }
 }

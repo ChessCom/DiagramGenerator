@@ -20,7 +20,7 @@ class Fen
      * Array of all board pieces, excluding empty
      * @var array
      */
-    protected $pieces;
+    protected $pieces = array();
 
     /**
      * Creates Fen object from the string
@@ -30,7 +30,7 @@ class Fen
     public static function createFromString($fenString)
     {
         $fen  = new Fen();
-        $rows = explode('/', $fenString);
+        $rows = explode('/', self::sanitizeFenString($fenString));
         foreach ($rows as $index => $rowString) {
             $row = array();
 
@@ -79,6 +79,15 @@ class Fen
             default:
                 throw new \InvalidArgumentException(sprintf("Piece with key %s doesn\'t exist", $key));
         }
+    }
+
+    /**
+     * @param  string $fen
+     * @return string
+     */
+    public static function sanitizeFenString($fen)
+    {
+        return (strpos($fen, ' ') === false) ? $fen : substr($fen, 0, strpos($fen, ' '));
     }
 
     /**

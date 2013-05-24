@@ -67,7 +67,7 @@ abstract class Piece
     public function setColor($color)
     {
         if ($color != self::WHITE && $color != self::BLACK) {
-            throw new \InvalidArgumentException('Invalid color given: %s', $color);
+            throw new \InvalidArgumentException(sprintf('Invalid color given: %s', $color));
         }
 
         $this->color = $color;
@@ -94,7 +94,6 @@ abstract class Piece
      */
     public function setRow($row)
     {
-        // TODO: Add sf2 validation here
         if ($row < 0 || $row > 7) {
             throw new \InvalidArgumentException("Invalid row index given: '%u'.", $row);
         }
@@ -123,7 +122,6 @@ abstract class Piece
      */
     public function setColumn($column)
     {
-        // TODO: Add sf2 validation here
         if ($column < 0 || $column > 7) {
             throw new \InvalidArgumentException("Invalid column index given: '%u'.", $column);
         }
