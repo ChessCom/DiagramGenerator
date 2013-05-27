@@ -78,6 +78,21 @@ $urlHelper->getSecureUrl($config, $routingName);
 ```
 where $config is a `DigramGenerator\Config` object, `$routingName` is your routing name for the action, responsible for rendering diagrams
 
+### Step 6: Validation
+
+To enable config validation enable annotations for the validator
+
+```php
+$validator->enableAnnotationMapping();
+```
+
+or in sf2 config:
+
+```yaml
+framework:
+    validation: { enable_annotations: true }
+```
+
 ### Bonus
 
 `Fen` object is a convenient way to work with fen strings and represents the board as a list of all pieces, each one is an instance of `DiagramGenerator\Fen\Piece` object, has color, row and column properties. It can be developed according to our future needs
