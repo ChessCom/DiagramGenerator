@@ -66,6 +66,19 @@ class Generator
         $config->setTheme($themes[$config->getThemeIndex()]);
         $config->setSize($sizes[$config->getSizeIndex()]);
 
+        $board = $this->createBoard($config);
+        $diagram = $this->createDiagram($config, $board);
+
+        return $diagram;
+    }
+
+    /**
+     * Creates board image
+     * @param  Config $config
+     * @return \DiagramGenerator\Diagram\Board
+     */
+    protected function createBoard(Config $config)
+    {
         $board = new Board($config);
         $board
             ->drawBoard()
@@ -74,6 +87,17 @@ class Generator
             ->drawBorder()
             ->draw();
 
+        return $board;
+    }
+
+    /**
+     * Creates diagram
+     * @param  Config $config
+     * @param  Board  $board
+     * @return \DiagramGenerator\Diagram
+     */
+    protected function createDiagram(Config $config, Board $board)
+    {
         $diagram = new Diagram($config);
         $diagram
             ->setBoard($board)

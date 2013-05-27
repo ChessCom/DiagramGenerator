@@ -149,6 +149,24 @@ class Diagram
     }
 
     /**
+     * Draws the image border
+     * @return null
+     */
+    protected function drawBorder()
+    {
+        // Check if border has been already drawn
+        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
+            return;
+        }
+
+        $this->image->borderImage(
+            $this->getBackgroundColor(),
+            $this->getBorderThickness(),
+            $this->getBorderThickness()
+        );
+    }
+
+    /**
      * @param  integer $width
      * @param  integer $height
      * @param  string  $text
@@ -167,24 +185,6 @@ class Diagram
         $coordinate->getImage()->setImageFormat('png');
 
         return $coordinate;
-    }
-
-    /**
-     * Draws the image border
-     * @return null
-     */
-    public function drawBorder()
-    {
-        // Check if border has been already drawn
-        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
-            return;
-        }
-
-        $this->image->borderImage(
-            $this->getBackgroundColor(),
-            $this->getBorderThickness(),
-            $this->getBorderThickness()
-        );
     }
 
     /**
