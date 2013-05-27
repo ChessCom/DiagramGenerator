@@ -115,7 +115,7 @@ class ConfigLoader
             $theme = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
             $themeErrors = $this->validator->validate($theme);
             if (count($themeErrors) > 0) {
-                throw new InvalidConfigException(sprintf("Theme %u has invalid config: %s", $key, $errors->__toString()));
+                throw new InvalidConfigException(sprintf("Theme %u has invalid config: %s", $key, $themeErrors->__toString()));
             }
 
             // FIXME: figure out why `valid` constraint doesn't work for color property
