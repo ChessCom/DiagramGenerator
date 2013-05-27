@@ -4,6 +4,7 @@ namespace DiagramGenerator\Config;
 
 use DiagramGenerator\Config\ThemeColor;
 use JMS\Serializer\Annotation\Type;
+use Symfony\Component\Validator\Constraints\Valid;
 
 class Theme
 {
@@ -16,6 +17,7 @@ class Theme
 
     /**
      * @Type("DiagramGenerator\Config\ThemeColor")
+     * @Valid()
      * @var \DiagramGenerator\Config\ThemeColor
      */
     protected $color;

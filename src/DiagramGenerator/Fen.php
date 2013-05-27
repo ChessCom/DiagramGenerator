@@ -16,6 +16,8 @@ use DiagramGenerator\Fen\Rook;
  */
 class Fen
 {
+    const DEFAULT_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
     /**
      * Array of all board pieces, excluding empty
      * @var array

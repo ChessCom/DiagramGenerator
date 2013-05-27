@@ -28,7 +28,7 @@ class Generator
     public function __construct(Validator $validator)
     {
         $this->validator    = $validator;
-        $this->configLoader = new ConfigLoader();
+        $this->configLoader = new ConfigLoader($validator);
         $this->configLoader->loadSizeConfig(self::getResourcesDir());
         $this->configLoader->loadThemeConfig(self::getResourcesDir());
     }

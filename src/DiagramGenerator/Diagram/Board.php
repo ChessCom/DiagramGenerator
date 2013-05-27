@@ -49,7 +49,7 @@ class Board
         $this->image->newImage(
             $boardSize,
             $boardSize,
-            new \ImagickPixel($this->config->getTheme()->getColor()->getBackground())
+            new \ImagickPixel($this->getBackgroundColor())
         );
 
         return $this;
@@ -106,11 +106,10 @@ class Board
      */
     public function drawBorder()
     {
-        $borderThickness = $this->config->getSize()->getBorder();
         $this->image->borderImage(
-            new \ImagickPixel($this->config->getTheme()->getColor()->getBorder()),
-            $borderThickness,
-            $borderThickness
+            new \ImagickPixel($this->getBorderColor()),
+            $this->getBorderSize(),
+            $this->getBorderSize()
         );
 
         return $this;
@@ -134,6 +133,30 @@ class Board
     public function getCellSize()
     {
         return $this->config->getSize()->getCell();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBorderSize()
+    {
+        return $this->config->getSize()->getBorder();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBackgroundColor()
+    {
+        return $this->config->getTheme()->getColor()->getBackground();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBorderColor()
+    {
+        return $this->config->getTheme()->getColor()->getBorder();
     }
 
     /**

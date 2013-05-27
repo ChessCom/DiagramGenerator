@@ -39,7 +39,7 @@ class Caption
         $draw = new \ImagickDraw();
         $draw->setFont($this->getFont());
         $draw->setGravity(\Imagick::GRAVITY_CENTER);
-        $draw->setFontSize($this->config->getSize()->getCaption());
+        $draw->setFontSize($this->getCaptionSize());
 
         return $draw;
     }
@@ -64,6 +64,14 @@ class Caption
     public function getMetrics(\ImagickDraw $draw)
     {
         return $this->image->queryFontMetrics($draw, $this->config->getCaption());
+    }
+
+    /**
+     * @return integer
+     */
+    protected function getCaptionSize()
+    {
+        return $this->config->getSize()->getCaption();
     }
 
     /**

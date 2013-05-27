@@ -54,9 +54,17 @@ class Coordinate
         $draw = new \ImagickDraw();
         $draw->setFont($this->getFont());
         $draw->setGravity(\Imagick::GRAVITY_CENTER);
-        $draw->setFontSize($this->config->getSize()->getCoordinates());
+        $draw->setFontSize($this->getCoordinatesSize());
 
         return $draw;
+    }
+
+    /**
+     * @return integer
+     */
+    protected function getCoordinatesSize()
+    {
+        return $this->config->getSize()->getCoordinates();
     }
 
     /**

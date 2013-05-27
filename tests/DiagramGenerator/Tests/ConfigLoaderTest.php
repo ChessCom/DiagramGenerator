@@ -18,7 +18,7 @@ class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadSizeConfig()
     {
-        $loader = new ConfigLoader();
+        $loader = $this->getLoaderMock();
         $loader->loadSizeConfig($this->resourcesDir);
         $sizes = $loader->getSizes();
         $this->assertCount(2, $sizes);
@@ -27,7 +27,7 @@ class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadThemeConfig()
     {
-        $loader = new ConfigLoader();
+        $loader = $this->getLoaderMock();
         $loader->loadThemeConfig($this->resourcesDir);
         $themes = $loader->getThemes();
         $this->assertCount(2, $themes);
@@ -36,15 +36,29 @@ class ConfigLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadSizeConfigFailed()
     {
-        $loader = new ConfigLoader();
+        $loader = $this->getLoaderMock();
         $this->setExpectedException('RuntimeException');
         $loader->loadSizeConfig(__DIR__);
     }
 
     public function testLoadThemeConfigFailed($value='')
     {
-        $loader = new ConfigLoader();
+        $loader = $this->getLoaderMock();
         $this->setExpectedException('RuntimeException');
         $loader->loadThemeConfig(__DIR__);
+    }
+
+    protected function getLoaderMock()
+    {
+        $validatorMock = $this
+            ->getMockBuilder('Symfony\Component\Validator\Validator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $this
+            ->getMockBuilder('DiagramGenerator\ConfigLoader')
+            ->setConstructorArgs(array($validatorMock))
+            ->setMethods(null)
+            ->getMock();
     }
 }

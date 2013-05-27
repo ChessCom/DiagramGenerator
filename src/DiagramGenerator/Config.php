@@ -25,7 +25,7 @@ class Config
      * @NotBlank()
      * @var string
      */
-    protected $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    protected $fen = FEN::DEFAULT_FEN;
 
     /**
      * @Type("integer")

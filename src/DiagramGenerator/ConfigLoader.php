@@ -4,7 +4,9 @@ namespace DiagramGenerator;
 
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Config\Size;
+use DiagramGenerator\Exception\InvalidConfigException;
 use JMS\Serializer\SerializerBuilder;
+use Symfony\Component\Validator\Validator;
 use Symfony\Component\Yaml\Parser;
 
 /**
@@ -33,10 +35,11 @@ class ConfigLoader
      */
     protected $sizes = array();
 
-    public function __construct()
+    public function __construct(Validator $validator)
     {
         $this->parser     = new Parser();
         $this->serializer = SerializerBuilder::create()->build();
+        $this->validator  = $validator;
     }
 
     /**
@@ -58,9 +61,6 @@ class ConfigLoader
     {
         return $this->sizes;
     }
-
-    /**
-     */
 
     /**
      * Load and parse size config file
@@ -112,7 +112,19 @@ class ConfigLoader
     protected function parseThemeConfig(array $config)
     {
         foreach ($config as $key => $value) {
-            $this->themes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
+            $theme = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
+            $themeErrors = $this->validator->validate($theme);
+            if (count($themeErrors) > 0) {
+                throw new InvalidConfigException(sprintf("Theme %u has invalid config: %s", $key, $errors->__toString()));
+            }
+
+            // FIXME: figure out why `valid` constraint doesn't work for color property
+            $colorErrors = $this->validator->validate($theme->getColor());
+            if (count($colorErrors) > 0) {
+                throw new InvalidConfigException(sprintf("Theme %u has invalid config: %s", $key, $colorErrors->__toString()));
+            }
+
+            $this->themes[] = $theme;
         }
     }
 }

@@ -170,6 +170,24 @@ class Diagram
     }
 
     /**
+     * Draws the image border
+     * @return null
+     */
+    public function drawBorder()
+    {
+        // Check if border has been already drawn
+        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
+            return;
+        }
+
+        $this->image->borderImage(
+            $this->getBackgroundColor(),
+            $this->getBorderThickness(),
+            $this->getBorderThickness()
+        );
+    }
+
+    /**
      * Creates caption
      * @return \DiagramGenerator\Diagram\Caption
      */
@@ -191,24 +209,6 @@ class Diagram
         $caption->getImage()->setImageFormat('png');
 
         return $caption;
-    }
-
-    /**
-     * Draws the image border
-     * @return null
-     */
-    public function drawBorder()
-    {
-        // Check if border has been already drawn
-        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
-            return;
-        }
-
-        $this->image->borderImage(
-            $this->getBackgroundColor(),
-            $this->getBorderThickness(),
-            $this->getBorderThickness()
-        );
     }
 
     /**

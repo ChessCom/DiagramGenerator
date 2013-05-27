@@ -3,45 +3,49 @@
 namespace DiagramGenerator\Config;
 
 use JMS\Serializer\Annotation\Type;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class ThemeColor
 {
     /**
      * @Type("string")
-     * @var array
+     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Background color should be in hex format")
+     * @var string
      */
-    protected $background = '#FFFFFF';
+    protected $background = 'FFFFFF';
 
     /**
      * @Type("string")
-     * @var array
+     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Caption color should be in hex format")
+     * @var string
      */
-    protected $caption = '#000000';
+    protected $caption = '000000';
 
     /**
      * @Type("string")
-     * @var array
+     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Border color should be in hex format")
+     * @var string
      */
-    protected $border = '#777777';
+    protected $border = '777777';
 
     /**
      * Gets the value of background.
      *
-     * @return array
+     * @return string
      */
     public function getBackground()
     {
-        return $this->background;
+        return sprintf("#%s", $this->background);
     }
 
     /**
      * Sets the value of background.
      *
-     * @param array $background the background
+     * @param string $background the background
      *
      * @return self
      */
-    public function setBackground(array $background)
+    public function setBackground($background)
     {
         $this->background = $background;
 
@@ -51,21 +55,21 @@ class ThemeColor
     /**
      * Gets the value of caption.
      *
-     * @return array
+     * @return string
      */
     public function getCaption()
     {
-        return $this->caption;
+        return sprintf("#%s", $this->caption);
     }
 
     /**
      * Sets the value of caption.
      *
-     * @param array $caption the caption
+     * @param string $caption the caption
      *
      * @return self
      */
-    public function setCaption(array $caption)
+    public function setCaption($caption)
     {
         $this->caption = $caption;
 
@@ -75,21 +79,21 @@ class ThemeColor
     /**
      * Gets the value of border.
      *
-     * @return array
+     * @return string
      */
     public function getBorder()
     {
-        return $this->border;
+        return sprintf("#%s", $this->border);
     }
 
     /**
      * Sets the value of border.
      *
-     * @param array $border the border
+     * @param string $border the border
      *
      * @return self
      */
-    public function setBorder(array $border)
+    public function setBorder($border)
     {
         $this->border = $border;
 
