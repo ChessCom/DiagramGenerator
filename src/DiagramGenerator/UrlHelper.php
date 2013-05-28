@@ -3,6 +3,7 @@
 namespace DiagramGenerator;
 
 use DiagramGenerator\Config;
+use JMS\Serializer\Serializer;
 use Symfony\Component\Routing\Router;
 
 /**
@@ -16,9 +17,10 @@ class UrlHelper
      */
     protected $router;
 
-    public function __construct(Router $router)
+    public function __construct(Router $router, Serializer $serializer)
     {
-        $this->router = $router;
+        $this->router     = $router;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -29,7 +31,7 @@ class UrlHelper
      */
     public function getNonSecureUrl(Config $config, $routing)
     {
-        return $this->generateRoutingByScheme($routing, $config->toArray(), false);
+        return $this->generateRoutingByScheme($routing, $this->convertConfigToParameters($config), false);
     }
 
     /**
@@ -40,7 +42,7 @@ class UrlHelper
      */
     public function getSecureUrl(Config $config, $routing)
     {
-        return $this->generateRoutingByScheme($routing, $config->toArray(), true);
+        return $this->generateRoutingByScheme($routing, $this->convertConfigToParameters($config), true);
     }
 
     /**
@@ -64,5 +66,15 @@ class UrlHelper
         $this->router->getContext()->setScheme($currentScheme);
 
         return $url;
+    }
+
+    /**
+     * Takes config and converts it to associative array
+     * @param  Config $config
+     * @return array
+     */
+    protected function convertConfigToParameters(Config $config)
+    {
+        return json_decode($this->serializer->serialize($config, 'json'), true);
     }
 }

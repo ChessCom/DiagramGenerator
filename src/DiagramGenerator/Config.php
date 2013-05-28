@@ -297,13 +297,4 @@ class Config
 
         return $this;
     }
-
-    /**
-     * Returns all urlencoded config properties in array key => value
-     * @return array
-     */
-    public function toArray()
-    {
-        return get_object_vars($this);
-    }
 }
