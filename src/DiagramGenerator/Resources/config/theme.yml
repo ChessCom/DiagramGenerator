@@ -1,14 +1,25 @@
 0:
-    name: classic
+    texture:
+        piece: classic
 1:
-    name: cheq_tt
+    texture:
+        piece: cheq_tt
 2:
-    name: alpha
+    texture:
+        piece: alpha
+        board: olive
 3:
-    name: book
+    texture:
+        piece: book
+        board: wood1
 4:
-    name: club
+    texture:
+        piece: club
+        board: wood2
 5:
-    name: modern
+    texture:
+        piece: modern
+        board: metal
 6:
-    name: vintage
+    texture:
+        piece: vintage

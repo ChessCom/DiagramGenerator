@@ -9,6 +9,7 @@ use DiagramGenerator\Fen\Piece;
 
 /**
  * Class responsible for drawing the board
+ *
  * @author Alex Kovalevych <alexkovalevych@gmail.com>
  */
 class Board
@@ -41,6 +42,7 @@ class Board
 
     /**
      * Draws board itself
+     *
      * @return self
      */
     public function drawBoard()
@@ -52,15 +54,37 @@ class Board
             new \ImagickPixel($this->getBackgroundColor())
         );
 
+        // Add board texture
+        if ($this->getTexture()->getBoard()) {
+            $background = new \Imagick($this->getBackgroundTexture());
+            $textureSize = $this->getCellSize() * 2;
+            $background->scaleImage($textureSize, $textureSize);
+            for ($x = 0; $x < 4; $x++) {
+                for ($y = 0; $y < 4; $y++) {
+                    $this->image->compositeImage(
+                        $background,
+                        \Imagick::COMPOSITE_DEFAULT,
+                        $x * $textureSize,
+                        $y * $textureSize
+                    );
+                }
+            }
+        }
+
         return $this;
     }
 
     /**
      * Draws cells on the board
+     *
      * @return self
      */
     public function drawCells()
     {
+        if ($this->getTexture()->getBoard()) {
+            return $this;
+        }
+
         for ($x = 1; $x <= 8; $x++) {
             for ($y = 1; $y <= 8; $y++) {
                 $colorIndex = ($x + $y) % 2;
@@ -178,18 +202,37 @@ class Board
     }
 
     /**
+     * @return \DiagramGenerator\Config\ThemeTexture
+     */
+    protected function getTexture()
+    {
+        return $this->config->getTheme()->getTexture();
+    }
+
+    /**
      * Returns piece image path
      * @param  \DiagramGenerator\Fen\Piece $piece
+     *
      * @return string
      */
     protected function getPieceImagePath(Piece $piece)
     {
         $filename = sprintf("%s/%s%s.png",
-            $this->config->getTheme()->getName(),
+            $this->getTexture()->getPiece(),
             substr($piece->getColor(), 0, 1),
             $piece->getKey()
         );
 
-        return sprintf("%s/%s", Generator::getResourcesDir() . '/pieces', $filename);
+        return sprintf("%s/pieces/%s", Generator::getResourcesDir(), $filename);
+    }
+
+    /**
+     * Returns board background image path
+     *
+     * @return string
+     */
+    protected function getBackgroundTexture()
+    {
+        return sprintf("%s/boards/%s.jpg", Generator::getResourcesDir(), $this->getTexture()->getBoard());
     }
 }
