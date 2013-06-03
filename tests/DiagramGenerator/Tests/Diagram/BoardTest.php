@@ -29,13 +29,18 @@ class BoardTest extends \PHPUnit_Framework_TestCase
                 'getCellSize',
                 'getPieceImagePath',
                 'getBorderColor',
-                'getBorderSize'
+                'getBorderSize',
+                'getTextureBoard'
             ))
             ->getMock();
         $board
             ->expects($this->any())
             ->method('getCellSize')
             ->will($this->returnValue(90));
+        $board
+            ->expects($this->any())
+            ->method('getTextureBoard')
+            ->will($this->returnValue(false));
         $board
             ->expects($this->any())
             ->method('getBorderSize')

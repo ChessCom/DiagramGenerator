@@ -49,13 +49,6 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('#FFFFFF', $config->getDark());
     }
 
-    public function testToArray()
-    {
-        $config = new Config();
-        $this->assertTrue(is_array($config->toArray()));
-        $this->assertGreaterThanOrEqual(1, $config->toArray());
-    }
-
     public function colorProvider()
     {
         return array(

@@ -1,4 +1,6 @@
 0:
-    name: classic
+    texture:
+        piece: classic
 1:
-    name: book
+    texture:
+        piece: book
