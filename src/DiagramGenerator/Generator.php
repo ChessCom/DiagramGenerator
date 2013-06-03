@@ -65,13 +65,16 @@ class Generator
             throw new InvalidConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
         }
 
-        if (!array_key_exists($config->getTextureIndex(), $textures)) {
-            throw new InvalidConfigException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
+        if (is_int($config->getTextureIndex())) {
+            if (!array_key_exists($config->getTextureIndex(), $textures)) {
+                throw new InvalidConfigException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
+            }
+
+            $config->setTexture($textures[$config->getTextureIndex()]);
         }
 
         $config->setTheme($themes[$config->getThemeIndex()]);
         $config->setSize($sizes[$config->getSizeIndex()]);
-        $config->setTexture($textures[$config->getTextureIndex()]);
 
         $board = $this->createBoard($config);
         $diagram = $this->createDiagram($config, $board);

@@ -56,7 +56,7 @@ class Config
      * @SerializedName("texture")
      * @var integer
      */
-    protected $textureIndex = 0;
+    protected $textureIndex;
 
     /**
      * @Exclude()
