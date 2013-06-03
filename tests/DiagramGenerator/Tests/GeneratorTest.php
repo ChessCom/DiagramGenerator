@@ -69,6 +69,10 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getSizeIndex')
             ->will($this->returnValue(1));
+        $config
+            ->expects($this->any())
+            ->method('getTextureIndex')
+            ->will($this->returnValue(1));
         $diagram = $generator->buildDiagram($config);
         $this->assertInstanceOf('DiagramGenerator\Diagram', $diagram);
     }

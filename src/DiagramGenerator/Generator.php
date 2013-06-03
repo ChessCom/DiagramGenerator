@@ -31,6 +31,7 @@ class Generator
         $this->configLoader = new ConfigLoader($validator);
         $this->configLoader->loadSizeConfig(self::getResourcesDir());
         $this->configLoader->loadThemeConfig(self::getResourcesDir());
+        $this->configLoader->loadTextureConfig(self::getResourcesDir());
     }
 
     /**
@@ -52,19 +53,25 @@ class Generator
             throw new InvalidConfigException($errors->__toString());
         }
 
-        $themes = $this->configLoader->getThemes();
-        $sizes  = $this->configLoader->getSizes();
+        $themes   = $this->configLoader->getThemes();
+        $sizes    = $this->configLoader->getSizes();
+        $textures = $this->configLoader->getTextures();
 
         if (!array_key_exists($config->getThemeIndex(), $themes)) {
-            throw new InvalidConfigException(sprintf("Theme %s doesn't exist", $config->getTheme()));
+            throw new InvalidConfigException(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
         }
 
         if (!array_key_exists($config->getSizeIndex(), $sizes)) {
-            throw new InvalidConfigException(sprintf("Size %s doesn't exist", $config->getSize()));
+            throw new InvalidConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
+        }
+
+        if (!array_key_exists($config->getTextureIndex(), $textures)) {
+            throw new InvalidConfigException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
         }
 
         $config->setTheme($themes[$config->getThemeIndex()]);
         $config->setSize($sizes[$config->getSizeIndex()]);
+        $config->setTexture($textures[$config->getTextureIndex()]);
 
         $board = $this->createBoard($config);
         $diagram = $this->createDiagram($config, $board);

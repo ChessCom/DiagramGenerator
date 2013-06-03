@@ -28,13 +28,6 @@ class Theme
      */
     protected $color;
 
-    /**
-     * @Type("DiagramGenerator\Config\ThemeTexture")
-     * @Valid()
-     * @var \DiagramGenerator\Config\ThemeTexture
-     */
-    protected $texture;
-
     public function __construct()
     {
         $this->color = new ThemeColor();
@@ -84,30 +77,6 @@ class Theme
     public function setColor(ThemeColor $color)
     {
         $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of texture.
-     *
-     * @return \DiagramGenerator\Config\ThemeTexture
-     */
-    public function getTexture()
-    {
-        return $this->texture;
-    }
-
-    /**
-     * Sets the value of texture.
-     *
-     * @param \DiagramGenerator\Config\ThemeTexture $texture the texture
-     *
-     * @return self
-     */
-    public function setTexture(ThemeTexture $texture)
-    {
-        $this->texture = $texture;
 
         return $this;
     }

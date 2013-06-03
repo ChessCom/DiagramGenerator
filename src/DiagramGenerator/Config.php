@@ -3,6 +3,7 @@
 namespace DiagramGenerator;
 
 use DiagramGenerator\Config\Size;
+use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Fen;
 use JMS\Serializer\Annotation\Exclude;
@@ -48,6 +49,20 @@ class Config
      * @var integer
      */
     protected $themeIndex = 3;
+
+    /**
+     * @Type("integer")
+     * @Range(min=0, max=3)
+     * @SerializedName("texture")
+     * @var integer
+     */
+    protected $textureIndex = 0;
+
+    /**
+     * @Exclude()
+     * @var \DiagramGenerator\Config\Texture
+     */
+    protected $texture;
 
     /**
      * @Exclude()
@@ -294,6 +309,54 @@ class Config
     public function setDark($dark)
     {
         $this->dark = $dark;
+
+        return $this;
+    }
+
+    /**
+     * Gets the value of textureIndex.
+     *
+     * @return integer
+     */
+    public function getTextureIndex()
+    {
+        return $this->textureIndex;
+    }
+
+    /**
+     * Sets the value of textureIndex.
+     *
+     * @param integer $textureIndex the textureIndex
+     *
+     * @return self
+     */
+    public function setTextureIndex($textureIndex)
+    {
+        $this->textureIndex = $textureIndex;
+
+        return $this;
+    }
+
+    /**
+     * Gets the value of texture.
+     *
+     * @return \DiagramGenerator\Config\Texture
+     */
+    public function getTexture()
+    {
+        return $this->texture;
+    }
+
+    /**
+     * Sets the value of texture.
+     *
+     * @param \DiagramGenerator\Config\Texture $texture the texture
+     *
+     * @return self
+     */
+    public function setTexture(Texture $texture)
+    {
+        $this->texture = $texture;
 
         return $this;
     }

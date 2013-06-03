@@ -55,7 +55,7 @@ class Board
         );
 
         // Add board texture
-        if ($this->getTexture()->getBoard()) {
+        if ($this->getBoardTexture()) {
             $background = new \Imagick($this->getBackgroundTexture());
             $textureSize = $this->getCellSize() * 2;
             $background->scaleImage($textureSize, $textureSize);
@@ -81,7 +81,7 @@ class Board
      */
     public function drawCells()
     {
-        if ($this->getTexture()->getBoard()) {
+        if ($this->getBoardTexture()) {
             return $this;
         }
 
@@ -204,9 +204,9 @@ class Board
     /**
      * @return \DiagramGenerator\Config\ThemeTexture
      */
-    protected function getTexture()
+    protected function getBoardTexture()
     {
-        return $this->config->getTheme()->getTexture();
+        return $this->config->getTexture() ? $this->config->getTexture()->getBoard() : null;
     }
 
     /**
@@ -218,7 +218,7 @@ class Board
     protected function getPieceImagePath(Piece $piece)
     {
         $filename = sprintf("%s/%s%s.png",
-            $this->getTexture()->getPiece(),
+            $this->config->getTheme()->getName(),
             substr($piece->getColor(), 0, 1),
             $piece->getKey()
         );
@@ -233,6 +233,6 @@ class Board
      */
     protected function getBackgroundTexture()
     {
-        return sprintf("%s/boards/%s.jpg", Generator::getResourcesDir(), $this->getTexture()->getBoard());
+        return sprintf("%s/boards/%s.jpg", Generator::getResourcesDir(), $this->getBoardTexture());
     }
 }

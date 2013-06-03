@@ -35,6 +35,11 @@ class ConfigLoader
      */
     protected $sizes = array();
 
+    /**
+     * @var array
+     */
+    protected $textures = array();
+
     public function __construct(Validator $validator)
     {
         $this->parser     = new Parser();
@@ -60,6 +65,16 @@ class ConfigLoader
     public function getSizes()
     {
         return $this->sizes;
+    }
+
+    /**
+     * Gets the value of textures.
+     *
+     * @return array
+     */
+    public function getTextures()
+    {
+        return $this->textures;
     }
 
     /**
@@ -89,6 +104,21 @@ class ConfigLoader
             $this->parseThemeConfig($this->parser->parse($configFile));
         } else {
             throw new \RuntimeException('Theme config not found');
+        }
+    }
+
+    /**
+     * Load and parse texture config file
+     * @param  string $resourcesDir
+     * @return null
+     */
+    public function loadTextureConfig($resourcesDir)
+    {
+        $this->textures = array();
+        if ($configFile = @file_get_contents(sprintf("%s/config/texture.yml", $resourcesDir))) {
+            $this->parseTextureConfig($this->parser->parse($configFile));
+        } else {
+            throw new \RuntimeException('Texture config not found');
         }
     }
 
@@ -125,6 +155,18 @@ class ConfigLoader
             }
 
             $this->themes[] = $theme;
+        }
+    }
+
+    /**
+     * Method to convert array config to array of Texture objects
+     * @param  array  $config
+     * @return null
+     */
+    protected function parseTextureConfig(array $config)
+    {
+        foreach ($config as $key => $value) {
+            $this->textures[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Texture', 'json');
         }
     }
 }
