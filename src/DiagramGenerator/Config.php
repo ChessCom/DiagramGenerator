@@ -48,7 +48,7 @@ class Config
      * @SerializedName("theme")
      * @var integer
      */
-    protected $themeIndex = 3;
+    protected $themeIndex = 1;
 
     /**
      * @Type("integer")
