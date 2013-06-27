@@ -145,7 +145,7 @@ class Board
      */
     public function draw()
     {
-        $this->image->setImageFormat('jpeg');
+        $this->image->setImageFormat('png');
 
         return $this;
     }

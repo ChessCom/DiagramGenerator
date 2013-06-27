@@ -143,7 +143,7 @@ class Diagram
             $this->image = $this->image->appendImages(true);
         }
 
-        $this->image->setImageFormat('jpeg');
+        $this->image->setImageFormat('png');
 
         return $this;
     }
