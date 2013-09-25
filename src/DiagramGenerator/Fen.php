@@ -26,10 +26,11 @@ class Fen
 
     /**
      * Creates Fen object from the string
-     * @param  string $fenString
+     * @param  string  $fenString
+     * @param  boolean $silent
      * @return self
      */
-    public static function createFromString($fenString)
+    public static function createFromString($fenString, $silent = false)
     {
         $fen  = new Fen();
         $rows = explode('/', self::sanitizeFenString($fenString));
@@ -45,7 +46,7 @@ class Fen
                 }
             }
 
-            $fen->setRow($row, $index);
+            $fen->setRow($row, $index, $silent);
         }
 
         return $fen;
@@ -53,10 +54,11 @@ class Fen
 
     /**
      * Returns piece by piece key or null if its empty piece
-     * @param  string $key
+     * @param  string  $key
+     * @param  boolean $silent
      * @return mixed
      */
-    public static function getPieceByKey($key)
+    public static function getPieceByKey($key, $silent = false)
     {
         $color = 'white';
         if (preg_match("/[A-Z]/", $key) === 0) {
@@ -79,7 +81,10 @@ class Fen
             case 'p':
                 return new Pawn($color);
             default:
-                throw new \InvalidArgumentException(sprintf("Piece with key %s doesn\'t exist", $key));
+                if (!$silent) {
+                    throw new \InvalidArgumentException(sprintf("Piece with key %s doesn\'t exist", $key));
+                }
+                null;
         }
     }
 
@@ -104,13 +109,14 @@ class Fen
 
     /**
      * Fills Fen row with values
-     * @param array  $row
+     * @param array   $row
+     * @param boolean $silent
      * @param integer
      */
-    public function setRow(array $row, $rowIndex)
+    public function setRow(array $row, $rowIndex, $silent = false)
     {
         foreach ($row as $columnIndex => $value) {
-            $this->setAtPosition($rowIndex, $columnIndex, self::getPieceByKey($value));
+            $this->setAtPosition($rowIndex, $columnIndex, self::getPieceByKey($value, $silent));
         }
     }
 

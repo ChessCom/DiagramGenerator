@@ -109,7 +109,7 @@ class Board
      */
     public function drawFigures()
     {
-        $fen = Fen::createFromString($this->config->getFen());
+        $fen = Fen::createFromString($this->config->getFen(), true);
         foreach ($fen->getPieces() as $piece) {
             $pieceImage = new \Imagick($this->getPieceImagePath($piece));
             $pieceImage->scaleImage($this->getCellSize(), $this->getCellSize());
