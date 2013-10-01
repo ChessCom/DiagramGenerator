@@ -67,7 +67,7 @@ class Fen
 
         switch (strtolower($key)) {
             case null:
-                return $key;
+                return null;
             case 'r':
                 return new Rook($color);
             case 'b':
@@ -80,11 +80,12 @@ class Fen
                 return new Queen($color);
             case 'p':
                 return new Pawn($color);
-            default:
-                if (!$silent) {
-                    throw new \InvalidArgumentException(sprintf("Piece with key %s doesn\'t exist", $key));
-                }
-                null;
+
+            if (!$silent) {
+                throw new \InvalidArgumentException(sprintf("Piece with key %s doesn\'t exist", $key));
+            }
+
+            return null;
         }
     }
 
