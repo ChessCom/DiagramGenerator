@@ -57,6 +57,18 @@ If config parameters can be represented as array (e.g. GET or POST parameters), 
 $diagramConfig = $jmsSerializer->deserialize($inputParameters, 'DiagramGenerator\Config', 'json');
 ```
 
+#### Config options
+
+| Name        | Description                     | Values                     | Default      | Examples                    |
+| ----------- | ------------------------------- | -------------------------- | ------------ | --------------------------- |
+| size        | board size                      | 0-3 (0,1,2,3)              | 0            | `/diagram/size=2`           |
+| theme       | theme (pieces) type             | 0-6                        | 1            | `/diagram/size=1&theme=5`   |
+| texture     | board (squares) texture         | 0-3                        | None         | `/diagram/size=1&texture=1` |
+| caption     | text to show under the board    | any url encoded string     | empty string | `/diagram/caption=php%20c#` |
+| coordinates | show or not board coordinates   | true or false              | false        | `/diagram/coordinates=true` |
+| light       | hex color of light board pieces | ^[a-fA-F0-9]{6}$           | eeeed2       | `/diagram/light=aecef2`     |
+| dark        | hex color of dark board pieces  | ^[a-fA-F0-9]{6}$           | 769656       | `/diagram/dark=16a656`      |
+
 ### Step 4: create and render diagram
 
 Its as simple as just call one method and set appropriate header:
