@@ -95,7 +95,7 @@ abstract class Piece
     public function setRow($row)
     {
         if ($row < 0 || $row > 7) {
-            throw new \InvalidArgumentException("Invalid row index given: '%u'.", $row);
+            throw new \InvalidArgumentException(sprintf("Invalid row index given: '%u'.", $row));
         }
 
         $this->row = $row;
@@ -123,7 +123,7 @@ abstract class Piece
     public function setColumn($column)
     {
         if ($column < 0 || $column > 7) {
-            throw new \InvalidArgumentException("Invalid column index given: '%u'.", $column);
+            throw new \InvalidArgumentException(sprintf("Invalid column index given: '%u'.", $column));
         }
 
         $this->column = $column;
