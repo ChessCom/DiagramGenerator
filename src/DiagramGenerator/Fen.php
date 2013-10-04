@@ -27,13 +27,16 @@ class Fen
     /**
      * Creates Fen object from the string
      * @param  string  $fenString
-     * @param  boolean $silent
      * @return self
      */
-    public static function createFromString($fenString, $silent = false)
+    public static function createFromString($fenString)
     {
         $fen  = new Fen();
         $rows = explode('/', self::sanitizeFenString($fenString));
+        if (count($rows) != 8) {
+            throw new \InvalidArgumentException('Fen should have exactly 8 rows');
+        }
+
         foreach ($rows as $index => $rowString) {
             $row = array();
 
@@ -46,7 +49,7 @@ class Fen
                 }
             }
 
-            $fen->setRow($row, $index, $silent);
+            $fen->setRow($row, $index);
         }
 
         return $fen;
@@ -55,10 +58,9 @@ class Fen
     /**
      * Returns piece by piece key or null if its empty piece
      * @param  string  $key
-     * @param  boolean $silent
      * @return mixed
      */
-    public static function getPieceByKey($key, $silent = false)
+    public static function getPieceByKey($key)
     {
         $color = 'white';
         if (preg_match("/[A-Z]/", $key) === 0) {
@@ -67,7 +69,7 @@ class Fen
 
         switch (strtolower($key)) {
             case null:
-                return null;
+                return $key;
             case 'r':
                 return new Rook($color);
             case 'b':
@@ -80,12 +82,8 @@ class Fen
                 return new Queen($color);
             case 'p':
                 return new Pawn($color);
-
-            if (!$silent) {
+            default:
                 throw new \InvalidArgumentException(sprintf("Piece with key %s doesn\'t exist", $key));
-            }
-
-            return null;
         }
     }
 
@@ -95,7 +93,9 @@ class Fen
      */
     public static function sanitizeFenString($fen)
     {
-        return (strpos($fen, ' ') === false) ? $fen : substr($fen, 0, strpos($fen, ' '));
+        $sanitizedFen = (strpos($fen, ' ') === false) ? $fen : substr($fen, 0, strpos($fen, ' '));
+
+        return preg_replace('/[^rbnkqp1-8\/]/i', '', $sanitizedFen);
     }
 
     /**
@@ -111,13 +111,17 @@ class Fen
     /**
      * Fills Fen row with values
      * @param array   $row
-     * @param boolean $silent
      * @param integer
+     * @throws \InvalidArgumentException
      */
-    public function setRow(array $row, $rowIndex, $silent = false)
+    public function setRow(array $row, $rowIndex)
     {
+        if (count($row) != 8) {
+            throw new \InvalidArgumentException("Row should have exactly 8 columns");
+        }
+
         foreach ($row as $columnIndex => $value) {
-            $this->setAtPosition($rowIndex, $columnIndex, self::getPieceByKey($value, $silent));
+            $this->setAtPosition($rowIndex, $columnIndex, self::getPieceByKey($value));
         }
     }
 
@@ -129,6 +133,10 @@ class Fen
      */
     public function setAtPosition($row, $column, Piece $piece = null)
     {
+        if ($row > 7 || $row < 0 || $column > 7 || $column < 0) {
+            throw new \InvalidArgumentException(sprintf('Invalid piece position index %d:%d', $row, $column));
+        }
+
         if ($piece) {
             $piece
                 ->setRow($row)
