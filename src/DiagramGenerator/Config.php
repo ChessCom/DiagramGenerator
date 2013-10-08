@@ -44,11 +44,11 @@ class Config
 
     /**
      * @Type("integer")
-     * @Range(min=0, max=6)
+     * @Range(min=0, max=5)
      * @SerializedName("theme")
      * @var integer
      */
-    protected $themeIndex = 1;
+    protected $themeIndex = 4;
 
     /**
      * @Type("integer")
