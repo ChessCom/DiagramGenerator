@@ -34,7 +34,7 @@ class Config
      * @SerializedName("size")
      * @var integer
      */
-    protected $sizeIndex = 0;
+    protected $sizeIndex = 1;
 
     /**
      * @Exclude()
