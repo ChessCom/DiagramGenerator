@@ -68,6 +68,7 @@ $diagramConfig = $jmsSerializer->deserialize($inputParameters, 'DiagramGenerator
 | coordinates | show or not board coordinates   | true or false              | false        | `/diagram/coordinates=true` |
 | light       | hex color of light board pieces | ^[a-fA-F0-9]{6}$           | eeeed2       | `/diagram/light=aecef2`     |
 | dark        | hex color of dark board pieces  | ^[a-fA-F0-9]{6}$           | 769656       | `/diagram/dark=16a656`      |
+| flip        | allows to flip the board        | true or false              | false        | `/diagram/flip=true`        |
 
 ### Step 4: create and render diagram
 
