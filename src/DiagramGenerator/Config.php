@@ -98,6 +98,12 @@ class Config
     protected $dark = '769656';
 
     /**
+     * @Type("boolean")
+     * @var boolean
+     */
+    protected $flip = false;
+
+    /**
      * Gets the value of fen.
      *
      * @return string
@@ -357,6 +363,30 @@ class Config
     public function setTexture(Texture $texture)
     {
         $this->texture = $texture;
+
+        return $this;
+    }
+
+    /**
+     * Gets the value of flip.
+     *
+     * @return boolean
+     */
+    public function getFlip()
+    {
+        return $this->flip;
+    }
+
+    /**
+     * Sets the value of flip.
+     *
+     * @param boolean $flip the flip
+     *
+     * @return self
+     */
+    public function setFlip($flip)
+    {
+        $this->flip = (bool) $flip;
 
         return $this;
     }

@@ -39,7 +39,6 @@ class Fen
 
         foreach ($rows as $index => $rowString) {
             $row = array();
-
             foreach (str_split($rowString) as $pieceKey) {
                 if (!is_numeric($pieceKey)) {
                     $row[] = $pieceKey;
@@ -96,6 +95,19 @@ class Fen
         $sanitizedFen = (strpos($fen, ' ') === false) ? $fen : substr($fen, 0, strpos($fen, ' '));
 
         return preg_replace('/[^rbnkqp1-8\/]/i', '', $sanitizedFen);
+    }
+
+    /**
+     * Flips pieces
+     */
+    public function flip()
+    {
+        $flipped = array();
+        foreach ($this->pieces as $key => $piece) {
+            $flipped[$key] = $piece->flip();
+        }
+
+        $this->pieces = $flipped;
     }
 
     /**
