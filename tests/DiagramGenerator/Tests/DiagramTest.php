@@ -32,7 +32,7 @@ class DiagramTest extends \PHPUnit_Framework_TestCase
         $diagram->setBoard($board);
         $diagram->draw();
         $image = $diagram->getImage();
-        $this->assertEquals('jpeg', $image->getImageFormat());
+        $this->assertEquals('png', $image->getImageFormat());
         $this->assertEquals(10, $image->getImageWidth());
         $this->assertEquals(10, $image->getImageHeight());
     }
@@ -75,7 +75,7 @@ class DiagramTest extends \PHPUnit_Framework_TestCase
         $diagram->draw();
         $this->assertEquals(100, $diagram->getImage()->getImageWidth());
         $this->assertEquals(100, $diagram->getImage()->getImageHeight());
-        $this->assertEquals('jpeg', $diagram->getImage()->getImageFormat());
+        $this->assertEquals('png', $diagram->getImage()->getImageFormat());
     }
 
     public function testDrawWithCaption()
@@ -115,7 +115,7 @@ class DiagramTest extends \PHPUnit_Framework_TestCase
         $diagram->draw();
         $this->assertEquals(100, $diagram->getImage()->getImageWidth());
         $this->assertEquals(235, $diagram->getImage()->getImageHeight());
-        $this->assertEquals('jpeg', $diagram->getImage()->getImageFormat());
+        $this->assertEquals('png', $diagram->getImage()->getImageFormat());
     }
 
     protected function getBoard($config, array $methods = array())

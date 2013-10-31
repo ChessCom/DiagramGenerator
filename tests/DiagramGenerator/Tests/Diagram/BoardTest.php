@@ -127,6 +127,6 @@ class BoardTest extends \PHPUnit_Framework_TestCase
         $this->board
             ->drawBoard()
             ->draw();
-        $this->assertEquals('jpeg', $this->board->getImage()->getImageFormat());
+        $this->assertEquals('png', $this->board->getImage()->getImageFormat());
     }
 }

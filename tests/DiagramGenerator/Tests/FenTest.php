@@ -81,7 +81,16 @@ class FenTest extends \PHPUnit_Framework_TestCase
     {
         $fen = new Fen();
         $fen->setRow($row, $index);
-        $this->assertCount(count($row), $fen->getPieces());
+        $this->assertCount(count(array_filter($row, function($piece){ return $piece != null; })), $fen->getPieces());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetRowException()
+    {
+        $fen = new Fen();
+        $fen->setRow(array(), 0);
     }
 
     /**
@@ -102,9 +111,8 @@ class FenTest extends \PHPUnit_Framework_TestCase
     public function rowProvider()
     {
         return array(
-            array(array('0' => 'r', '1' => 'P', '6' => 'q'), 2),
-            array(array('3' => 'R', '1' => 'P', '6' => 'k'), 5),
-            array(array(), 4),
+            array(array('0' => 'r', '1' => 'P', '2' => null, '3' => null, '4' => null, '5' => null, '6' => 'q', '7' => null), 2),
+            array(array('0' => null,'1' => 'P', '2' => null, '3' => 'R' , '4' => null, '5' => null, '6' => 'k', '7' => null), 5),
         );
     }
 }
