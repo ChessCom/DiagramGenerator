@@ -42,17 +42,6 @@ class PieceTest extends \PHPUnit_Framework_TestCase
         $piece->setColumn(20);
     }
 
-    public function testFlip()
-    {
-        $piece = $this->getPiece();
-        $piece->setColor(Piece::WHITE);
-        $piece->flip();
-        $this->assertEquals(Piece::BLACK, $piece->getColor());
-
-        $piece->flip();
-        $this->assertEquals(Piece::WHITE, $piece->getColor());
-    }
-
     protected function getPiece()
     {
         return $this

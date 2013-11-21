@@ -130,17 +130,4 @@ abstract class Piece
 
         return $this;
     }
-
-    /**
-     * Change piece color to opposite
-     * @return self
-     */
-    public function flip()
-    {
-        if ($this->getColor() == self::WHITE) {
-            return $this->setColor(self::BLACK);
-        }
-
-        return $this->setColor(self::WHITE);
-    }
 }

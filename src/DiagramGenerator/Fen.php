@@ -104,10 +104,17 @@ class Fen
     {
         $flipped = array();
         foreach ($this->pieces as $key => $piece) {
-            $flipped[$key] = $piece->flip();
+            list($row, $column) = explode(':', $key);
+            $flippedRow = 7 - $row;
+            $flippedColumn = 7 - $column;
+            $piece
+                ->setRow($flippedRow)
+                ->setColumn($flippedColumn)
+            ;
+            $flipped[sprintf('%u:%u', $flippedRow, $flippedColumn)] = $piece;
         }
 
-        $this->pieces = $flipped;
+        $this->pieces = array_reverse($flipped);
     }
 
     /**
