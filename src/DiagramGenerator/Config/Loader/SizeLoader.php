@@ -7,6 +7,10 @@ use DiagramGenerator\Config\Size;
 
 class SizeLoader
 {
+    const CAPTION_COEFFICIENT = .4;
+    const BORDER_COEFFICIENT = 0;
+    const COORDINATES_COEFFICIENT = .25;
+
     /** @var \Symfony\Component\Yaml\Parser $parser */
     protected $parser;
 
@@ -25,6 +29,7 @@ class SizeLoader
      */
     public function getSize($configFilePath, $sizeIndex)
     {
+        // TODO [lackovic10]: rename sizeIndex to size
         if (is_numeric($sizeIndex)) {
             $sizes = $this->loadSizes($configFilePath);
 
@@ -35,7 +40,7 @@ class SizeLoader
             return $sizes[$sizeIndex];
         }
 
-        ///// TODO [lackovic10] custom sell size 20px
+        return $this->createSizeFromCustom($sizeIndex);
     }
 
     /**
@@ -75,5 +80,22 @@ class SizeLoader
         }
 
         return $sizes;
+    }
+
+    /**
+     * @param string $customSize
+     *
+     * @return Size
+     */
+    protected function createSizeFromCustom($customSize)
+    {
+        $cellSize = substr($customSize, 0, -2);
+
+        $size = new Size();
+
+        return $size->setCell($cellSize)
+            ->setBorder($cellSize * self::BORDER_COEFFICIENT)
+            ->setCaption($cellSize * self::CAPTION_COEFFICIENT)
+            ->setCoordinates($cellSize * self::COORDINATES_COEFFICIENT);
     }
 }

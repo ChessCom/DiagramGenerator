@@ -32,6 +32,10 @@ class Parser
     }
 
     /**
+     * Parse the input configuration and create a configuration object which can be handled by the diagram generator
+     *
+     * @param Input $configInput
+     *
      * @return Config
      */
     public function parseConfig(Input $configInput)
@@ -58,9 +62,6 @@ class Parser
             ->setBoard($board)
             ->setPieceTheme($pieceTheme);
 
-        var_dump($config);
-        die();
-
-        return $parsedConfig;
+        return $config;
     }
 }

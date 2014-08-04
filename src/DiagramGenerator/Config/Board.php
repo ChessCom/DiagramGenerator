@@ -60,6 +60,14 @@ class Board
     protected $coordinates;
 
     /**
+     * Coordinates font
+     *
+     * @Type("string")
+     * @var string $coordinatesFont
+     */
+    protected $coordinatesFont = 'tahoma.ttf';
+
+    /**
      * Light cell color
      *
      * @Type("string")
@@ -173,9 +181,21 @@ class Board
         return $this;
     }
 
+    public function getCoordinatesFont()
+    {
+        return $this->coordinatesFont;
+    }
+
+    public function setCoordinatesFont($coordinatesFont)
+    {
+        $this->coordinatesFont = $coordinatesFont;
+
+        return $this;
+    }
+
     public function getLightCellColor()
     {
-        return $this->lightCellColor;
+        return sprintf("#%s", $this->lightCellColor);
     }
 
     public function setLightCellColor($lightCellColor)
@@ -187,7 +207,7 @@ class Board
 
     public function getDarkCellColor()
     {
-        return $this->darkCellColor;
+        return sprintf("#%s", $this->darkCellColor);
     }
 
     public function setDarkCellColor($darkCellColor)
@@ -223,7 +243,7 @@ class Board
 
     public function getHighlightSquaresColor()
     {
-        return $this->highlightSquaresColor;
+        return sprintf("#%s", $this->highlightSquaresColor);
     }
 
     public function setHighlightSquaresColor($highlightSquaresColor)

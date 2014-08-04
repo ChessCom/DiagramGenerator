@@ -2,12 +2,14 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Config;
+use DiagramGenerator\Config\Input;
+use DiagramGenerator\Config\Parser;
+use Symfony\Component\Validator\ValidatorInterface;
+
 use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\InvalidConfigException;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator;
+
 
 /**
  * Generator class
@@ -15,23 +17,16 @@ use Symfony\Component\Validator\Validator;
  */
 class Generator
 {
-    /**
-     * @var \DiagramGenerator\ConfigLoader;
-     */
-    protected $configLoader;
+    /** @var \DiagramGenerator\Config\Parser $configParser */
+    protected $configParser;
 
-    /**
-     * @var \Symfony\Component\Validator\Validator
-     */
+    /** @var \Symfony\Component\Validator\ValidatorInterface $validator */
     protected $validator;
 
-    public function __construct(Validator $validator)
+    public function __construct(Parser $configParser, ValidatorInterface $validator)
     {
+        $this->configParser = $configParser;
         $this->validator    = $validator;
-        $this->configLoader = new ConfigLoader($validator);
-        $this->configLoader->loadSizeConfig(self::getResourcesDir());
-        $this->configLoader->loadThemeConfig(self::getResourcesDir());
-        $this->configLoader->loadTextureConfig(self::getResourcesDir());
     }
 
     /**
@@ -43,15 +38,27 @@ class Generator
     }
 
     /**
-     * @param  Config $config
+     * Build the chess diagram
+     *
+     * @param  Config\Input $configInput
+     *
      * @return \DiagramGenerator\Diagram
      */
-    public function buildDiagram(Config $config)
+    public function buildDiagram(Input $configInput)
     {
-        $errors = $this->validator->validate($config);
+        $errors = $this->validator->validate($configInput);
         if (count($errors) > 0) {
-            throw new InvalidConfigException($errors->__toString());
+            throw new \InvalidArgumentException($errors->__toString());
         }
+
+        $config = $this->configParser->parseConfig($configInput);
+
+        $board = $this->createBoard($config);
+        $diagram = $this->createDiagram($config, $board);
+
+        return $diagram;
+
+
 
         $themes   = $this->configLoader->getThemes();
         $sizes    = $this->configLoader->getSizes();
@@ -84,7 +91,9 @@ class Generator
 
     /**
      * Creates board image
-     * @param  Config $config
+     *
+     * @param Config $config
+     *
      * @return \DiagramGenerator\Diagram\Board
      */
     protected function createBoard(Config $config)

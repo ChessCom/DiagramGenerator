@@ -29,13 +29,13 @@ class Caption
     }
 
     /**
-     * Draw object which with caption text ready
-     * to be added into the image
+     * Draw an object with the caption text ready to be added onto the image
+     *
      * @return \ImagickDraw
      */
     public function getDraw()
     {
-        $caption = $this->config->getCaption();
+        $caption = $this->config->getBoard()->getCaption();
         $draw = new \ImagickDraw();
         $draw->setFont($this->getFont());
         $draw->setGravity(\Imagick::GRAVITY_CENTER);
@@ -59,11 +59,12 @@ class Caption
 
     /**
      * @param  \ImagickDraw $draw
+     *
      * @return array
      */
     public function getMetrics(\ImagickDraw $draw)
     {
-        return $this->image->queryFontMetrics($draw, $this->config->getCaption());
+        return $this->image->queryFontMetrics($draw, $this->config->getBoard()->getCaption());
     }
 
     /**
