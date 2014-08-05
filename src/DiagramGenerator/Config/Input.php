@@ -157,9 +157,9 @@ class Input
         return $this;
     }
 
-    public function setTheme($theme)
+    public function setThemeIndex($themeIndex)
     {
-        $this->theme = $theme;
+        $this->themeIndex = $themeIndex;
 
         return $this;
     }
@@ -178,16 +178,16 @@ class Input
         return $this->themeIndex;
     }
 
-    public function setPieceTheme($pieceTheme)
+    public function setPieceThemeIndex($pieceThemeIndex)
     {
-        $this->pieceTheme = $pieceTheme;
+        $this->pieceThemeIndex = $pieceThemeIndex;
 
         return $this;
     }
 
-    public function setTexture($texture)
+    public function setTextureIndex($textureIndex)
     {
-        $this->texture = $texture;
+        $this->textureIndex = $textureIndex;
 
         return $this;
     }
@@ -206,7 +206,7 @@ class Input
         return $this->textureIndex;
     }
 
-    public function setBoardTexture($boardTexture)
+    public function setBoardTextureIndex($boardTexture)
     {
         $this->boardTexture = $boardTexture;
 
