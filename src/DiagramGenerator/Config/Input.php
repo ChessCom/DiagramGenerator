@@ -44,7 +44,7 @@ class Input
      *
      * @Type("string")
      * @CustomCellSize(min=0, max=3, minPx=20, maxPx=200)
-     * @var integer
+     * @var string
      */
     protected $size = self::DEFAULT_SIZE;
 
