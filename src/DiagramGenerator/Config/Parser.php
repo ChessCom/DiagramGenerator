@@ -42,7 +42,7 @@ class Parser
     {
         $size = $this->sizeLoader->getSize(
             Generator::getResourcesDir() . '/config//' . $this->sizeConfigFilename,
-            $configInput->getSizeIndex()
+            $configInput->getSize()
         );
 
         $board = $this->boardLoader->getBoard(

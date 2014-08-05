@@ -22,15 +22,15 @@ class SizeLoader
     /**
      * Get the size object for the users input parameter
      *
-     * @param string $configFilePath
-     * @param int    $sizeIndex
+     * @param string     $configFilePath
+     * @param int|string $size
      *
      * @return Size
      */
-    public function getSize($configFilePath, $sizeIndex)
+    public function getSize($configFilePath, $size)
     {
-        // TODO [lackovic10]: rename sizeIndex to size
-        if (is_numeric($sizeIndex)) {
+        if (is_numeric($size)) {
+            $sizeIndex = $size; // size index in the config file
             $sizes = $this->loadSizes($configFilePath);
 
             if (!array_key_exists($sizeIndex, $sizes)) {
@@ -40,7 +40,7 @@ class SizeLoader
             return $sizes[$sizeIndex];
         }
 
-        return $this->createSizeFromCustom($sizeIndex);
+        return $this->createSizeFromCustom($size);
     }
 
     /**

@@ -40,12 +40,13 @@ class Input
     protected $fen = Fen::DEFAULT_FEN;
 
     /**
+     * This value can contain the size index (load data from the config file) or it can define the cell with (50px)
+     *
      * @Type("string")
      * @CustomCellSize(min=0, max=3, minPx=20, maxPx=200)
-     * @SerializedName("size")
      * @var integer
      */
-    protected $sizeIndex = self::DEFAULT_SIZE;
+    protected $size = self::DEFAULT_SIZE;
 
     /**
      * @Type("integer")
@@ -144,14 +145,14 @@ class Input
         return $this;
     }
 
-    public function getSizeIndex()
+    public function getSize()
     {
-        return $this->sizeIndex;
+        return $this->size;
     }
 
-    public function setSizeIndex($sizeIndex)
+    public function setSize($size)
     {
-        $this->sizeIndex = $sizeIndex;
+        $this->size = $size;
 
         return $this;
     }
