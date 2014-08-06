@@ -13,5 +13,4 @@ matrix:
 
 before_script:
   - printf "\n" | pecl install imagick
-  - echo "extension=imagick.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - COMPOSER_ROOT_VERSION=dev-master composer --prefer-source --dev install

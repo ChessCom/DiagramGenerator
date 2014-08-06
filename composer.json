@@ -17,7 +17,8 @@
         "php": ">=5.3.2",
         "jms/serializer": "~0.12",
         "symfony/routing": "~2.1",
-        "symfony/yaml": "~2.1"
+        "symfony/yaml": "~2.1",
+        "symfony/validator": "~2.1"
     },
     "autoload": {
         "psr-0": {"DiagramGenerator": "src/"}
@@ -26,5 +27,8 @@
         "branch-alias": {
             "dev-master": "1.0-dev"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
     }
 }
