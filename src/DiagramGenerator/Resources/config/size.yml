@@ -1,22 +1,22 @@
 0:
     cell       : 20
-    border     : 1
+    border     : 0
     caption    : 8
     coordinates: 5
 1:
     cell       : 30
-    border     : 1
+    border     : 0
     caption    : 12
-    coordinates: 8
+    coordinates: 7.5
 
 2:
     cell       : 60
-    border     : 1
+    border     : 0
     caption    : 24
-    coordinates: 14
+    coordinates: 15
 
 3:
     cell       : 90
-    border     : 1
+    border     : 0
     caption    : 36
-    coordinates: 22
+    coordinates: 22.5

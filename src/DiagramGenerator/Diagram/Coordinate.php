@@ -69,11 +69,11 @@ class Coordinate
 
     /**
      * Path to the font
-     * TODO: move coordinate font to config
+     *
      * @return string
      */
     protected function getFont()
     {
-        return sprintf("%s/fonts/%s", Generator::getResourcesDir(), 'tahoma.ttf');
+        return sprintf("%s/fonts/%s", Generator::getResourcesDir(), $this->config->getBoard()->getCoordinatesFont());
     }
 }

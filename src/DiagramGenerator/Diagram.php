@@ -90,7 +90,7 @@ class Diagram
         }
 
         $this->image->addImage($this->board->getImage());
-        if ($this->config->getCoordinates()) {
+        if ($this->config->getBoard()->getCoordinates()) {
             // Add border to diagram
             $this->drawBorder();
 
@@ -125,14 +125,14 @@ class Diagram
             $caption = $this->createCaption();
 
             // Additional padding if coordinates were added
-            if ($this->config->getCoordinates()) {
+            if ($this->config->getBoard()->getCoordinates()) {
                 $caption->drawBorder($this->getBackgroundColor(), 0, $caption->getImage()->getImageHeight() / 2);
             }
 
             $this->image->addImage($caption->getImage());
 
             // Add bottom padding
-            if (!$this->config->getCoordinates()) {
+            if (!$this->config->getBoard()->getCoordinates()) {
                 $this->image->newImage(
                     $this->image->getImageWidth(),
                     $this->getBorderThickness(),
@@ -213,11 +213,12 @@ class Diagram
 
     /**
      * Returns caption text
+     *
      * @return string
      */
     protected function getCaptionText()
     {
-        return $this->config->getCaption();
+        return $this->config->getBoard()->getCaption();
     }
 
     /**
@@ -235,7 +236,7 @@ class Diagram
      */
     protected function getBackgroundColor()
     {
-        return new \ImagickPixel($this->config->getTheme()->getColor()->getBackground());
+        return new \ImagickPixel($this->config->getBoard()->getBackgroundColor());
     }
 
     /**
