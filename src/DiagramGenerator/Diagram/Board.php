@@ -14,6 +14,9 @@ use DiagramGenerator\Fen\Piece;
  */
 class Board
 {
+    const HIGHLIGHTED_DARK_SQUARE_OPACITY = 1;
+    const HIGHLIGHTED_LIGHT_SQUARE_OPACITY = .5;
+
     /**
      * @var \Imagick
      */
@@ -81,26 +84,47 @@ class Board
      */
     public function drawCells()
     {
-        if ($this->getBoardTexture()) {
-            return $this;
-        }
-
         for ($x = 1; $x <= 8; $x++) {
             for ($y = 1; $y <= 8; $y++) {
-                $colorIndex = ($x + $y) % 2;
-                $cell = new \ImagickDraw();
-                $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
-                $cell->rectangle(
-                    ($x - 1) * $this->getCellSize(),
-                    ($y - 1) * $this->getCellSize(),
-                    $x * $this->getCellSize(),
-                    $y * $this->getCellSize()
-                );
-                $this->image->drawImage($cell);
+                $this->drawCell($x, $y, ($x + $y) % 2);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Draw a single cell
+     *
+     * @param int  $x
+     * @param int  $y
+     * @param bool $colorIndex
+     */
+    public function drawCell($x, $y, $colorIndex)
+    {
+        $cell = new \ImagickDraw();
+
+        if (in_array($this->getSquare($x, $y), $this->config->getHighlightSquares())) {
+            $cell->setFillColor($this->config->getHighlightSquaresColor());
+            $cell->setFillOpacity(
+                $colorIndex ? self::HIGHLIGHTED_DARK_SQUARE_OPACITY : self::HIGHLIGHTED_LIGHT_SQUARE_OPACITY
+            );
+        } else {
+            if ($this->getBoardTexture()) {
+                return;
+            }
+
+            $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
+        }
+
+        $cell->rectangle(
+            ($x - 1) * $this->getCellSize(),
+            ($y - 1) * $this->getCellSize(),
+            $x * $this->getCellSize(),
+            $y * $this->getCellSize()
+        );
+
+        $this->image->drawImage($cell);
     }
 
     /**
@@ -238,5 +262,20 @@ class Board
     protected function getBackgroundTexture()
     {
         return sprintf("%s/boards/%s.jpg", Generator::getResourcesDir(), $this->getBoardTexture());
+    }
+
+    /**
+     * Return the square for the coordinates passed (starting from 0)
+     *
+     * @param int $x
+     * @param int $y
+     *
+     * @return string
+     */
+    protected function getSquare($x, $y)
+    {
+        $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
+
+        return $squares[$x-1] . (8 - $y + 1);
     }
 }

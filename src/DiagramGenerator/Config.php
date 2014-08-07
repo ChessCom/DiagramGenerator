@@ -15,12 +15,17 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
+use DiagramGenerator\Validator\Constraints\CustomCellSize;
+use DiagramGenerator\Validator\Constraints\SquareList;
 
 /**
  * @ExclusionPolicy("none")
  */
 class Config
 {
+    const DEFAULT_PIECE_THEME_INDEX = 4;
+    const DEFAULT_BOARD_TEXTURE_INDEX = null;
+
     /**
      * @Type("string")
      * @NotBlank()
@@ -29,10 +34,10 @@ class Config
     protected $fen = FEN::DEFAULT_FEN;
 
     /**
-     * @Type("integer")
-     * @Range(min=0, max=3)
+     * @Type("string")
+     * @CustomCellSize(min=0, max=3, minPx=20, maxPx=200)
      * @SerializedName("size")
-     * @var integer
+     * @var string
      */
     protected $sizeIndex = 1;
 
@@ -48,7 +53,15 @@ class Config
      * @SerializedName("theme")
      * @var integer
      */
-    protected $themeIndex = 4;
+    protected $themeIndex = self::DEFAULT_PIECE_THEME_INDEX;
+
+    /**
+     * @Type("integer")
+     * @Range(min=0, max=5)
+     * @SerializedName("piece")
+     * @var integer
+     */
+    protected $pieceIndex = self::DEFAULT_PIECE_THEME_INDEX;
 
     /**
      * @Type("integer")
@@ -56,7 +69,15 @@ class Config
      * @SerializedName("texture")
      * @var integer
      */
-    protected $textureIndex;
+    protected $textureIndex = self::DEFAULT_BOARD_TEXTURE_INDEX;
+
+    /**
+     * @Type("integer")
+     * @Range(min=0, max=3)
+     * @SerializedName("board")
+     * @var integer
+     */
+    protected $boardIndex = self::DEFAULT_BOARD_TEXTURE_INDEX;
 
     /**
      * @Exclude()
@@ -102,6 +123,21 @@ class Config
      * @var boolean
      */
     protected $flip = false;
+
+    /**
+     * @Type("string")
+     * @SquareList()
+     * @Length(max=128)
+     * @var string
+     */
+    protected $highlightSquares = '';
+
+    /**
+     * @Type("string")
+     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Highlight squares color should be in hex format")
+     * @var string
+     */
+    protected $highlightSquaresColor = 'ffcccc';
 
     /**
      * Gets the value of fen.
@@ -182,6 +218,10 @@ class Config
      */
     public function getThemeIndex()
     {
+        if ($this->pieceIndex != self::DEFAULT_PIECE_THEME_INDEX) {
+            return $this->pieceIndex;
+        }
+
         return $this->themeIndex;
     }
 
@@ -326,6 +366,10 @@ class Config
      */
     public function getTextureIndex()
     {
+        if ($this->boardIndex != self::DEFAULT_BOARD_TEXTURE_INDEX) {
+            return $this->boardIndex;
+        }
+
         return $this->textureIndex;
     }
 
@@ -387,6 +431,30 @@ class Config
     public function setFlip($flip)
     {
         $this->flip = (bool) $flip;
+
+        return $this;
+    }
+
+    public function getHighlightSquares()
+    {
+        return $this->highlightSquares;
+    }
+
+    public function setHighlightSquares($highlightSquares)
+    {
+        $this->highlightSquares = $highlightSquares;
+
+        return $this;
+    }
+
+    public function getHighlightSquaresColor()
+    {
+        return sprintf("#%s", ltrim($this->highlightSquaresColor, '#'));
+    }
+
+    public function setHighlightSquaresColor($highlightSquaresColor)
+    {
+        $this->highlightSquaresColor = $highlightSquaresColor;
 
         return $this;
     }

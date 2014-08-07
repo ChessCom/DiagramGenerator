@@ -3,6 +3,7 @@
 namespace DiagramGenerator;
 
 use DiagramGenerator\Config;
+use DiagramGenerator\Config\Size;
 use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\InvalidConfigException;
@@ -54,15 +55,30 @@ class Generator
         }
 
         $themes   = $this->configLoader->getThemes();
-        $sizes    = $this->configLoader->getSizes();
         $textures = $this->configLoader->getTextures();
 
         if (!array_key_exists($config->getThemeIndex(), $themes)) {
             throw new InvalidConfigException(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
         }
 
-        if (!array_key_exists($config->getSizeIndex(), $sizes)) {
-            throw new InvalidConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
+        if (is_numeric($config->getSizeIndex())) {
+            $sizes = $this->configLoader->getSizes();
+
+            if (!array_key_exists($config->getSizeIndex(), $sizes)) {
+                throw new InvalidConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
+            }
+
+            $config->setSize($sizes[$config->getSizeIndex()]);
+        } else {
+            $cellSize = substr($config->getSizeIndex(), 0, -2);
+
+            $size = new Size();
+            $size->setCell($cellSize)
+                ->setBorder(Size::BORDER_COEFFICIENT * $cellSize)
+                ->setCaption(Size::CAPTION_COEFFICIENT * $cellSize)
+                ->setCoordinates(Size::COORDINATES_COEFFICIENT * $cellSize);
+
+            $config->setSize($size);
         }
 
         if (is_int($config->getTextureIndex())) {
@@ -74,7 +90,9 @@ class Generator
         }
 
         $config->setTheme($themes[$config->getThemeIndex()]);
-        $config->setSize($sizes[$config->getSizeIndex()]);
+        $config->setHighlightSquares(
+            $this->configLoader->parseHighlightSquaresString($config->getHighlightSquares())
+        );
 
         $board = $this->createBoard($config);
         $diagram = $this->createDiagram($config, $board);

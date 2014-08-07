@@ -123,6 +123,21 @@ class ConfigLoader
     }
 
     /**
+     * Parse the highlightSquares string into an array of squares
+     *
+     * @param string $highlightSquares
+     */
+    public function parseHighlightSquaresString($highlightSquares)
+    {
+        $highlightSquaresParsed = array();
+        for ($i = 0; $i < strlen($highlightSquares); $i+=2) {
+            $highlightSquaresParsed[] = $highlightSquares[$i] . $highlightSquares[$i+1];
+        }
+
+        return $highlightSquaresParsed;
+    }
+
+    /**
      * Method to convert array config to array of Size objects
      * @param  array  $config Parsed yaml config
      * @return null

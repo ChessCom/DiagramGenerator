@@ -6,6 +6,10 @@ use JMS\Serializer\Annotation\Type;
 
 class Size
 {
+    const CAPTION_COEFFICIENT = .4;
+    const BORDER_COEFFICIENT = 0;
+    const COORDINATES_COEFFICIENT = .25;
+
     /**
      * Cell size
      * @Type("integer")
