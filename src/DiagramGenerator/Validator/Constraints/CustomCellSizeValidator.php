@@ -45,6 +45,8 @@ class CustomCellSizeValidator extends ConstraintValidator
                     '{{ value }}' => $value,
                     '{{ limit }}' => $constraint->min,
                 ));
+
+                return;
             }
         }
 
@@ -63,6 +65,8 @@ class CustomCellSizeValidator extends ConstraintValidator
                     '{{ value }}' => $value,
                     '{{ limit }}' => $constraint->minPx,
                 ));
+
+                return;
             }
         }
     }

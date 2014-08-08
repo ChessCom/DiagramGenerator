@@ -17,18 +17,24 @@ class IntegerValidator extends ConstraintValidator
             $this->context->addViolation($constraint->invalidPositiveMessage, array(
                 '{{ value }}' => $value,
             ));
+
+            return;
         }
 
         if ($constraint->unsigned && !preg_match('/' . Integer::UNSIGNED_REGEX . '/', $value)) {
             $this->context->addViolation($constraint->invalidUnsignedMessage, array(
                 '{{ value }}' => $value,
             ));
+
+            return;
         }
 
         if (!preg_match('/' . Integer::REGEX . '/', $value)) {
             $this->context->addViolation($constraint->invalidMessage, array(
                 '{{ value }}' => $value,
             ));
+
+            return;
         }
     }
 }
