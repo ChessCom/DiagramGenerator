@@ -6,7 +6,7 @@ use DiagramGenerator\Config;
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
-use DiagramGenerator\Exception\InvalidConfigException;
+use DiagramGenerator\Exception\UnsupportedConfigException;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator;
 
@@ -51,26 +51,32 @@ class Generator
     {
         $errors = $this->validator->validate($config);
         if (count($errors) > 0) {
-            throw new InvalidConfigException($errors->__toString());
+            throw new \InvalidArgumentException($errors->__toString());
         }
 
         $themes   = $this->configLoader->getThemes();
         $textures = $this->configLoader->getTextures();
 
         if (!array_key_exists($config->getThemeIndex(), $themes)) {
-            throw new InvalidConfigException(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
+            throw new UnsupportedConfigException(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
         }
 
         if (is_numeric($config->getSizeIndex())) {
             $sizes = $this->configLoader->getSizes();
 
             if (!array_key_exists($config->getSizeIndex(), $sizes)) {
-                throw new InvalidConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
+                throw new UnsupportedConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
             }
 
             $config->setSize($sizes[$config->getSizeIndex()]);
         } else {
             $cellSize = substr($config->getSizeIndex(), 0, -2);
+
+            if ($cellSize < Size::MIN_CUSTOM_SIZE) {
+                throw new UnsupportedConfigException(sprintf('Size should be %spx or more', Size::MIN_CUSTOM_SIZE));
+            } elseif ($cellSize > Size::MAX_CUSTOM_SIZE) {
+                throw new UnsupportedConfigException(sprintf('Size should be %spx or less', Size::MAX_CUSTOM_SIZE));
+            }
 
             $size = new Size();
             $size->setCell($cellSize)
@@ -83,7 +89,7 @@ class Generator
 
         if (is_int($config->getTextureIndex())) {
             if (!array_key_exists($config->getTextureIndex(), $textures)) {
-                throw new InvalidConfigException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
+                throw new UnsupportedConfigException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
             }
 
             $config->setTexture($textures[$config->getTextureIndex()]);

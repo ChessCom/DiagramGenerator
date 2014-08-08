@@ -17,10 +17,15 @@ use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Regex;
 use DiagramGenerator\Validator\Constraints\CustomCellSize;
 use DiagramGenerator\Validator\Constraints\SquareList;
+use DiagramGenerator\Validator\Constraints\Integer;
 
 /**
  * @ExclusionPolicy("none")
  */
+// [lackovic10] setting Type("string") for int values theme, piece, texture, board so we can validate, and throw
+// exceptions with 404 http status code for invalid data. When the type is string, if the client passes an invalid
+// string, it will be converted to 0, which is a valid index for both piece theme and board texture, and then the
+// url with invalid data can be cached, which we want to avoid
 class Config
 {
     const DEFAULT_PIECE_THEME_INDEX = 4;
@@ -35,7 +40,7 @@ class Config
 
     /**
      * @Type("string")
-     * @CustomCellSize(min=0, max=3, minPx=20, maxPx=200)
+     * @CustomCellSize()
      * @SerializedName("size")
      * @var string
      */
@@ -48,32 +53,32 @@ class Config
     protected $size;
 
     /**
-     * @Type("integer")
-     * @Range(min=0, max=5)
+     * @Type("string")
+     * @Integer(unsigned=true)
      * @SerializedName("theme")
      * @var integer
      */
     protected $themeIndex = self::DEFAULT_PIECE_THEME_INDEX;
 
     /**
-     * @Type("integer")
-     * @Range(min=0, max=5)
+     * @Type("string")
+     * @Integer(unsigned=true)
      * @SerializedName("piece")
      * @var integer
      */
     protected $pieceIndex = self::DEFAULT_PIECE_THEME_INDEX;
 
     /**
-     * @Type("integer")
-     * @Range(min=0, max=3)
+     * @Type("string")
+     * @Integer(unsigned=true)
      * @SerializedName("texture")
      * @var integer
      */
     protected $textureIndex = self::DEFAULT_BOARD_TEXTURE_INDEX;
 
     /**
-     * @Type("integer")
-     * @Range(min=0, max=3)
+     * @Type("string")
+     * @Integer(unsigned=true)
      * @SerializedName("board")
      * @var integer
      */

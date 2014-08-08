@@ -31,26 +31,38 @@ class CustomCellSizeValidator extends ConstraintValidator
         }
 
         if ($isBoardSizeIndexFormat) {
-            if ($value < $constraint->min || $value > $constraint->max) {
-                $this->context->addViolation($constraint->invalidBoardSizeIndexMessage, array(
+            if (null !== $constraint->max && $value > $constraint->max) {
+                $this->context->addViolation($constraint->maxIndexMessage, array(
                     '{{ value }}' => $value,
-                    '{{ min }}' => $constraint->min,
-                    '{{ max }}' => $constraint->max,
+                    '{{ limit }}' => $constraint->max,
                 ));
 
                 return;
             }
+
+            if (null !== $constraint->min && $value < $constraint->min) {
+                $this->context->addViolation($constraint->minIndexMessage, array(
+                    '{{ value }}' => $value,
+                    '{{ limit }}' => $constraint->min,
+                ));
+            }
         }
 
         if ($boardCellSize) {
-            if ($boardCellSize < $constraint->minPx || $boardCellSize > $constraint->maxPx) {
-                $this->context->addViolation($constraint->invalidCellSizeMessage, array(
+            if (null !== $constraint->maxPx && $value > $constraint->maxPx) {
+                $this->context->addViolation($constraint->maxMessage, array(
                     '{{ value }}' => $value,
-                    '{{ minPx }}' => $constraint->minPx,
-                    '{{ maxPx }}' => $constraint->maxPx,
+                    '{{ limit }}' => $constraint->maxPx,
                 ));
 
                 return;
+            }
+
+            if (null !== $constraint->minPx && $value < $constraint->minPx) {
+                $this->context->addViolation($constraint->minMessage, array(
+                    '{{ value }}' => $value,
+                    '{{ limit }}' => $constraint->minPx,
+                ));
             }
         }
     }
@@ -60,7 +72,7 @@ class CustomCellSizeValidator extends ConstraintValidator
      */
     protected function isValidBoardSizeIndexFormat($value)
     {
-        return is_numeric($value);
+        return preg_match('/' . Integer::UNSIGNED_REGEX .'/', $value);
     }
 
     /**
@@ -79,7 +91,7 @@ class CustomCellSizeValidator extends ConstraintValidator
 
         $size = substr($value, 0, -2);
 
-        if (!is_numeric($size)) {
+        if (!preg_match('/' . Integer::POSITIVE_REGEX . '/', $size)) {
             return false;
         }
 
