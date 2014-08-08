@@ -104,7 +104,9 @@ class Board
     {
         $cell = new \ImagickDraw();
 
-        if (in_array($this->getSquare($x, $y), $this->config->getHighlightSquares())) {
+        if (is_array($this->config->getHighlightSquares()) &&
+            in_array($this->getSquare($x, $y), $this->config->getHighlightSquares())) {
+
             $cell->setFillColor($this->config->getHighlightSquaresColor());
             $cell->setFillOpacity(
                 $colorIndex ? self::HIGHLIGHTED_DARK_SQUARE_OPACITY : self::HIGHLIGHTED_LIGHT_SQUARE_OPACITY

@@ -16,25 +16,45 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             ->setConstructorArgs(array($this->getValidator()))
             ->setMethods(null)
             ->getMock();
+
         $config = $this->getMock('DiagramGenerator\Config');
-        $this->setExpectedException('DiagramGenerator\Exception\InvalidConfigException');
+        $this->setExpectedException('DiagramGenerator\Exception\UnsupportedConfigException');
         $generator->buildDiagram($config);
     }
 
-    public function testBuildDiagramInvalidSizeConfig()
+    /**
+     * @dataProvider buildDiagramInvalidSizeConfigProvider
+     */
+    public function testBuildDiagramInvalidSizeConfig($getSizeIndexCalls, $size)
     {
-        $generator = $this
-            ->getMockBuilder('DiagramGenerator\Generator')
+        $generator = $this->getMockBuilder('DiagramGenerator\Generator')
             ->setConstructorArgs(array($this->getValidator()))
             ->setMethods(null)
             ->getMock();
+
         $config = $this->getMock('DiagramGenerator\Config');
-        $config
-            ->expects($this->once())
+
+        $config->expects($this->once())
             ->method('getThemeIndex')
             ->will($this->returnValue(1));
-        $this->setExpectedException('DiagramGenerator\Exception\InvalidConfigException');
+
+        $config->expects($this->exactly($getSizeIndexCalls))
+            ->method('getSizeIndex')
+            ->will($this->returnValue($size));
+
+        $this->setExpectedException('DiagramGenerator\Exception\UnsupportedConfigException');
         $generator->buildDiagram($config);
+    }
+
+    public function buildDiagramInvalidSizeConfigProvider()
+    {
+        return array(
+            array(3, -1),
+            array(3, 4),
+            array(3, 30),
+            array(2, '220px'),
+            array(2, '19px')
+        );
     }
 
     public function testBuildDiagram()

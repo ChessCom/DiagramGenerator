@@ -74,7 +74,7 @@ class BoardTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(90 * 8, $this->board->getImage()->getImageWidth());
         $this->assertEquals(90 * 8, $this->board->getImage()->getImageHeight());
         $this->assertEquals(
-            'rgb(255,255,255)',
+            'srgb(255,255,255)',
             $this->board->getImage()->getImageBackgroundColor()->getColorAsString()
         );
     }
