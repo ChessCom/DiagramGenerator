@@ -54,7 +54,6 @@ class Config
 
     /**
      * @Type("string")
-     * @Integer(unsigned=true)
      * @SerializedName("theme")
      * @var integer
      */
@@ -62,7 +61,6 @@ class Config
 
     /**
      * @Type("string")
-     * @Integer(unsigned=true)
      * @SerializedName("piece")
      * @var integer
      */
@@ -70,7 +68,6 @@ class Config
 
     /**
      * @Type("string")
-     * @Integer(unsigned=true)
      * @SerializedName("texture")
      * @var integer
      */
@@ -78,7 +75,6 @@ class Config
 
     /**
      * @Type("string")
-     * @Integer(unsigned=true)
      * @SerializedName("board")
      * @var integer
      */

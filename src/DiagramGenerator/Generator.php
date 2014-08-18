@@ -4,6 +4,8 @@ namespace DiagramGenerator;
 
 use DiagramGenerator\Config;
 use DiagramGenerator\Config\Size;
+use DiagramGenerator\Config\Texture;
+use DiagramGenerator\Config\Theme;
 use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\UnsupportedConfigException;
@@ -26,13 +28,25 @@ class Generator
      */
     protected $validator;
 
+    /**
+     * Deprecating the passing an integer that represents the board texture index, which determines the board
+     * texture data which is recorded in a config file. Not using the config file anymore
+     */
+    protected $deprecateBoardTextures = array(0 => 'neon', 1 => 'dark_wood', 2 => 'burled_wood', 3 => 'metal');
+
+    /**
+     * Deprecating the passing an integer that represents the piece theme index, which determines the piece theme
+     * data which is recorded in a config file. Not using the config file anymore
+     */
+    protected $deprecatedPieceThemes = array(
+        0 => 'classic', 1 => 'alpha', 2 => 'book', 3 => 'club', 4 => 'modern', 5 => 'vintage'
+    );
+
     public function __construct(Validator $validator)
     {
         $this->validator    = $validator;
         $this->configLoader = new ConfigLoader($validator);
         $this->configLoader->loadSizeConfig(self::getResourcesDir());
-        $this->configLoader->loadThemeConfig(self::getResourcesDir());
-        $this->configLoader->loadTextureConfig(self::getResourcesDir());
     }
 
     /**
@@ -51,21 +65,36 @@ class Generator
     {
         $errors = $this->validator->validate($config);
         if (count($errors) > 0) {
-            throw new \InvalidArgumentException($errors->__toString());
+            throw new \Exception($errors->__toString());
         }
 
-        $themes   = $this->configLoader->getThemes();
-        $textures = $this->configLoader->getTextures();
+        $this->setConfigSize($config);
+        $this->setConfigBoardTexture($config);
+        $this->setConfigPieceTheme($config);
+        
+        $config->setHighlightSquares(
+            $this->configLoader->parseHighlightSquaresString($config->getHighlightSquares())
+        );
 
-        if (!array_key_exists($config->getThemeIndex(), $themes)) {
-            throw new UnsupportedConfigException(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
-        }
+        $board = $this->createBoard($config);
+        $diagram = $this->createDiagram($config, $board);
 
+        return $diagram;
+    }
+
+    /**
+     * Set the config size
+     *
+     * @param Config $config
+     */
+    protected function setConfigSize(Config $config)
+    {
         if (is_numeric($config->getSizeIndex())) {
+            // numeric sizes are deprecated, keeping numeric sizes for backwords compatibility (0-3).
             $sizes = $this->configLoader->getSizes();
 
             if (!array_key_exists($config->getSizeIndex(), $sizes)) {
-                throw new UnsupportedConfigException(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
+                throw new \Exception(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
             }
 
             $config->setSize($sizes[$config->getSizeIndex()]);
@@ -73,9 +102,13 @@ class Generator
             $cellSize = substr($config->getSizeIndex(), 0, -2);
 
             if ($cellSize < Size::MIN_CUSTOM_SIZE) {
-                throw new UnsupportedConfigException(sprintf('Size should be %spx or more', Size::MIN_CUSTOM_SIZE));
+                throw new \InvalidArgumentException(
+                    sprintf('Size should be %spx or more', Size::MIN_CUSTOM_SIZE)
+                );
             } elseif ($cellSize > Size::MAX_CUSTOM_SIZE) {
-                throw new UnsupportedConfigException(sprintf('Size should be %spx or less', Size::MAX_CUSTOM_SIZE));
+                throw new \InvalidArgumentException(
+                    sprintf('Size should be %spx or less', Size::MAX_CUSTOM_SIZE)
+                );
             }
 
             $size = new Size();
@@ -86,24 +119,44 @@ class Generator
 
             $config->setSize($size);
         }
+    }
 
-        if (is_int($config->getTextureIndex())) {
-            if (!array_key_exists($config->getTextureIndex(), $textures)) {
-                throw new UnsupportedConfigException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
+    /**
+     * Set the config board texture
+     *
+     * @param Config $config
+     */
+    protected function setConfigBoardTexture(Config $config)
+    {
+        $texture = new Texture();
+        if (is_numeric($config->getTextureIndex())) {
+            if (!array_key_exists($config->getTextureIndex(), $this->deprecateBoardTextures)) {
+                throw new \RuntimeException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
             }
 
-            $config->setTexture($textures[$config->getTextureIndex()]);
+            $config->setTexture($texture->setBoard($this->deprecateBoardTextures[$config->getTextureIndex()]));
+        } else {
+            $config->setTexture($texture->setBoard($config->getTextureIndex()));
         }
+    }
 
-        $config->setTheme($themes[$config->getThemeIndex()]);
-        $config->setHighlightSquares(
-            $this->configLoader->parseHighlightSquaresString($config->getHighlightSquares())
-        );
+    /**
+     * Set the config piece theme
+     *
+     * @param Config $config
+     */
+    protected function setConfigPieceTheme(Config $config)
+    {
+        $theme = new Theme();
+        if (is_numeric($config->getThemeIndex())) {
+            if (!array_key_exists($config->getThemeIndex(), $this->deprecatedPieceThemes)) {
+                throw new \Exception(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
+            }
 
-        $board = $this->createBoard($config);
-        $diagram = $this->createDiagram($config, $board);
-
-        return $diagram;
+            $config->setTheme($theme->setName($this->deprecatedPieceThemes[$config->getThemeIndex()]));
+        } else {
+            $config->setTheme($theme->setName($config->getThemeIndex()));
+        }
     }
 
     /**

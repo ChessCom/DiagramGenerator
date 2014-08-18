@@ -27,10 +27,31 @@ class Board
      */
     protected $config;
 
+    /**
+     * @var \DiagramGenerator\Fen $fen
+     */
+    protected $fen;
+
+    /**
+     * @var int $paddingTop
+     */
+    protected $paddingTop = 0;
+
+    protected $boardTextures = array('blackwhite', 'blue', 'brown', 'bubblegum', 'burled_wood', 'dark_wood',
+        'glass', 'graffiti', 'green', 'light', 'lolz', 'marble', 'marbleblue', 'marblegreen', 'metal', 'neon',
+        'newspaper', 'orange', 'parchment', 'purple', 'red', 'sand', 'sky', 'stone', 'tan', 'tournament',
+        'translucent', 'woodolive'
+    );
+
     public function __construct(Config $config)
     {
         $this->config = $config;
         $this->image  = new \Imagick();
+        $this->fen = Fen::createFromString($this->config->getFen());
+
+        if ($this->config->getFlip()) {
+            $this->fen->flip();
+        }
     }
 
     /**
@@ -50,10 +71,11 @@ class Board
      */
     public function drawBoard()
     {
-        $boardSize = $this->getCellSize() * 8;
+        $this->paddingTop = $this->getMaxPieceHeight() - $this->getCellSize();
+
         $this->image->newImage(
-            $boardSize,
-            $boardSize,
+            $this->getCellSize() * 8,
+            $this->getCellSize() * 8 + $this->paddingTop,
             new \ImagickPixel($this->getBackgroundColor())
         );
 
@@ -61,17 +83,10 @@ class Board
         if ($this->getBoardTexture()) {
             $background = new \Imagick($this->getBackgroundTexture());
             $textureSize = $this->getCellSize() * 2;
-            $background->scaleImage($textureSize, $textureSize);
-            for ($x = 0; $x < 4; $x++) {
-                for ($y = 0; $y < 4; $y++) {
-                    $this->image->compositeImage(
-                        $background,
-                        \Imagick::COMPOSITE_DEFAULT,
-                        $x * $textureSize,
-                        $y * $textureSize
-                    );
-                }
-            }
+            
+            $this->image->compositeImage(
+                $background, \Imagick::COMPOSITE_DEFAULT, 0, $this->paddingTop
+            );
         }
 
         return $this;
@@ -121,9 +136,9 @@ class Board
 
         $cell->rectangle(
             ($x - 1) * $this->getCellSize(),
-            ($y - 1) * $this->getCellSize(),
+            ($y - 1) * $this->getCellSize() + $this->paddingTop,
             $x * $this->getCellSize(),
-            $y * $this->getCellSize()
+            $y * $this->getCellSize() + $this->paddingTop
         );
 
         $this->image->drawImage($cell);
@@ -135,19 +150,15 @@ class Board
      */
     public function drawFigures()
     {
-        $fen = Fen::createFromString($this->config->getFen());
-        if ($this->config->getFlip()) {
-            $fen->flip();
-        }
-
-        foreach ($fen->getPieces() as $piece) {
+        foreach ($this->fen->getPieces() as $piece) {
             $pieceImage = new \Imagick($this->getPieceImagePath($piece));
-            $pieceImage->scaleImage($this->getCellSize(), $this->getCellSize());
+
             $this->image->compositeImage(
                 $pieceImage,
                 \Imagick::COMPOSITE_DEFAULT,
                 $this->getCellSize() * $piece->getColumn(),
-                $this->getCellSize() * $piece->getRow()
+                // some pieces are not the same hight as the cell and they need to be adjusted
+                $this->getCellSize() * ($piece->getRow() + 1) - $pieceImage->getImageHeight() + $this->paddingTop
             );
         }
 
@@ -247,13 +258,17 @@ class Board
      */
     protected function getPieceImagePath(Piece $piece)
     {
-        $filename = sprintf("%s/%s%s.png",
-            $this->config->getTheme()->getName(),
+        
+        $filename = sprintf("%s%s.png",
             substr($piece->getColor(), 0, 1),
             $piece->getKey()
         );
 
-        return sprintf("%s/pieces/%s", Generator::getResourcesDir(), $filename);
+        return sprintf("http://d1xrj4tlyewhek.cloudfront.net/pieces/%s/%s/%s",
+            $this->config->getTheme()->getName(),
+            $this->getCellSize(),
+            $filename
+        );
     }
 
     /**
@@ -263,7 +278,10 @@ class Board
      */
     protected function getBackgroundTexture()
     {
-        return sprintf("%s/boards/%s.jpg", Generator::getResourcesDir(), $this->getBoardTexture());
+        return sprintf("http://d1xrj4tlyewhek.cloudfront.net/boards/%s/%s.png",
+            $this->getBoardTexture(),
+            $this->getCellSize()
+        );
     }
 
     /**
@@ -279,5 +297,26 @@ class Board
         $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
 
         return $squares[$x-1] . (8 - $y + 1);
+    }
+
+    /**
+     * Get the largest piece height
+     *
+     * @return int
+     */
+    protected function getMaxPieceHeight()
+    {
+        $maxHeight = $this->getCellSize();
+        foreach ($this->fen->getPieces() as $piece) {
+            $pieceImage = new \Imagick($this->getPieceImagePath($piece));
+
+            if ($pieceImage->getImageHeight() > $maxHeight) {
+                $maxHeight = $pieceImage->getImageHeight();
+            }
+
+            unset($pieceImage);
+        }
+
+        return $maxHeight;
     }
 }

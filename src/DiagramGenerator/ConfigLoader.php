@@ -28,33 +28,13 @@ class ConfigLoader
     /**
      * @var array
      */
-    protected $themes = array();
-
-    /**
-     * @var array
-     */
     protected $sizes = array();
-
-    /**
-     * @var array
-     */
-    protected $textures = array();
 
     public function __construct(Validator $validator)
     {
         $this->parser     = new Parser();
         $this->serializer = SerializerBuilder::create()->build();
         $this->validator  = $validator;
-    }
-
-    /**
-     * Gets the value of themes.
-     *
-     * @return array
-     */
-    public function getThemes()
-    {
-        return $this->themes;
     }
 
     /**
@@ -65,16 +45,6 @@ class ConfigLoader
     public function getSizes()
     {
         return $this->sizes;
-    }
-
-    /**
-     * Gets the value of textures.
-     *
-     * @return array
-     */
-    public function getTextures()
-    {
-        return $this->textures;
     }
 
     /**
@@ -89,36 +59,6 @@ class ConfigLoader
             $this->parseSizeConfig($this->parser->parse($configFile));
         } else {
             throw new \RuntimeException('Size config not found');
-        }
-    }
-
-    /**
-     * Load and parse theme config file
-     * @param  string $resourcesDir
-     * @return null
-     */
-    public function loadThemeConfig($resourcesDir)
-    {
-        $this->themes = array();
-        if ($configFile = @file_get_contents(sprintf("%s/config/theme.yml", $resourcesDir))) {
-            $this->parseThemeConfig($this->parser->parse($configFile));
-        } else {
-            throw new \RuntimeException('Theme config not found');
-        }
-    }
-
-    /**
-     * Load and parse texture config file
-     * @param  string $resourcesDir
-     * @return null
-     */
-    public function loadTextureConfig($resourcesDir)
-    {
-        $this->textures = array();
-        if ($configFile = @file_get_contents(sprintf("%s/config/texture.yml", $resourcesDir))) {
-            $this->parseTextureConfig($this->parser->parse($configFile));
-        } else {
-            throw new \RuntimeException('Texture config not found');
         }
     }
 
@@ -146,42 +86,6 @@ class ConfigLoader
     {
         foreach ($config as $key => $value) {
             $this->sizes[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Size', 'json');
-        }
-    }
-
-    /**
-     * Method to convert array config to array of Theme objects
-     * @param  array  $config
-     * @return null
-     */
-    protected function parseThemeConfig(array $config)
-    {
-        foreach ($config as $key => $value) {
-            $theme = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Theme', 'json');
-            $themeErrors = $this->validator->validate($theme);
-            if (count($themeErrors) > 0) {
-                throw new InvalidConfigException(sprintf("Theme %u has invalid config: %s", $key, $themeErrors->__toString()));
-            }
-
-            // FIXME: figure out why `valid` constraint doesn't work for color property
-            $colorErrors = $this->validator->validate($theme->getColor());
-            if (count($colorErrors) > 0) {
-                throw new InvalidConfigException(sprintf("Theme %u has invalid config: %s", $key, $colorErrors->__toString()));
-            }
-
-            $this->themes[] = $theme;
-        }
-    }
-
-    /**
-     * Method to convert array config to array of Texture objects
-     * @param  array  $config
-     * @return null
-     */
-    protected function parseTextureConfig(array $config)
-    {
-        foreach ($config as $key => $value) {
-            $this->textures[] = $this->serializer->deserialize(json_encode($value), 'DiagramGenerator\Config\Texture', 'json');
         }
     }
 }
