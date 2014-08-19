@@ -37,12 +37,6 @@ class Board
      */
     protected $paddingTop = 0;
 
-    protected $boardTextures = array('blackwhite', 'blue', 'brown', 'bubblegum', 'burled_wood', 'dark_wood',
-        'glass', 'graffiti', 'green', 'light', 'lolz', 'marble', 'marbleblue', 'marblegreen', 'metal', 'neon',
-        'newspaper', 'orange', 'parchment', 'purple', 'red', 'sand', 'sky', 'stone', 'tan', 'tournament',
-        'translucent', 'woodolive'
-    );
-
     public function __construct(Config $config)
     {
         $this->config = $config;

@@ -40,6 +40,19 @@ class Generator
      */
     protected $deprecatedPieceThemes = array('classic', 'alpha', 'book', 'club', 'modern', 'vintage');
 
+    protected $pieceThemes = array(
+        '3d_chesskid', '3d_plastic', '3d_staunton', '3d_wood', 'alpha', 'blindfold', 'book', 'bubblegum', 'cases',
+        'classic', 'club', 'condal', 'dark', 'game_room', 'glass', 'gothic', 'graffiti', 'light', 'lolz', 'marble',
+        'maya', 'metal', 'mini', 'modern', 'nature', 'neon', 'newspaper', 'ocean', 'sky', 'space', 'tigers',
+        'tournament', 'vintage', 'wood'
+    );
+
+    protected $boardTextures = array('blackwhite', 'blue', 'brown', 'bubblegum', 'burled_wood', 'dark_wood',
+        'glass', 'graffiti', 'green', 'light', 'lolz', 'marble', 'marbleblue', 'marblegreen', 'metal', 'neon',
+        'newspaper', 'orange', 'parchment', 'purple', 'red', 'sand', 'sky', 'stone', 'tan', 'tournament',
+        'translucent', 'woodolive'
+    );
+
     public function __construct(Validator $validator)
     {
         $this->validator    = $validator;
@@ -67,7 +80,7 @@ class Generator
         $this->setConfigSize($config);
         $this->setConfigBoardTexture($config);
         $this->setConfigPieceTheme($config);
-        
+
         $config->setHighlightSquares(
             $this->parseHighlightSquaresString($config->getHighlightSquares())
         );

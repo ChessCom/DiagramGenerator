@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use DiagramGenerator\Validator\Constraints\CustomCellSize;
 use DiagramGenerator\Validator\Constraints\SquareList;
 use DiagramGenerator\Validator\Constraints\Integer;
+use DiagramGenerator\Validator\Constraints\StringOrInteger;
 
 /**
  * @ExclusionPolicy("none")
@@ -54,6 +55,7 @@ class Config
 
     /**
      * @Type("string")
+     * @StringOrInteger(min=0, max=5)
      * @SerializedName("theme")
      * @var integer
      */
@@ -61,6 +63,7 @@ class Config
 
     /**
      * @Type("string")
+     * @StringOrInteger(min=0, max=5)
      * @SerializedName("piece")
      * @var integer
      */
@@ -68,6 +71,7 @@ class Config
 
     /**
      * @Type("string")
+     * @StringOrInteger(min=0, max=3)
      * @SerializedName("texture")
      * @var integer
      */
@@ -75,6 +79,7 @@ class Config
 
     /**
      * @Type("string")
+     * @StringOrInteger(min=0, max=3)
      * @SerializedName("board")
      * @var integer
      */
