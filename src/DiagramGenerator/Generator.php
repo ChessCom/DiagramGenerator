@@ -128,16 +128,15 @@ class Generator
      */
     protected function setConfigBoardTexture(Config $config)
     {
-        $texture = new Texture();
-        if (is_numeric($config->getTextureIndex())) {
-            if (!array_key_exists($config->getTextureIndex(), $this->deprecateBoardTextures)) {
-                throw new \RuntimeException(sprintf("Texture %s doesn't exist", $config->getTextureIndex()));
-            }
+        $boardTexture = is_numeric($config->getTextureIndex()) ?
+            $this->deprecateBoardTextures[$config->getTextureIndex()] : $config->getTextureIndex();
 
-            $config->setTexture($texture->setBoard($this->deprecateBoardTextures[$config->getTextureIndex()]));
-        } else {
-            $config->setTexture($texture->setBoard($config->getTextureIndex()));
+        if ($boardTexture && !in_array($boardTexture, $this->boardTextures)) {
+            throw new \InvalidArgumentException(sprintf('Board texture %s does not exist', $boardTexture));
         }
+
+        $texture = new Texture();
+        $config->setTexture($texture->setBoard($boardTexture));
     }
 
     /**
@@ -147,16 +146,15 @@ class Generator
      */
     protected function setConfigPieceTheme(Config $config)
     {
-        $theme = new Theme();
-        if (is_numeric($config->getThemeIndex())) {
-            if (!array_key_exists($config->getThemeIndex(), $this->deprecatedPieceThemes)) {
-                throw new \Exception(sprintf("Theme %s doesn't exist", $config->getThemeIndex()));
-            }
+        $pieceTheme = is_numeric($config->getThemeIndex()) ?
+            $this->deprecatedPieceThemes[$config->getThemeIndex()] : $config->getThemeIndex();
 
-            $config->setTheme($theme->setName($this->deprecatedPieceThemes[$config->getThemeIndex()]));
-        } else {
-            $config->setTheme($theme->setName($config->getThemeIndex()));
+        if (!in_array($pieceTheme, $this->pieceThemes)) {
+            throw new \InvalidArgumentException(sprintf('Piece theme %s does not exist', $pieceTheme));
         }
+
+        $theme = new Theme();
+        $config->setTheme($theme->setName($pieceTheme));
     }
 
     /**
