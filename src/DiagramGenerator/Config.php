@@ -40,7 +40,7 @@ class Config
 
     /**
      * @Type("string")
-     * @CustomCellSize()
+     * @CustomCellSize(min=0, max=3)
      * @SerializedName("size")
      * @var string
      */

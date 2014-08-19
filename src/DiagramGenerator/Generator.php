@@ -6,7 +6,6 @@ use DiagramGenerator\Config;
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
-use DiagramGenerator\ConfigLoader;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\UnsupportedConfigException;
 use Symfony\Component\Validator\Validation;
@@ -19,34 +18,31 @@ use Symfony\Component\Validator\Validator;
 class Generator
 {
     /**
-     * @var \DiagramGenerator\ConfigLoader;
-     */
-    protected $configLoader;
-
-    /**
      * @var \Symfony\Component\Validator\Validator
      */
     protected $validator;
 
     /**
-     * Deprecating the passing an integer that represents the board texture index, which determines the board
-     * texture data which is recorded in a config file. Not using the config file anymore
+     * Deprecating the size index format, using {cellSize}px format instead. Keeping the size indexes for backwards
+     * compatibility, we will not provide new indexes in the future
      */
-    protected $deprecateBoardTextures = array(0 => 'neon', 1 => 'dark_wood', 2 => 'burled_wood', 3 => 'metal');
+    protected $deprecatedSizes = array(20, 30, 60, 90);
 
     /**
-     * Deprecating the passing an integer that represents the piece theme index, which determines the piece theme
-     * data which is recorded in a config file. Not using the config file anymore
+     * Deprecating board texture index format, using the board texture name instead. Keeping the board texture
+     * indexes for backwards compatibility, we will not provide new indexes in the future
      */
-    protected $deprecatedPieceThemes = array(
-        0 => 'classic', 1 => 'alpha', 2 => 'book', 3 => 'club', 4 => 'modern', 5 => 'vintage'
-    );
+    protected $deprecateBoardTextures = array('neon', 'dark_wood', 'burled_wood', 'metal');
+
+    /**
+     * Deprecating piece theme index format, using the piece theme name instead. Keeping the piece theme indexes
+     * for backwards compatibility, we will not provide new indexes in the future
+     */
+    protected $deprecatedPieceThemes = array('classic', 'alpha', 'book', 'club', 'modern', 'vintage');
 
     public function __construct(Validator $validator)
     {
         $this->validator    = $validator;
-        $this->configLoader = new ConfigLoader($validator);
-        $this->configLoader->loadSizeConfig(self::getResourcesDir());
     }
 
     /**
@@ -73,7 +69,7 @@ class Generator
         $this->setConfigPieceTheme($config);
         
         $config->setHighlightSquares(
-            $this->configLoader->parseHighlightSquaresString($config->getHighlightSquares())
+            $this->parseHighlightSquaresString($config->getHighlightSquares())
         );
 
         $board = $this->createBoard($config);
@@ -89,36 +85,27 @@ class Generator
      */
     protected function setConfigSize(Config $config)
     {
-        if (is_numeric($config->getSizeIndex())) {
-            // numeric sizes are deprecated, keeping numeric sizes for backwords compatibility (0-3).
-            $sizes = $this->configLoader->getSizes();
+        $cellSize = is_numeric($config->getSizeIndex()) ?
+            $this->deprecatedSizes[$config->getSizeIndex()] : substr($config->getSizeIndex(), 0, -2);
 
-            if (!array_key_exists($config->getSizeIndex(), $sizes)) {
-                throw new \Exception(sprintf("Size %s doesn't exist", $config->getSizeIndex()));
-            }
 
-            $config->setSize($sizes[$config->getSizeIndex()]);
-        } else {
-            $cellSize = substr($config->getSizeIndex(), 0, -2);
-
-            if ($cellSize < Size::MIN_CUSTOM_SIZE) {
-                throw new \InvalidArgumentException(
-                    sprintf('Size should be %spx or more', Size::MIN_CUSTOM_SIZE)
-                );
-            } elseif ($cellSize > Size::MAX_CUSTOM_SIZE) {
-                throw new \InvalidArgumentException(
-                    sprintf('Size should be %spx or less', Size::MAX_CUSTOM_SIZE)
-                );
-            }
-
-            $size = new Size();
-            $size->setCell($cellSize)
-                ->setBorder(Size::BORDER_COEFFICIENT * $cellSize)
-                ->setCaption(Size::CAPTION_COEFFICIENT * $cellSize)
-                ->setCoordinates(Size::COORDINATES_COEFFICIENT * $cellSize);
-
-            $config->setSize($size);
+        if ($cellSize < Size::MIN_CUSTOM_SIZE) {
+            throw new \InvalidArgumentException(
+                sprintf('Size should be %spx or more', Size::MIN_CUSTOM_SIZE)
+            );
+        } elseif ($cellSize > Size::MAX_CUSTOM_SIZE) {
+            throw new \InvalidArgumentException(
+                sprintf('Size should be %spx or less', Size::MAX_CUSTOM_SIZE)
+            );
         }
+
+        $size = new Size();
+        $size->setCell($cellSize)
+            ->setBorder(Size::BORDER_COEFFICIENT * $cellSize)
+            ->setCaption(Size::CAPTION_COEFFICIENT * $cellSize)
+            ->setCoordinates(Size::COORDINATES_COEFFICIENT * $cellSize);
+
+        $config->setSize($size);
     }
 
     /**
@@ -157,6 +144,21 @@ class Generator
         } else {
             $config->setTheme($theme->setName($config->getThemeIndex()));
         }
+    }
+
+    /**
+     * Parse the highlightSquares string into an array of squares
+     *
+     * @param string $highlightSquares
+     */
+    protected function parseHighlightSquaresString($highlightSquares)
+    {
+        $highlightSquaresParsed = array();
+        for ($i = 0; $i < strlen($highlightSquares); $i+=2) {
+            $highlightSquaresParsed[] = $highlightSquares[$i] . $highlightSquares[$i+1];
+        }
+
+        return $highlightSquaresParsed;
     }
 
     /**
