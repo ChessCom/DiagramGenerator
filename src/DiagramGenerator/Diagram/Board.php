@@ -70,14 +70,14 @@ class Board
         $this->image->newImage(
             $this->getCellSize() * 8,
             $this->getCellSize() * 8 + $this->paddingTop,
-            new \ImagickPixel($this->getBackgroundColor())
+            new \ImagickPixel('none')
         );
 
         // Add board texture
         if ($this->getBoardTexture()) {
             $background = new \Imagick($this->getBackgroundTexture());
             $textureSize = $this->getCellSize() * 2;
-            
+
             $this->image->compositeImage(
                 $background, \Imagick::COMPOSITE_DEFAULT, 0, $this->paddingTop
             );
@@ -252,7 +252,7 @@ class Board
      */
     protected function getPieceImagePath(Piece $piece)
     {
-        
+
         $filename = sprintf("%s%s.png",
             substr($piece->getColor(), 0, 1),
             $piece->getKey()

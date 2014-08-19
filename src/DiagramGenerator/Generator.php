@@ -184,7 +184,6 @@ class Generator
             ->drawBoard()
             ->drawCells()
             ->drawFigures()
-            ->drawBorder()
             ->draw();
 
         return $board;
