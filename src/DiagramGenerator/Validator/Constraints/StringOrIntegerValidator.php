@@ -23,8 +23,7 @@ class StringOrIntegerValidator extends ConstraintValidator
         if ($isInteger) {
             if (null !== $constraint->max && $value > $constraint->max) {
                 $this->context->addViolation($constraint->maxMessage, array(
-                    '{{ value }}' => $value,
-                    '{{ limit }}' => $constraint->max,
+                    '{{ limit }}' => $constraint->max
                 ));
 
                 return;
@@ -32,8 +31,7 @@ class StringOrIntegerValidator extends ConstraintValidator
 
             if (null !== $constraint->min && $value < $constraint->min) {
                 $this->context->addViolation($constraint->minMessage, array(
-                    '{{ value }}' => $value,
-                    '{{ limit }}' => $constraint->min,
+                    '{{ limit }}' => $constraint->min
                 ));
 
                 return;
