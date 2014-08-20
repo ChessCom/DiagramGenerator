@@ -9,7 +9,7 @@ class StringOrIntegerValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        if (null === $value || '' === $value) {
+        if (null === $value) {
             return;
         }
 
