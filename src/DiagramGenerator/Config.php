@@ -29,7 +29,7 @@ use DiagramGenerator\Validator\Constraints\StringOrInteger;
 // url with invalid data can be cached, which we want to avoid
 class Config
 {
-    const DEFAULT_PIECE_THEME_INDEX = 4;
+    const DEFAULT_PIECE_THEME_INDEX = 'modern';
     const DEFAULT_BOARD_TEXTURE_INDEX = null;
 
     /**
@@ -45,7 +45,7 @@ class Config
      * @SerializedName("size")
      * @var string
      */
-    protected $sizeIndex = 1;
+    protected $sizeIndex = '20px';
 
     /**
      * @Exclude()
