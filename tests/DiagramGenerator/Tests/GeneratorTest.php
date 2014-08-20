@@ -122,9 +122,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($constraintViolationList));
     }
 
-    public function testBuildDiagramInvalidHighlightSquares()
+    public function testBuildDiagram()
     {
-        $this->config->setSizeIndex('200px')
+        $this->config->setSizeIndex('20px')
             ->setThemeIndex('3d_chesskid');
 
         $this->assertValidatorMockWithNoErrors($this->config);
