@@ -83,6 +83,7 @@ class Diagram
      * Draw diagram
      * @return self
      */
+    // TODO [lackovic10]: move this to the Board class
     public function draw()
     {
         if (!$this->board) {

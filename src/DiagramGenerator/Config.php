@@ -37,7 +37,7 @@ class Config
      * @NotBlank()
      * @var string
      */
-    protected $fen = FEN::DEFAULT_FEN;
+    protected $fen = Fen::DEFAULT_FEN;
 
     /**
      * @Type("string")
