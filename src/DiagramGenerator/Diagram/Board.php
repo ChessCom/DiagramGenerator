@@ -66,7 +66,6 @@ class Board
     public function drawBoard()
     {
         $this->paddingTop = $this->getMaxPieceHeight() - $this->getCellSize();
-
         $this->image->newImage(
             $this->getCellSize() * 8,
             $this->getCellSize() * 8 + $this->paddingTop,
@@ -161,15 +160,17 @@ class Board
 
     /**
      * Draws border. Must be called last
-     * @return self
+     * @deprecated
+     * needs to be updated to handle boards with 3d pieces correctly
      */
     public function drawBorder()
     {
+        /*
         $this->image->borderImage(
             new \ImagickPixel($this->getBorderColor()),
             $this->getBorderSize(),
             $this->getBorderSize()
-        );
+        );*/
 
         return $this;
     }

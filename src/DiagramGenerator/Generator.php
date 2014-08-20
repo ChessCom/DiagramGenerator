@@ -55,7 +55,7 @@ class Generator
 
     public function __construct(Validator $validator)
     {
-        $this->validator    = $validator;
+        $this->validator = $validator;
     }
 
     /**
