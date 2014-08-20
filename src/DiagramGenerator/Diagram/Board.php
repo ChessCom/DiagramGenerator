@@ -195,6 +195,11 @@ class Board
         return $this->config->getSize()->getCell();
     }
 
+    public function getPaddingTop()
+    {
+        return $this->paddingTop;
+    }
+
     /**
      * @return string
      */
