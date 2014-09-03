@@ -10,9 +10,4 @@ use Symfony\Component\Validator\Constraint;
 class SquareList extends Constraint
 {
     public $invalidMessage = 'Invalid string representation of a list of squares';
-
-    public function __construct($options = null)
-    {
-        parent::__construct($options);
-    }
 }
