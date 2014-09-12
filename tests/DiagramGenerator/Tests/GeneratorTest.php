@@ -20,6 +20,13 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Config $config */
     protected $config;
 
+    /** @var string $rootCacheDir */
+    protected $rootCacheDir = '/tmp/diagram_generator_test';
+
+    protected $boardTextureUrl = 'test.png';
+
+    protected $pieceThemeUrl = 'test.png';
+
     public function setUp()
     {
         parent::setUp();
@@ -40,7 +47,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertValidatorMockWithErrors($this->config);
 
-        $this->generator->buildDiagram($this->config);
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
     }
 
     /**
@@ -53,7 +62,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram($this->config);
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
     }
 
     /**
@@ -66,7 +77,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram($this->config);
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
     }
 
     /**
@@ -80,7 +93,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram($this->config);
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
     }
 
     /**
@@ -95,7 +110,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram($this->config);
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
     }
 
     private function assertValidatorMockWithErrors(Config $config)
@@ -121,14 +138,5 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             ->with($config)
             ->will($this->returnValue($constraintViolationList));
     }
-
-    public function testBuildDiagram()
-    {
-        $this->config->setSizeIndex('20px')
-            ->setThemeIndex('3d_chesskid');
-
-        $this->assertValidatorMockWithNoErrors($this->config);
-
-        $this->assertInstanceOf('DiagramGenerator\Diagram', $this->generator->buildDiagram($this->config));
-    }
 }
+
