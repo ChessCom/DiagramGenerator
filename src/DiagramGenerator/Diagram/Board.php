@@ -316,14 +316,6 @@ class Board
             mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
         }
 
-        /*if (!file_exists($this->cacheDir . '/' . $pieceThemeName)) {
-            mkdir($this->cacheDir . '/' . $pieceThemeName);
-        }
-
-        if (!file_exists($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize)) {
-            mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize);
-        }*/
-
         $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
         $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
         $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
