@@ -70,7 +70,7 @@ class Generator
      * @param  Config $config
      * @return \DiagramGenerator\Diagram
      */
-    public function buildDiagram(Config $config)
+    public function buildDiagram(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
         $errors = $this->validator->validate($config);
         if (count($errors) > 0) {
@@ -85,8 +85,15 @@ class Generator
             $this->parseHighlightSquaresString($config->getHighlightSquares())
         );
 
-        $board = $this->createBoard($config);
-        $diagram = $this->createDiagram($config, $board);
+        $board = new Board($config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl);
+        $board->drawBoard()
+            ->drawCells()
+            ->drawFigures()
+            ->draw();
+
+        $diagram = new Diagram($config);
+        $diagram->setBoard($board)
+            ->draw();
 
         return $diagram;
     }
@@ -170,38 +177,5 @@ class Generator
         }
 
         return $highlightSquaresParsed;
-    }
-
-    /**
-     * Creates board image
-     * @param  Config $config
-     * @return \DiagramGenerator\Diagram\Board
-     */
-    protected function createBoard(Config $config)
-    {
-        $board = new Board($config);
-        $board
-            ->drawBoard()
-            ->drawCells()
-            ->drawFigures()
-            ->draw();
-
-        return $board;
-    }
-
-    /**
-     * Creates diagram
-     * @param  Config $config
-     * @param  Board  $board
-     * @return \DiagramGenerator\Diagram
-     */
-    protected function createDiagram(Config $config, Board $board)
-    {
-        $diagram = new Diagram($config);
-        $diagram
-            ->setBoard($board)
-            ->draw();
-
-        return $diagram;
     }
 }

@@ -37,9 +37,52 @@ class Board
      */
     protected $paddingTop = 0;
 
-    public function __construct(Config $config)
+    /**
+     * @var
+     */
+    protected $rootCacheDir;
+
+    /**
+     * @var
+     */
+    protected $cacheDirName = 'diagram_generator';
+
+    /**
+     * @var
+     */
+    protected $cacheDir;
+
+    /**
+     * @var string $boardTextureUrl
+     */
+    protected $boardTextureUrl;
+
+    /**
+     * @var string $piece
+     */
+    protected $pieceThemeUrl;
+
+    /**
+     * @var string $imagesExtension
+     */
+    protected $imagesExtension;
+
+    public function __construct(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
         $this->config = $config;
+        $this->rootCacheDir = $rootCacheDir;
+        $this->boardTextureUrl = $boardTextureUrl;
+        $this->pieceThemeUrl = $pieceThemeUrl;
+
+        $boardTextureUrlExploded = explode('.', $boardTextureUrl);
+        $this->imagesExtension = $boardTextureUrlExploded[count($boardTextureUrlExploded) - 1];
+
+        $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
+
+        if (!file_exists($this->cacheDir)) {
+            mkdir($this->cacheDir);
+        }
+
         $this->image  = new \Imagick();
         $this->fen = Fen::createFromString($this->config->getFen());
 
@@ -258,17 +301,36 @@ class Board
      */
     protected function getPieceImagePath(Piece $piece)
     {
+        $pieceThemeName = $this->config->getTheme()->getName();
+        $cellSize = $this->getCellSize();
+        $piece = substr($piece->getColor(), 0, 1) . $piece->getKey();
 
-        $filename = sprintf("%s%s.png",
-            substr($piece->getColor(), 0, 1),
-            $piece->getKey()
-        );
+        $pieceCachedPath = $this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize . '/' . $piece . '.' .
+            $this->imagesExtension;
 
-        return sprintf("http://d1xrj4tlyewhek.cloudfront.net/pieces/%s/%s/%s",
-            $this->config->getTheme()->getName(),
-            $this->getCellSize(),
-            $filename
-        );
+        if (file_exists($pieceCachedPath)) {
+            return $pieceCachedPath;
+        }
+
+        if (!file_exists($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize)) {
+            mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
+        }
+
+        /*if (!file_exists($this->cacheDir . '/' . $pieceThemeName)) {
+            mkdir($this->cacheDir . '/' . $pieceThemeName);
+        }
+
+        if (!file_exists($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize)) {
+            mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize);
+        }*/
+
+        $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
+        $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
+        $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
+
+        $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
+
+        return $pieceCachedPath;
     }
 
     /**
@@ -278,10 +340,23 @@ class Board
      */
     protected function getBackgroundTexture()
     {
-        return sprintf("http://d1xrj4tlyewhek.cloudfront.net/boards/%s/%s.png",
-            $this->getBoardTexture(),
-            $this->getCellSize()
-        );
+        $boardCachedPath = $this->cacheDir . '/board/' . $this->getBoardTexture() . '/' . $this->getCellSize() .
+            '.' . $this->imagesExtension;
+
+        if (file_exists($boardCachedPath)) {
+            return $boardCachedPath;
+        }
+
+        if (!file_exists($this->cacheDir . '/board/' . $this->getBoardTexture())) {
+            mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
+        }
+
+        $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
+        $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
+
+        $this->cacheImage($boardTextureUrl, $boardCachedPath);
+
+        return $boardCachedPath;
     }
 
     /**
@@ -318,5 +393,22 @@ class Board
         }
 
         return $maxHeight;
+    }
+
+    /**
+     * Cache an image from a remote url to a local cache file
+     *
+     * @param string $remoteImageUrl
+     * @param string $cachedFilePath
+     */
+    protected function cacheImage($remoteImageUrl, $cachedFilePath)
+    {
+        $ch = curl_init($remoteImageUrl);
+        $destinationFileHandle = fopen($cachedFilePath, 'wb');
+        curl_setopt($ch, CURLOPT_FILE, $destinationFileHandle);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($destinationFileHandle);
     }
 }
