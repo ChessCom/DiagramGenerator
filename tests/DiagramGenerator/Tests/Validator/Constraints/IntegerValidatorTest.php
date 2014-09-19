@@ -84,7 +84,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidUnsignedIntegerProvider
      */
-    public function testInvalidunsignedInteger($value)
+    public function testInvalidUnsignedInteger($value)
     {
         $this->integer->unsigned = true;
 

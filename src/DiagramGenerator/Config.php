@@ -23,10 +23,9 @@ use DiagramGenerator\Validator\Constraints\StringOrInteger;
 /**
  * @ExclusionPolicy("none")
  */
-// [lackovic10] setting Type("string") for int values theme, piece, texture, board so we can validate, and throw
-// exceptions with 404 http status code for invalid data. When the type is string, if the client passes an invalid
-// string, it will be converted to 0, which is a valid index for both piece theme and board texture, and then the
-// url with invalid data can be cached, which we want to avoid
+// [lackovic10] Type("string")for int values of theme, piece, texture and board need to be to string and not int,
+// so that they can be validated correctly. Invalid int type values are converted to 0, which are valid indexes for
+// piece/theme and board/texture and cause unwanted results
 class Config
 {
     const DEFAULT_PIECE_THEME_INDEX = 'modern';

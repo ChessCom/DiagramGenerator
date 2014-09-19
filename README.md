@@ -63,10 +63,10 @@ $diagramConfig = $jmsSerializer->deserialize($inputParameters, 'DiagramGenerator
 | ----------- | ------------------------------- | ---------------------------- | ------------ | --------------------------- |
 | fen         | board fen                       | a valid fen (only with pieces info) | default fen  | `/diagram?fen=rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R`
 | size        | board size                      | 20px - 200px                 | 20px         | `/diagram?size=50px`        |
-| theme       | theme (pieces) type             | bellow (Piece themes list)   | modern       | `/diagram?theme=3d_wood`    |
-| piece       | alias for theme                 | bellow (Piece themes list)   | modern       | `/diagram?piece=3d_wood`    |
-| texture     | board (squares) texture         | bellow (Board textures list) | None         | `/diagram?texture=bubblegum`|
-| board       | alias for texture               | bellow (Board textures list) | None         | `/diagram?board=bubblegum`  |
+| theme       | theme (pieces) type             | below (Piece themes list)   | modern       | `/diagram?theme=3d_wood`    |
+| piece       | alias for theme                 | below (Piece themes list)   | modern       | `/diagram?piece=3d_wood`    |
+| texture     | board (squares) texture         | below (Board textures list) | None         | `/diagram?texture=bubblegum`|
+| board       | alias for texture               | below (Board textures list) | None         | `/diagram?board=bubblegum`  |
 | caption     | text to show under the board    | any url encoded string       | empty string | `/diagram?caption=php%20c#` |
 | coordinates | show or not board coordinates   | true or false                | false        | `/diagram?coordinates=true` |
 | light       | hex color of light board pieces | ^[a-fA-F0-9]{6}$             | eeeed2       | `/diagram?light=aecef2`     |

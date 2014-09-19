@@ -67,6 +67,12 @@ class Board
      */
     protected $imagesExtension;
 
+    /**
+     * @param Config $config
+     * @param string $rootCacheDir
+     * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__.png
+     * @param string $pieceThemeUrl   ex. /pieces/__PIECE_THEME__/__SIZE__/__PIECE__.png
+     */
     public function __construct(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
         $this->config = $config;
