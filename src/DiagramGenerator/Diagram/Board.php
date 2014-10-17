@@ -14,6 +14,9 @@ use DiagramGenerator\Fen\Piece;
  */
 class Board
 {
+    const HIGHLIGHTED_DARK_SQUARE_OPACITY = 1;
+    const HIGHLIGHTED_LIGHT_SQUARE_OPACITY = .5;
+
     /**
      * @var \Imagick
      */
@@ -24,10 +27,74 @@ class Board
      */
     protected $config;
 
-    public function __construct(Config $config)
+    /**
+     * @var \DiagramGenerator\Fen $fen
+     */
+    protected $fen;
+
+    /**
+     * @var int $paddingTop
+     */
+    protected $paddingTop = 0;
+
+    /**
+     * @var
+     */
+    protected $rootCacheDir;
+
+    /**
+     * @var
+     */
+    protected $cacheDirName = 'diagram_generator';
+
+    /**
+     * @var
+     */
+    protected $cacheDir;
+
+    /**
+     * @var string $boardTextureUrl
+     */
+    protected $boardTextureUrl;
+
+    /**
+     * @var string $piece
+     */
+    protected $pieceThemeUrl;
+
+    /**
+     * @var string $imagesExtension
+     */
+    protected $imagesExtension;
+
+    /**
+     * @param Config $config
+     * @param string $rootCacheDir
+     * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__.png
+     * @param string $pieceThemeUrl   ex. /pieces/__PIECE_THEME__/__SIZE__/__PIECE__.png
+     */
+    public function __construct(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
         $this->config = $config;
+        $this->rootCacheDir = $rootCacheDir;
+        $this->boardTextureUrl = $boardTextureUrl;
+        $this->pieceThemeUrl = $pieceThemeUrl;
+
+        $boardTextureUrlExploded = explode('.', $boardTextureUrl);
+        $this->imagesExtension = $boardTextureUrlExploded[count($boardTextureUrlExploded) - 1];
+
+        $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
+
+        if (!file_exists($this->cacheDir)) {
+            mkdir($this->cacheDir);
+        }
+
         $this->image  = new \Imagick();
+        $this->fen = Fen::createFromString($this->config->getFen());
+
+        if ($this->config->getFlip()) {
+            $this->fen->flip();
+        }
     }
 
     /**
@@ -47,28 +114,21 @@ class Board
      */
     public function drawBoard()
     {
-        $boardSize = $this->getCellSize() * 8;
+        $this->paddingTop = $this->getMaxPieceHeight() - $this->getCellSize();
         $this->image->newImage(
-            $boardSize,
-            $boardSize,
-            new \ImagickPixel($this->getBackgroundColor())
+            $this->getCellSize() * 8,
+            $this->getCellSize() * 8 + $this->paddingTop,
+            new \ImagickPixel('none')
         );
 
         // Add board texture
         if ($this->getBoardTexture()) {
             $background = new \Imagick($this->getBackgroundTexture());
             $textureSize = $this->getCellSize() * 2;
-            $background->scaleImage($textureSize, $textureSize);
-            for ($x = 0; $x < 4; $x++) {
-                for ($y = 0; $y < 4; $y++) {
-                    $this->image->compositeImage(
-                        $background,
-                        \Imagick::COMPOSITE_DEFAULT,
-                        $x * $textureSize,
-                        $y * $textureSize
-                    );
-                }
-            }
+
+            $this->image->compositeImage(
+                $background, \Imagick::COMPOSITE_DEFAULT, 0, $this->paddingTop
+            );
         }
 
         return $this;
@@ -81,26 +141,49 @@ class Board
      */
     public function drawCells()
     {
-        if ($this->getBoardTexture()) {
-            return $this;
-        }
-
         for ($x = 1; $x <= 8; $x++) {
             for ($y = 1; $y <= 8; $y++) {
-                $colorIndex = ($x + $y) % 2;
-                $cell = new \ImagickDraw();
-                $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
-                $cell->rectangle(
-                    ($x - 1) * $this->getCellSize(),
-                    ($y - 1) * $this->getCellSize(),
-                    $x * $this->getCellSize(),
-                    $y * $this->getCellSize()
-                );
-                $this->image->drawImage($cell);
+                $this->drawCell($x, $y, ($x + $y) % 2);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Draw a single cell
+     *
+     * @param int  $x
+     * @param int  $y
+     * @param bool $colorIndex
+     */
+    public function drawCell($x, $y, $colorIndex)
+    {
+        $cell = new \ImagickDraw();
+
+        if (is_array($this->config->getHighlightSquares()) &&
+            in_array($this->getSquare($x, $y), $this->config->getHighlightSquares())) {
+
+            $cell->setFillColor($this->config->getHighlightSquaresColor());
+            $cell->setFillOpacity(
+                $colorIndex ? self::HIGHLIGHTED_DARK_SQUARE_OPACITY : self::HIGHLIGHTED_LIGHT_SQUARE_OPACITY
+            );
+        } else {
+            if ($this->getBoardTexture()) {
+                return;
+            }
+
+            $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
+        }
+
+        $cell->rectangle(
+            ($x - 1) * $this->getCellSize(),
+            ($y - 1) * $this->getCellSize() + $this->paddingTop,
+            $x * $this->getCellSize(),
+            $y * $this->getCellSize() + $this->paddingTop
+        );
+
+        $this->image->drawImage($cell);
     }
 
     /**
@@ -109,19 +192,15 @@ class Board
      */
     public function drawFigures()
     {
-        $fen = Fen::createFromString($this->config->getFen());
-        if ($this->config->getFlip()) {
-            $fen->flip();
-        }
-
-        foreach ($fen->getPieces() as $piece) {
+        foreach ($this->fen->getPieces() as $piece) {
             $pieceImage = new \Imagick($this->getPieceImagePath($piece));
-            $pieceImage->scaleImage($this->getCellSize(), $this->getCellSize());
+
             $this->image->compositeImage(
                 $pieceImage,
                 \Imagick::COMPOSITE_DEFAULT,
                 $this->getCellSize() * $piece->getColumn(),
-                $this->getCellSize() * $piece->getRow()
+                // some pieces are not the same hight as the cell and they need to be adjusted
+                $this->getCellSize() * ($piece->getRow() + 1) - $pieceImage->getImageHeight() + $this->paddingTop
             );
         }
 
@@ -130,15 +209,17 @@ class Board
 
     /**
      * Draws border. Must be called last
-     * @return self
+     * @deprecated
+     * needs to be updated to handle boards with 3d pieces correctly
      */
     public function drawBorder()
     {
+        /*
         $this->image->borderImage(
             new \ImagickPixel($this->getBorderColor()),
             $this->getBorderSize(),
             $this->getBorderSize()
-        );
+        );*/
 
         return $this;
     }
@@ -161,6 +242,11 @@ class Board
     public function getCellSize()
     {
         return $this->config->getSize()->getCell();
+    }
+
+    public function getPaddingTop()
+    {
+        return $this->paddingTop;
     }
 
     /**
@@ -221,13 +307,28 @@ class Board
      */
     protected function getPieceImagePath(Piece $piece)
     {
-        $filename = sprintf("%s/%s%s.png",
-            $this->config->getTheme()->getName(),
-            substr($piece->getColor(), 0, 1),
-            $piece->getKey()
-        );
+        $pieceThemeName = $this->config->getTheme()->getName();
+        $cellSize = $this->getCellSize();
+        $piece = substr($piece->getColor(), 0, 1) . $piece->getKey();
 
-        return sprintf("%s/pieces/%s", Generator::getResourcesDir(), $filename);
+        $pieceCachedPath = $this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize . '/' . $piece . '.' .
+            $this->imagesExtension;
+
+        if (file_exists($pieceCachedPath)) {
+            return $pieceCachedPath;
+        }
+
+        if (!file_exists($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize)) {
+            mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
+        }
+
+        $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
+        $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
+        $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
+
+        $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
+
+        return $pieceCachedPath;
     }
 
     /**
@@ -237,6 +338,75 @@ class Board
      */
     protected function getBackgroundTexture()
     {
-        return sprintf("%s/boards/%s.jpg", Generator::getResourcesDir(), $this->getBoardTexture());
+        $boardCachedPath = $this->cacheDir . '/board/' . $this->getBoardTexture() . '/' . $this->getCellSize() .
+            '.' . $this->imagesExtension;
+
+        if (file_exists($boardCachedPath)) {
+            return $boardCachedPath;
+        }
+
+        if (!file_exists($this->cacheDir . '/board/' . $this->getBoardTexture())) {
+            mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
+        }
+
+        $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
+        $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
+
+        $this->cacheImage($boardTextureUrl, $boardCachedPath);
+
+        return $boardCachedPath;
+    }
+
+    /**
+     * Return the square for the coordinates passed (starting from 0)
+     *
+     * @param int $x
+     * @param int $y
+     *
+     * @return string
+     */
+    protected function getSquare($x, $y)
+    {
+        $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
+
+        return $squares[$x-1] . (8 - $y + 1);
+    }
+
+    /**
+     * Get the largest piece height
+     *
+     * @return int
+     */
+    protected function getMaxPieceHeight()
+    {
+        $maxHeight = $this->getCellSize();
+        foreach ($this->fen->getPieces() as $piece) {
+            $pieceImage = new \Imagick($this->getPieceImagePath($piece));
+
+            if ($pieceImage->getImageHeight() > $maxHeight) {
+                $maxHeight = $pieceImage->getImageHeight();
+            }
+
+            unset($pieceImage);
+        }
+
+        return $maxHeight;
+    }
+
+    /**
+     * Cache an image from a remote url to a local cache file
+     *
+     * @param string $remoteImageUrl
+     * @param string $cachedFilePath
+     */
+    protected function cacheImage($remoteImageUrl, $cachedFilePath)
+    {
+        $ch = curl_init($remoteImageUrl);
+        $destinationFileHandle = fopen($cachedFilePath, 'wb');
+        curl_setopt($ch, CURLOPT_FILE, $destinationFileHandle);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($destinationFileHandle);
     }
 }

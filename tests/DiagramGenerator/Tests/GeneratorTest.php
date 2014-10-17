@@ -3,85 +3,140 @@
 namespace DiagramGenerator\Tests;
 
 use Symfony\Component\Validator\ConstraintViolationList;
+use DiagramGenerator\Config;
+use DiagramGenerator\Generator;
 
 /**
  * GeneratorTest
  */
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    public function testBuildDiagramInvalidThemeConfig()
-    {
-        $generator = $this
-            ->getMockBuilder('DiagramGenerator\Generator')
-            ->setConstructorArgs(array($this->getValidator()))
-            ->setMethods(null)
-            ->getMock();
-        $config = $this->getMock('DiagramGenerator\Config');
-        $this->setExpectedException('DiagramGenerator\Exception\InvalidConfigException');
-        $generator->buildDiagram($config);
-    }
+    /** @var \Symfony\Component\Validator\Validator $validator */
+    protected $validatorMock;
 
-    public function testBuildDiagramInvalidSizeConfig()
-    {
-        $generator = $this
-            ->getMockBuilder('DiagramGenerator\Generator')
-            ->setConstructorArgs(array($this->getValidator()))
-            ->setMethods(null)
-            ->getMock();
-        $config = $this->getMock('DiagramGenerator\Config');
-        $config
-            ->expects($this->once())
-            ->method('getThemeIndex')
-            ->will($this->returnValue(1));
-        $this->setExpectedException('DiagramGenerator\Exception\InvalidConfigException');
-        $generator->buildDiagram($config);
-    }
+    /** @var \DiagramGenerator\Generator $generator */
+    protected $generator;
 
-    public function testBuildDiagram()
+    /** @var \DiagramGenerator\Config $config */
+    protected $config;
+
+    /** @var string $rootCacheDir */
+    protected $rootCacheDir = '/tmp/diagram_generator_test';
+
+    protected $boardTextureUrl = 'test.png';
+
+    protected $pieceThemeUrl = 'test.png';
+
+    public function setUp()
     {
-        $generator = $this
-            ->getMockBuilder('DiagramGenerator\Generator')
-            ->setConstructorArgs(array($this->getValidator()))
-            ->setMethods(array('createBoard', 'createDiagram'))
-            ->getMock();
-        $board = $this
-            ->getMockBuilder('DiagramGenerator\Diagram\Board')
+        parent::setUp();
+
+        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\Validator')
             ->disableOriginalConstructor()
             ->getMock();
-        $generator
-            ->expects($this->once())
-            ->method('createBoard')
-            ->will($this->returnValue($board));
-        $diagram = $this
-            ->getMockBuilder('DiagramGenerator\Diagram')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $generator
-            ->expects($this->once())
-            ->method('createDiagram')
-            ->will($this->returnValue($diagram));
-        $config = $this->getMock('DiagramGenerator\Config');
-        $config
-            ->expects($this->any())
-            ->method('getThemeIndex')
-            ->will($this->returnValue(1));
-        $config
-            ->expects($this->any())
-            ->method('getSizeIndex')
-            ->will($this->returnValue(1));
-        $config
-            ->expects($this->any())
-            ->method('getTextureIndex')
-            ->will($this->returnValue(1));
-        $diagram = $generator->buildDiagram($config);
-        $this->assertInstanceOf('DiagramGenerator\Diagram', $diagram);
+
+        $this->generator = new Generator($this->validatorMock);
+
+        $this->config = new Config();
     }
 
-    protected function getValidator()
+    /**
+     * @expectedException \Exception
+     */
+    public function testBuildDiagramValidateError()
     {
-        return $this
-            ->getMockBuilder('Symfony\Component\Validator\Validator')
+        $this->assertValidatorMockWithErrors($this->config);
+
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Size should be 20px or more
+     */
+    public function testBuildDiagramSmallSize()
+    {
+        $this->config->setSizeIndex('19px');
+
+        $this->assertValidatorMockWithNoErrors($this->config);
+
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Size should be 200px or less
+     */
+    public function testBuildDiagramLargeSize()
+    {
+        $this->config->setSizeIndex('201px');
+
+        $this->assertValidatorMockWithNoErrors($this->config);
+
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Piece theme non-existent does not exist
+     */
+    public function testBuldDiagramNonExistingPieceTheme()
+    {
+        $this->config->setSizeIndex('200px')
+            ->setThemeIndex('non-existent');
+
+        $this->assertValidatorMockWithNoErrors($this->config);
+
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Board texture non-existent does not exist
+     */
+    public function testBuildDiagramNonExistingBoardTexture()
+    {
+        $this->config->setSizeIndex('200px')
+            ->setThemeIndex('3d_chesskid')
+            ->setTextureIndex('non-existent');
+
+        $this->assertValidatorMockWithNoErrors($this->config);
+
+        $this->generator->buildDiagram(
+            $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
+        );
+    }
+
+    private function assertValidatorMockWithErrors(Config $config)
+    {
+        $constraintViolationMock = $this->getMockBuilder('Symfony\Component\Validator\ConstraintViolation')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $constraintViolationList = new ConstraintViolationList(array($constraintViolationMock));
+
+        $this->validatorMock->expects($this->once())
+            ->method('validate')
+            ->with($config)
+            ->will($this->returnValue($constraintViolationList));
+    }
+
+    private function assertValidatorMockWithNoErrors(Config $config)
+    {
+        $constraintViolationList = new ConstraintViolationList(array());
+
+        $this->validatorMock->expects($this->once())
+            ->method('validate')
+            ->with($config)
+            ->will($this->returnValue($constraintViolationList));
     }
 }
+

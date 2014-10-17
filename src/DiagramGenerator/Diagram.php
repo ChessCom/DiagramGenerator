@@ -83,6 +83,7 @@ class Diagram
      * Draw diagram
      * @return self
      */
+    // TODO [lackovic10]: move this to the Board class
     public function draw()
     {
         if (!$this->board) {
@@ -96,12 +97,18 @@ class Diagram
 
             // Add vertical coordinates
             foreach (Coordinate::getVerticalCoordinates() as $index => $x) {
-                $coordinate = $this->createCoordinate($this->getBorderThickness(), $this->board->getCellSize(), abs($x - 9));
+                $coordinate = $this->createCoordinate(
+                    $this->getBorderThickness(), $this->board->getCellSize(), abs($x - 9)
+                );
+
+                $coordinateY = $this->getBorderThickness() + $this->board->getPaddingTop() +
+                    $this->board->getCellSize() * $index;
+
                 $this->image->compositeImage(
                     $coordinate->getImage(),
                     \Imagick::COMPOSITE_DEFAULT,
                     0,
-                    $this->getBorderThickness() + $this->board->getCellSize() * $index
+                    $coordinateY
                 );
             }
 
