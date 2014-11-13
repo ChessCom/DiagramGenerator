@@ -86,7 +86,7 @@ class Board
         $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
 
         if (!file_exists($this->cacheDir)) {
-            mkdir($this->cacheDir);
+            @mkdir($this->cacheDir);
         }
 
         $this->image  = new \Imagick();
@@ -319,7 +319,7 @@ class Board
         }
 
         if (!file_exists($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize)) {
-            mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
+            @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
         }
 
         $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
@@ -346,7 +346,7 @@ class Board
         }
 
         if (!file_exists($this->cacheDir . '/board/' . $this->getBoardTexture())) {
-            mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
+            @mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
         }
 
         $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
