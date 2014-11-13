@@ -62,7 +62,7 @@ $diagramConfig = $jmsSerializer->deserialize($inputParameters, 'DiagramGenerator
 | Name        | Description                     | Values                       | Default      | Examples                    |
 | ----------- | ------------------------------- | ---------------------------- | ------------ | --------------------------- |
 | fen         | board fen                       | a valid fen (only with pieces info) | default fen  | `/diagram?fen=rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R`
-| size        | board size                      | 20px - 200px                 | 20px         | `/diagram?size=50px`        |
+| size        | cell size                       | 20px - 200px                 | 20px         | `/diagram?size=50px`        |
 | theme       | theme (pieces) type             | below (Piece themes list)   | modern       | `/diagram?theme=3d_wood`    |
 | piece       | alias for theme                 | below (Piece themes list)   | modern       | `/diagram?piece=3d_wood`    |
 | texture     | board (squares) texture         | below (Board textures list) | None         | `/diagram?texture=bubblegum`|
