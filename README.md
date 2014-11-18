@@ -72,6 +72,8 @@ $diagramConfig = $jmsSerializer->deserialize($inputParameters, 'DiagramGenerator
 | light       | hex color of light board pieces | ^[a-fA-F0-9]{6}$             | eeeed2       | `/diagram?light=aecef2`     |
 | dark        | hex color of dark board pieces  | ^[a-fA-F0-9]{6}$             | 769656       | `/diagram?dark=16a656`      |
 | flip        | allows to flip the board        | true or false                | false        | `/diagram?flip=true`        |
+| highlight_squares | The squares that are highlighted | A string containing a set of squares. An example: 'a1a3h1g4' | '' | `/diagram?highlight_squares=h2h4` |
+| highlight_squares_color | The color of the highlighted squares | ^[a-fA-F0-9]{6}$ | ffcccc | `/diagram?highlight_squares=h2h4&highlight_squares_color=eeeed2` |
 
 #### Piece themes list: ####
 3d_chesskid, 3d_plastic, 3d_staunton, 3d_wood, alpha, blindfold, book, bubblegum, cases, classic, club, condal, dark, game_room, glass, gothic, graffiti, light, lolz, marble, maya, metal, mini, modern, nature, neon, newspaper, ocean, sky, space, tigers, tournament, vintage, wood
