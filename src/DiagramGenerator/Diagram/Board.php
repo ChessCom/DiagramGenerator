@@ -17,6 +17,10 @@ class Board
     const HIGHLIGHTED_DARK_SQUARE_OPACITY = 1;
     const HIGHLIGHTED_LIGHT_SQUARE_OPACITY = .5;
 
+    protected $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
+
+    protected $flippedSquares = array('h', 'g', 'f', 'e', 'd', 'c', 'b', 'a');
+
     /**
      * @var \Imagick
      */
@@ -116,8 +120,8 @@ class Board
     {
         $this->paddingTop = $this->getMaxPieceHeight() - $this->getCellSize();
         $this->image->newImage(
-            $this->getCellSize() * 8,
-            $this->getCellSize() * 8 + $this->paddingTop,
+            $this->getCellSize() * count($this->squares),
+            $this->getCellSize() * count($this->squares) + $this->paddingTop,
             new \ImagickPixel('none')
         );
 
@@ -141,8 +145,8 @@ class Board
      */
     public function drawCells()
     {
-        for ($x = 1; $x <= 8; $x++) {
-            for ($y = 1; $y <= 8; $y++) {
+        for ($x = 1; $x <= count($this->squares); $x++) {
+            for ($y = 1; $y <= count($this->squares); $y++) {
                 $this->drawCell($x, $y, ($x + $y) % 2);
             }
         }
@@ -161,8 +165,8 @@ class Board
     {
         $cell = new \ImagickDraw();
 
-        if (is_array($this->config->getHighlightSquares()) &&
-            in_array($this->getSquare($x, $y), $this->config->getHighlightSquares())) {
+        if (is_array($this->getHighlightSquares($this->config)) &&
+            in_array($this->getSquare($x, $y), $this->getHighlightSquares($this->config))) {
 
             $cell->setFillColor($this->config->getHighlightSquaresColor());
             $cell->setFillOpacity(
@@ -367,9 +371,7 @@ class Board
      */
     protected function getSquare($x, $y)
     {
-        $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
-
-        return $squares[$x-1] . (8 - $y + 1);
+        return $this->squares[$x-1] . (count($this->squares) - $y + 1);
     }
 
     /**
@@ -408,5 +410,43 @@ class Board
         curl_exec($ch);
         curl_close($ch);
         fclose($destinationFileHandle);
+    }
+
+    /**
+     * Get the highlighted squares for the board (considering the flip parameter)
+     *
+     * @param Config $config
+     *
+     * @return array
+     */
+    protected function getHighlightSquares(Config $config)
+    {
+        if (!$config->getFlip()) {
+            return $config->getHighlightSquares();
+        }
+
+        $flippedSquares = array();
+        foreach ($config->getHighlightSquares() as $square) {
+            $flippedSquares[] = $this->flipSquare($square[0], $square[1]);
+        }
+
+        return $flippedSquares;
+    }
+
+    /**
+     * Return the flipped representation of a square
+     *
+     * @param int $x
+     * @param int $y
+     *
+     * @return string
+     */
+    protected function flipSquare($x, $y)
+    {
+        foreach ($this->squares as $index => $square) {
+            if ($square == $x) {
+                return $this->flippedSquares[$index] . (count($this->squares) - $y + 1);
+            }
+        }
     }
 }
