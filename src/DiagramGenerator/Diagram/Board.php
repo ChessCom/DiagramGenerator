@@ -183,8 +183,8 @@ class Board
         $cell->rectangle(
             ($x - 1) * $this->getCellSize(),
             ($y - 1) * $this->getCellSize() + $this->paddingTop,
-            $x * $this->getCellSize(),
-            $y * $this->getCellSize() + $this->paddingTop
+            $x * $this->getCellSize() - 1,
+            $y * $this->getCellSize() + $this->paddingTop - 1
         );
 
         $this->image->drawImage($cell);
