@@ -6,6 +6,7 @@ use DiagramGenerator\Config;
 use DiagramGenerator\Generator;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
+use ImagickDraw;
 
 /**
  * Class responsible for drawing the board
@@ -14,7 +15,7 @@ use DiagramGenerator\Fen\Piece;
  */
 class Board
 {
-    const HIGHLIGHTED_DARK_SQUARE_OPACITY = 1;
+    const HIGHLIGHTED_DARK_SQUARE_OPACITY = .5;
     const HIGHLIGHTED_LIGHT_SQUARE_OPACITY = .5;
 
     protected $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
@@ -163,31 +164,10 @@ class Board
      */
     public function drawCell($x, $y, $colorIndex)
     {
-        $cell = new \ImagickDraw();
+        $cell = new ImagickDraw();
 
-        if (is_array($this->getHighlightSquares($this->config)) &&
-            in_array($this->getSquare($x, $y), $this->getHighlightSquares($this->config))) {
-
-            $cell->setFillColor($this->config->getHighlightSquaresColor());
-            $cell->setFillOpacity(
-                $colorIndex ? self::HIGHLIGHTED_DARK_SQUARE_OPACITY : self::HIGHLIGHTED_LIGHT_SQUARE_OPACITY
-            );
-        } else {
-            if ($this->getBoardTexture()) {
-                return;
-            }
-
-            $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
-        }
-
-        $cell->rectangle(
-            ($x - 1) * $this->getCellSize(),
-            ($y - 1) * $this->getCellSize() + $this->paddingTop,
-            $x * $this->getCellSize() - 1,
-            $y * $this->getCellSize() + $this->paddingTop - 1
-        );
-
-        $this->image->drawImage($cell);
+        $this->drawCellStandard($cell, $x, $y, $colorIndex);
+        $this->drawCellHighlighted($cell, $x, $y, $colorIndex);
     }
 
     /**
@@ -448,5 +428,66 @@ class Board
                 return $this->flippedSquares[$index] . (count($this->squares) - $y + 1);
             }
         }
+    }
+
+    /**
+     * Draw a non-highlighted square
+     *
+     * @param ImagickDraw $cell
+     * @param int         $x
+     * @param int         $y
+     * @param int         $colorIndex
+     */
+    protected function drawCellStandard(ImagickDraw $cell, $x, $y, $colorIndex)
+    {
+        if ($this->getBoardTexture()) {
+            return;
+        }
+
+        $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
+
+        $this->drawCellRectangle($cell, $x, $y);
+    }
+
+    /**
+     * Draw a highlighted cell
+     *
+     * @param ImagickDraw $cell
+     * @param int         $x
+     * @param int         $y
+     * @param int         $colorIndex
+     */
+    protected function drawCellHighlighted(ImagickDraw $cell, $x, $y, $colorIndex)
+    {
+        if (!is_array($this->getHighlightSquares($this->config)) ||
+            !in_array($this->getSquare($x, $y), $this->getHighlightSquares($this->config))) {
+            return;
+        }
+
+        $cell->setFillColor($this->config->getHighlightSquaresColor());
+        $cell->setFillOpacity(
+            $colorIndex ? self::HIGHLIGHTED_DARK_SQUARE_OPACITY : self::HIGHLIGHTED_LIGHT_SQUARE_OPACITY
+        );
+
+        $this->drawCellRectangle($cell, $x, $y);
+    }
+
+    /**
+     * Draw a cell rectangle
+     *
+     * @param ImagickDraw $cell
+     * @param int         $x
+     * @param int         $y
+     */
+    protected function drawCellRectangle(ImagickDraw $cell, $x, $y)
+    {
+        $cell->rectangle(
+            ($x - 1) * $this->getCellSize(),
+            ($y - 1) * $this->getCellSize() + $this->paddingTop,
+            $x * $this->getCellSize() - 1,
+            $y * $this->getCellSize() + $this->paddingTop - 1
+        );
+
+        $this->image->drawImage($cell);
     }
 }
