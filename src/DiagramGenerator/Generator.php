@@ -44,7 +44,7 @@ class Generator
         '3d_chesskid', '3d_plastic', '3d_staunton', '3d_wood', 'alpha', 'blindfold', 'book', 'bubblegum', 'cases',
         'classic', 'club', 'condal', 'dark', 'game_room', 'glass', 'gothic', 'graffiti', 'light', 'lolz', 'marble',
         'maya', 'metal', 'mini', 'modern', 'nature', 'neon', 'newspaper', 'ocean', 'sky', 'space', 'tigers',
-        'tournament', 'vintage', 'wood'
+        'tournament', 'vintage', 'wood', 'chesskid'
     );
 
     protected $boardTextures = array('blackwhite', 'blue', 'brown', 'bubblegum', 'burled_wood', 'dark_wood',
