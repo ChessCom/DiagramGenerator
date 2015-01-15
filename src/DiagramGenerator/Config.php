@@ -44,6 +44,7 @@ class Config
      * @SerializedName("size")
      * @var string
      */
+    // keeping deprecated int values (0-3) for backwards compatibility
     protected $sizeIndex = '20px';
 
     /**
@@ -58,6 +59,7 @@ class Config
      * @SerializedName("theme")
      * @var integer
      */
+    // @deprecated - keeping for backward compatibility
     protected $themeIndex = self::DEFAULT_PIECE_THEME_INDEX;
 
     /**
@@ -74,6 +76,7 @@ class Config
      * @SerializedName("texture")
      * @var integer
      */
+    // @deprecated - keeping for backward compatibility
     protected $textureIndex = self::DEFAULT_BOARD_TEXTURE_INDEX;
 
     /**
@@ -245,6 +248,20 @@ class Config
     }
 
     /**
+     * Sets the value of the piece index field. Preserving old values (0-6) for backwards compatibility
+     *
+     * @param string|int $piece
+     *
+     * @return Config
+     */
+    public function setPieceIndex($pieceIndex)
+    {
+        $this->pieceIndex = $pieceIndex;
+
+        return $this;
+    }
+
+    /**
      * Gets the value of theme.
      *
      * @return \DiagramGenerator\Config\Theme
@@ -388,6 +405,20 @@ class Config
     public function setTextureIndex($textureIndex)
     {
         $this->textureIndex = $textureIndex;
+
+        return $this;
+    }
+
+    /**
+     * Sets the value of the $boardIndex field. Keeping old values (0-3) for backwards compatibility
+     *
+     * @param string|int $boardIndex
+     *
+     * @return Config
+     */
+    public function setBoardIndex($boardIndex)
+    {
+        $this->boardIndex = $boardIndex;
 
         return $this;
     }
