@@ -89,7 +89,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     public function testBuldDiagramNonExistingPieceTheme()
     {
         $this->config->setSizeIndex('200px')
-            ->setThemeIndex('non-existent');
+            ->setPieceIndex('non-existent');
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
@@ -105,10 +105,12 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     public function testBuildDiagramNonExistingBoardTexture()
     {
         $this->config->setSizeIndex('200px')
-            ->setThemeIndex('3d_chesskid')
-            ->setTextureIndex('non-existent');
+            ->setPieceIndex('3d_chesskid')
+            ->setBoardIndex('non-existent');
 
         $this->assertValidatorMockWithNoErrors($this->config);
+
+        $this->generator->setPieceThemes(array('3d_chesskid'));
 
         $this->generator->buildDiagram(
             $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
