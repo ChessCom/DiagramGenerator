@@ -28,15 +28,12 @@ use DiagramGenerator\Validator\Constraints\StringOrInteger;
 // piece/theme and board/texture and cause unwanted results
 class Config
 {
-    const DEFAULT_PIECE_THEME_INDEX = 'modern';
-    const DEFAULT_BOARD_TEXTURE_INDEX = null;
-
     /**
      * @Type("string")
      * @NotBlank()
      * @var string
      */
-    protected $fen = Fen::DEFAULT_FEN;
+    protected $fen;
 
     /**
      * @Type("string")
@@ -45,7 +42,9 @@ class Config
      * @var string
      */
     // keeping deprecated int values (0-3) for backwards compatibility
-    protected $sizeIndex = '20px';
+    // TODO [lackovic10]: rename to size, once the library is refactored and the size field is removed from this class
+    // the same action with boardTexture and pieceTheme
+    protected $sizeIndex;
 
     /**
      * @Exclude()
@@ -56,28 +55,13 @@ class Config
     /**
      * @Type("string")
      * @StringOrInteger(min=0, max=5)
-     * @SerializedName("theme")
-     * @var integer
-     */
-    // @deprecated - keeping for backward compatibility
-    protected $themeIndex = self::DEFAULT_PIECE_THEME_INDEX;
-
-    /**
-     * @Type("string")
-     * @StringOrInteger(min=0, max=5)
      * @SerializedName("piece")
      * @var integer
      */
-    protected $pieceIndex = self::DEFAULT_PIECE_THEME_INDEX;
-
-    /**
-     * @Type("string")
-     * @StringOrInteger(min=0, max=3)
-     * @SerializedName("texture")
-     * @var integer
-     */
-    // @deprecated - keeping for backward compatibility
-    protected $textureIndex = self::DEFAULT_BOARD_TEXTURE_INDEX;
+    // [lackovic10]: these are piece theme folder names from the image url
+    // TODO: future idea - pass the whole urls to the library instead of generating the url inside the library based
+    // on parameters
+    protected $pieceIndex;
 
     /**
      * @Type("string")
@@ -85,7 +69,8 @@ class Config
      * @SerializedName("board")
      * @var integer
      */
-    protected $boardIndex = self::DEFAULT_BOARD_TEXTURE_INDEX;
+    // [lackovic10]: these are board texture folder names from the image url
+    protected $boardIndex;
 
     /**
      * @Exclude()
@@ -104,33 +89,33 @@ class Config
      * @Length(max=30)
      * @var string
      */
-    protected $caption = '';
+    protected $caption;
 
     /**
      * @Type("boolean")
      * @var boolean
      */
-    protected $coordinates = false;
+    protected $coordinates;
 
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Light color should be in hex format")
      * @var string
      */
-    protected $light = 'eeeed2';
+    protected $light;
 
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Dark color should be in hex format")
      * @var string
      */
-    protected $dark = '769656';
+    protected $dark;
 
     /**
      * @Type("boolean")
      * @var boolean
      */
-    protected $flip = false;
+    protected $flip;
 
     /**
      * @Type("string")
@@ -138,14 +123,14 @@ class Config
      * @Length(max=128)
      * @var string
      */
-    protected $highlightSquares = '';
+    protected $highlightSquares;
 
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Highlight squares color should be in hex format")
      * @var string
      */
-    protected $highlightSquaresColor = 'ffcccc';
+    protected $highlightSquaresColor;
 
     /**
      * Gets the value of fen.
@@ -220,31 +205,13 @@ class Config
     }
 
     /**
-     * Gets the value of themeIndex.
+     * Gets the value of pieceIndex.
      *
      * @return integer
      */
-    public function getThemeIndex()
+    public function getPieceIndex()
     {
-        if ($this->pieceIndex != self::DEFAULT_PIECE_THEME_INDEX) {
-            return $this->pieceIndex;
-        }
-
-        return $this->themeIndex;
-    }
-
-    /**
-     * Sets the value of themeIndex.
-     *
-     * @param integer $themeIndex the themeIndex
-     *
-     * @return self
-     */
-    public function setThemeIndex($themeIndex)
-    {
-        $this->themeIndex = $themeIndex;
-
-        return $this;
+        return $this->pieceIndex;
     }
 
     /**
@@ -382,31 +349,13 @@ class Config
     }
 
     /**
-     * Gets the value of textureIndex.
+     * Gets the value of boardIndex.
      *
      * @return integer
      */
-    public function getTextureIndex()
+    public function getBoardIndex()
     {
-        if ($this->boardIndex != self::DEFAULT_BOARD_TEXTURE_INDEX) {
-            return $this->boardIndex;
-        }
-
-        return $this->textureIndex;
-    }
-
-    /**
-     * Sets the value of textureIndex.
-     *
-     * @param integer $textureIndex the textureIndex
-     *
-     * @return self
-     */
-    public function setTextureIndex($textureIndex)
-    {
-        $this->textureIndex = $textureIndex;
-
-        return $this;
+        return $this->boardIndex;
     }
 
     /**

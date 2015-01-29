@@ -17,41 +17,14 @@ use Symfony\Component\Validator\Validator;
  */
 class Generator
 {
-    /**
-     * @var \Symfony\Component\Validator\Validator
-     */
+    /** @var \Symfony\Component\Validator\Validator */
     protected $validator;
 
-    /**
-     * Deprecating the size index format, using {cellSize}px format instead. Keeping the size indexes for backwards
-     * compatibility, we will not provide new indexes in the future
-     */
-    protected $deprecatedSizes = array(20, 30, 60, 90);
+    /** @var array $boardTextures */
+    protected $boardTextures = array();
 
-    /**
-     * Deprecating board texture index format, using the board texture name instead. Keeping the board texture
-     * indexes for backwards compatibility, we will not provide new indexes in the future
-     */
-    protected $deprecateBoardTextures = array('neon', 'dark_wood', 'burled_wood', 'metal');
-
-    /**
-     * Deprecating piece theme index format, using the piece theme name instead. Keeping the piece theme indexes
-     * for backwards compatibility, we will not provide new indexes in the future
-     */
-    protected $deprecatedPieceThemes = array('classic', 'alpha', 'book', 'club', 'modern', 'vintage');
-
-    protected $pieceThemes = array(
-        '3d_chesskid', '3d_plastic', '3d_staunton', '3d_wood', 'alpha', 'blindfold', 'book', 'bubblegum', 'cases',
-        'classic', 'club', 'condal', 'dark', 'game_room', 'glass', 'gothic', 'graffiti', 'light', 'lolz', 'marble',
-        'maya', 'metal', 'mini', 'modern', 'nature', 'neon', 'newspaper', 'ocean', 'sky', 'space', 'tigers',
-        'tournament', 'vintage', 'wood', 'chesskid'
-    );
-
-    protected $boardTextures = array('blackwhite', 'blue', 'brown', 'bubblegum', 'burled_wood', 'dark_wood',
-        'glass', 'graffiti', 'green', 'light', 'lolz', 'marble', 'marbleblue', 'marblegreen', 'metal', 'neon',
-        'newspaper', 'orange', 'parchment', 'purple', 'red', 'sand', 'sky', 'stone', 'tan', 'tournament',
-        'translucent', 'woodolive'
-    );
+    /** @var array $pieceThemes */
+    protected $pieceThemes = array();
 
     public function __construct(Validator $validator)
     {
@@ -98,6 +71,20 @@ class Generator
         return $diagram;
     }
 
+    public function setBoardTextures(array $boardTextures)
+    {
+        $this->boardTextures = $boardTextures;
+
+        return $this;
+    }
+
+    public function setPieceThemes(array $pieceThemes)
+    {
+        $this->pieceThemes = $pieceThemes;
+
+        return $this;
+    }
+
     /**
      * Set the config size
      *
@@ -105,9 +92,7 @@ class Generator
      */
     protected function setConfigSize(Config $config)
     {
-        $cellSize = is_numeric($config->getSizeIndex()) ?
-            $this->deprecatedSizes[$config->getSizeIndex()] : substr($config->getSizeIndex(), 0, -2);
-
+        $cellSize = substr($config->getSizeIndex(), 0, -2);
 
         if ($cellSize < Size::MIN_CUSTOM_SIZE) {
             throw new \InvalidArgumentException(
@@ -135,8 +120,7 @@ class Generator
      */
     protected function setConfigBoardTexture(Config $config)
     {
-        $boardTexture = is_numeric($config->getTextureIndex()) ?
-            $this->deprecateBoardTextures[$config->getTextureIndex()] : $config->getTextureIndex();
+        $boardTexture = $config->getBoardIndex();
 
         if ($boardTexture && !in_array($boardTexture, $this->boardTextures)) {
             throw new \InvalidArgumentException(sprintf('Board texture %s does not exist', $boardTexture));
@@ -153,8 +137,7 @@ class Generator
      */
     protected function setConfigPieceTheme(Config $config)
     {
-        $pieceTheme = is_numeric($config->getThemeIndex()) ?
-            $this->deprecatedPieceThemes[$config->getThemeIndex()] : $config->getThemeIndex();
+        $pieceTheme = $config->getPieceIndex();
 
         if (!in_array($pieceTheme, $this->pieceThemes)) {
             throw new \InvalidArgumentException(sprintf('Piece theme %s does not exist', $pieceTheme));
