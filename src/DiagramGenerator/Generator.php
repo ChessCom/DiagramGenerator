@@ -9,7 +9,7 @@ use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\UnsupportedConfigException;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\Validator\RecursiveValidator as Validator;
 
 /**
  * Generator class
