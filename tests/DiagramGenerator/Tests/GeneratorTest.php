@@ -31,7 +31,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\Validator')
+        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\Validator\RecursiveValidator')
             ->disableOriginalConstructor()
             ->getMock();
 
