@@ -88,11 +88,7 @@ class Board
         $boardTextureUrlExploded = explode('.', $boardTextureUrl);
         $this->imagesExtension = $boardTextureUrlExploded[count($boardTextureUrlExploded) - 1];
 
-        $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
-
-        if (!file_exists($this->cacheDir)) {
-            mkdir($this->cacheDir, 0777);
-        }
+        @mkdir($this->rootCacheDir . '/' . $this->cacheDirName, 0777);
 
         $this->image  = new \Imagick();
         $this->fen = Fen::createFromString($this->config->getFen());
@@ -302,9 +298,7 @@ class Board
             return $pieceCachedPath;
         }
 
-        if (!file_exists($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize)) {
-            mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
-        }
+        @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
 
         $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
         $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
@@ -329,9 +323,7 @@ class Board
             return $boardCachedPath;
         }
 
-        if (!file_exists($this->cacheDir . '/board/' . $this->getBoardTexture())) {
-            mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
-        }
+        @mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
 
         $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
         $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
