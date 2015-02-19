@@ -11,7 +11,7 @@ use DiagramGenerator\Generator;
  */
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Symfony\Component\Validator\Validator $validator */
+    /** @var \Symfony\Component\Validator\ValidatorInterface $validator */
     protected $validatorMock;
 
     /** @var \DiagramGenerator\Generator $generator */
@@ -31,7 +31,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\Validator')
+        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\ValidatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
 

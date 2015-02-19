@@ -9,7 +9,7 @@ use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\UnsupportedConfigException;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\ValidatorInterface;
 
 /**
  * Generator class
@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validator;
  */
 class Generator
 {
-    /** @var \Symfony\Component\Validator\Validator */
+    /** @var \Symfony\Component\Validator\ValidatorInterface */
     protected $validator;
 
     /** @var array $boardTextures */
@@ -26,7 +26,7 @@ class Generator
     /** @var array $pieceThemes */
     protected $pieceThemes = array();
 
-    public function __construct(Validator $validator)
+    public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }

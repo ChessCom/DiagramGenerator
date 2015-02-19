@@ -116,6 +116,10 @@ framework:
     validation: { enable_annotations: true }
 ```
 
+### Testing
+
+Clone the library, run php composer.phar install, and run php vendor/bin/phpunit to run the unit tests.
+
 ### Bonus
 
 `Fen` object is a convenient way to work with fen strings and represents the board as a list of all pieces, each one is an instance of `DiagramGenerator\Fen\Piece` object, has color, row and column properties. It can be developed according to our future needs
