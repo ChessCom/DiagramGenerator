@@ -7,6 +7,7 @@ use DiagramGenerator\Generator;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
 use ImagickDraw;
+use RuntimeException;
 
 /**
  * Class responsible for drawing the board
@@ -87,6 +88,8 @@ class Board
 
         $boardTextureUrlExploded = explode('.', $boardTextureUrl);
         $this->imagesExtension = $boardTextureUrlExploded[count($boardTextureUrlExploded) - 1];
+
+        $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
 
         @mkdir($this->rootCacheDir . '/' . $this->cacheDirName, 0777);
 
@@ -377,6 +380,11 @@ class Board
     {
         $ch = curl_init($remoteImageUrl);
         $destinationFileHandle = fopen($cachedFilePath, 'wb');
+
+        if (!$destinationFileHandle) {
+            throw new RuntimeException(sprintf('Could not open file: %s', $cachedFilePath));
+        }
+
         curl_setopt($ch, CURLOPT_FILE, $destinationFileHandle);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_exec($ch);
