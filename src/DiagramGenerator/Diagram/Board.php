@@ -3,6 +3,7 @@
 namespace DiagramGenerator\Diagram;
 
 use DiagramGenerator\Config;
+use DiagramGenerator\Exception\CachedFileInvalidException;
 use DiagramGenerator\Generator;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
@@ -115,6 +116,8 @@ class Board
      * Draws board itself
      *
      * @return self
+     *
+     * @throws CachedFileInvalidException When cache file is invalid even after fetching from remote host
      */
     public function drawBoard()
     {
@@ -127,8 +130,11 @@ class Board
 
         // Add board texture
         if ($this->getBoardTexture()) {
-            $background = new \Imagick($this->getBackgroundTexture());
-            $textureSize = $this->getCellSize() * 2;
+            try {
+                $background = $this->getBackgroundTexture();
+            } catch (\ImagickException $exception) {
+                throw new CachedFileInvalidException();
+            }
 
             $this->image->compositeImage(
                 $background, \Imagick::COMPOSITE_DEFAULT, 0, $this->paddingTop
@@ -315,25 +321,26 @@ class Board
     /**
      * Returns board background image path
      *
-     * @return string
+     * @return \Imagick
+     *
+     * @throws \ImagickException
      */
     protected function getBackgroundTexture()
     {
-        $boardCachedPath = $this->cacheDir . '/board/' . $this->getBoardTexture() . '/' . $this->getCellSize() .
-            '.' . $this->imagesExtension;
+        $boardCachedPath = $this->getCachedFilePath();
 
-        if (file_exists($boardCachedPath)) {
-            return $boardCachedPath;
+        try {
+            return new \Imagick($boardCachedPath);
+        } catch (\ImagickException $exception) {
+            @mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
+
+            $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
+            $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
+
+            $this->cacheImage($boardTextureUrl, $boardCachedPath);
+
+            return new \Imagick($boardCachedPath);
         }
-
-        @mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
-
-        $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
-        $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
-
-        $this->cacheImage($boardTextureUrl, $boardCachedPath);
-
-        return $boardCachedPath;
     }
 
     /**
@@ -489,5 +496,21 @@ class Board
         );
 
         $this->image->drawImage($cell);
+    }
+
+    /**
+     * Cached file path
+     *
+     * @return string
+     */
+    protected function getCachedFilePath()
+    {
+        return sprintf(
+            '%s/board/%s/%d.%s',
+            $this->cacheDir,
+            $this->getBoardTexture(),
+            $this->getCellSize(),
+            $this->imagesExtension
+        );
     }
 }
