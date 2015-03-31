@@ -7,6 +7,7 @@ use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Diagram\Board;
+use DiagramGenerator\Exception\InvalidConfigException;
 use DiagramGenerator\Exception\UnsupportedConfigException;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\ValidatorInterface;
@@ -47,7 +48,7 @@ class Generator
     {
         $errors = $this->validator->validate($config);
         if (count($errors) > 0) {
-            throw new \Exception($errors->__toString());
+            throw new InvalidConfigException($errors->__toString());
         }
 
         $this->setConfigSize($config);
