@@ -117,7 +117,7 @@ class Board
      *
      * @return self
      *
-     * @throws CachedFileInvalidException When cache file is invalid even after fetching from remote host
+     * @throws \ImagickException When cache file is invalid even after fetching from remote host
      */
     public function drawBoard()
     {
@@ -130,11 +130,8 @@ class Board
 
         // Add board texture
         if ($this->getBoardTexture()) {
-            try {
-                $background = $this->getBackgroundTexture();
-            } catch (\ImagickException $exception) {
-                throw new CachedFileInvalidException();
-            }
+            // leaving exception uncaught, because that's unexpected behavior, and should be logged by rollbar
+            $background = $this->getBackgroundTexture();
 
             $this->image->compositeImage(
                 $background, \Imagick::COMPOSITE_DEFAULT, 0, $this->paddingTop
@@ -182,7 +179,7 @@ class Board
     public function drawFigures()
     {
         foreach ($this->fen->getPieces() as $piece) {
-            $pieceImage = new \Imagick($this->getPieceImagePath($piece));
+            $pieceImage = $this->getPieceImage($piece);
 
             $this->image->compositeImage(
                 $pieceImage,
@@ -292,30 +289,28 @@ class Board
      * Returns piece image path
      * @param  \DiagramGenerator\Fen\Piece $piece
      *
-     * @return string
+     * @return \Imagick
      */
-    protected function getPieceImagePath(Piece $piece)
+    protected function getPieceImage(Piece $piece)
     {
         $pieceThemeName = $this->config->getTheme()->getName();
         $cellSize = $this->getCellSize();
         $piece = substr($piece->getColor(), 0, 1) . $piece->getKey();
+        $pieceCachedPath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece);
 
-        $pieceCachedPath = $this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize . '/' . $piece . '.' .
-            $this->imagesExtension;
+        try {
+            return new \Imagick($pieceCachedPath);
+        } catch (\ImagickException $exception) {
+            @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
 
-        if (file_exists($pieceCachedPath)) {
-            return $pieceCachedPath;
+            $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
+            $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
+            $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
+
+            $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
+
+            return new \Imagick($pieceCachedPath);
         }
-
-        @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
-
-        $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
-        $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
-        $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
-
-        $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
-
-        return $pieceCachedPath;
     }
 
     /**
@@ -327,7 +322,7 @@ class Board
      */
     protected function getBackgroundTexture()
     {
-        $boardCachedPath = $this->getCachedFilePath();
+        $boardCachedPath = $this->getCachedTextureFilePath();
 
         try {
             return new \Imagick($boardCachedPath);
@@ -365,7 +360,7 @@ class Board
     {
         $maxHeight = $this->getCellSize();
         foreach ($this->fen->getPieces() as $piece) {
-            $pieceImage = new \Imagick($this->getPieceImagePath($piece));
+            $pieceImage = $this->getPieceImage($piece);
 
             if ($pieceImage->getImageHeight() > $maxHeight) {
                 $maxHeight = $pieceImage->getImageHeight();
@@ -499,17 +494,34 @@ class Board
     }
 
     /**
-     * Cached file path
+     * Cached texture file path
      *
      * @return string
      */
-    protected function getCachedFilePath()
+    protected function getCachedTextureFilePath()
     {
         return sprintf(
             '%s/board/%s/%d.%s',
             $this->cacheDir,
             $this->getBoardTexture(),
             $this->getCellSize(),
+            $this->imagesExtension
+        );
+    }
+
+    /**
+     * Cached piece file path
+     *
+     * @return string
+     */
+    protected function getCachedPieceFilePath($pieceThemeName, $cellSize, $piece)
+    {
+        return sprintf(
+            '%s/%s/%d/%s.%s',
+            $this->cacheDir,
+            $pieceThemeName,
+            $cellSize,
+            $piece,
             $this->imagesExtension
         );
     }
