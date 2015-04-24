@@ -380,11 +380,12 @@ class Board
      */
     protected function cacheImage($remoteImageUrl, $cachedFilePath)
     {
+        $cachedFilePathTmp = $cachedFilePath . uniqid('', true);
         $ch = curl_init($remoteImageUrl);
-        $destinationFileHandle = fopen($cachedFilePath, 'wb');
+        $destinationFileHandle = fopen($cachedFilePathTmp, 'wb');
 
         if (!$destinationFileHandle) {
-            throw new RuntimeException(sprintf('Could not open file: %s', $cachedFilePath));
+            throw new RuntimeException(sprintf('Could not open temporary file: %s', $cachedFilePathTmp));
         }
 
         curl_setopt($ch, CURLOPT_FILE, $destinationFileHandle);
@@ -392,6 +393,8 @@ class Board
         curl_exec($ch);
         curl_close($ch);
         fclose($destinationFileHandle);
+
+        rename($cachedFilePathTmp, $cachedFilePath);
     }
 
     /**
