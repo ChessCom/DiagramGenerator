@@ -216,7 +216,8 @@ class Board
      */
     public function draw()
     {
-        $this->image->setImageFormat('png');
+        $this->image->setImageFormat($this->config->getImageFormat());
+        $this->image->setImageCompressionQuality($this->config->getImageCompressionQuality());
 
         return $this;
     }

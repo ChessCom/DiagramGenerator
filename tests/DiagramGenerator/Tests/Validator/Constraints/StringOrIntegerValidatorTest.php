@@ -10,7 +10,7 @@ class StringOrIntegerValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Validator\Constraints\StringOrInteger $stringOrInteger */
     protected $stringOrInteger;
 
-    /** @var \Symfony\Component\Validator\ExecutionContext $contextMock */
+    /** @var \Symfony\Component\Validator\Context\ExecutionContext $contextMock */
     protected $contextMock;
 
     /** @var \DiagramGenerator\Validator\Constraints\StringOrIntegerValidator $stringOrIntegerValidator */
@@ -21,7 +21,7 @@ class StringOrIntegerValidatorTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->contextMock = $this->getMock(
-            'Symfony\Component\Validator\ExecutionContext', array(), array(), '', false
+            'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 
         $this->stringOrInteger = new StringOrInteger();

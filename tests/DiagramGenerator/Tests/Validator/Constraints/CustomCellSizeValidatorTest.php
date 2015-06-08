@@ -10,7 +10,7 @@ class CustomCellSizeValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Validator\Constraints\CustomCellSize $customCellSize */
     protected $customCellSize;
 
-    /** @var \Symfony\Component\Validator\ExecutionContext $contextMock */
+    /** @var \Symfony\Component\Validator\Context\ExecutionContext $contextMock */
     protected $contextMock;
 
     /** @var \DiagramGenerator\Validator\Constraints\CustomCellSizeValidator $customCellSizeValidator */
@@ -21,7 +21,7 @@ class CustomCellSizeValidatorTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->contextMock = $this->getMock(
-            'Symfony\Component\Validator\ExecutionContext', array(), array(), '', false
+            'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 
         $this->customCellSize = new CustomCellSize();
