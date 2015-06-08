@@ -133,6 +133,20 @@ class Config
     protected $highlightSquaresColor;
 
     /**
+     * @Type("string")
+     * @Regex(pattern="/^png|jpeg$/", message="Invalid image format. Please pass jpeg or png.")
+     * @var string
+     */
+    protected $imageFormat = 'jpeg';
+
+    /**
+     * @Type("integer")
+     * @Range(min=0, max=100)
+     * @var int
+     */
+    protected $imageCompressionQuality = 90;
+
+    /**
      * Gets the value of fen.
      *
      * @return string
@@ -440,6 +454,30 @@ class Config
     public function setHighlightSquaresColor($highlightSquaresColor)
     {
         $this->highlightSquaresColor = $highlightSquaresColor;
+
+        return $this;
+    }
+
+    public function getImageFormat()
+    {
+        return $this->imageFormat;
+    }
+
+    public function setImageFormat($imageFormat)
+    {
+        $this->imageFormat = $imageFormat;
+
+        return $this;
+    }
+
+    public function getImageCompressionQuality()
+    {
+        return $this->imageCompressionQuality;
+    }
+
+    public function setImageCompressionQuality($imageCompressionQuality)
+    {
+        $this->imageCompressionQuality = $imageCompressionQuality;
 
         return $this;
     }

@@ -150,7 +150,8 @@ class Diagram
             $this->image = $this->image->appendImages(true);
         }
 
-        $this->image->setImageFormat('png');
+        $this->image->setImageFormat($this->config->getImageFormat());
+        $this->image->setImageCompressionQuality($this->config->getImageCompressionQuality());
 
         return $this;
     }
@@ -189,7 +190,8 @@ class Diagram
 
         // Add text
         $coordinate->getImage()->annotateImage($draw, 0, 0, 0, $text);
-        $coordinate->getImage()->setImageFormat('png');
+        $coordinate->getImage()->setImageFormat($this->config->getImageFormat());
+        $coordinate->getImage()->setImageCompressionQuality($this->config->getImageCompressionQuality());
 
         return $coordinate;
     }
@@ -213,7 +215,8 @@ class Diagram
 
         // Add text
         $caption->getImage()->annotateImage($draw, 0, 0, 0, $this->getCaptionText());
-        $caption->getImage()->setImageFormat('png');
+        $caption->getImage()->setImageFormat($this->config->getImageFormat());
+        $caption->getImage()->setImageCompressionQuality($this->config->getImageCompressionQuality());
 
         return $caption;
     }
