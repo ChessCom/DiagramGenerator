@@ -64,15 +64,6 @@ class Config
     protected $pieceIndex;
 
     /**
-     * @Type("string")
-     * @StringOrInteger(min=0, max=3)
-     * @SerializedName("board")
-     * @var integer
-     */
-    // [lackovic10]: these are board texture folder names from the image url
-    protected $boardIndex;
-
-    /**
      * @Exclude()
      * @var \DiagramGenerator\Config\Texture
      */
@@ -344,30 +335,6 @@ class Config
     public function setDark($dark)
     {
         $this->dark = $dark;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of boardIndex.
-     *
-     * @return integer
-     */
-    public function getBoardIndex()
-    {
-        return $this->boardIndex;
-    }
-
-    /**
-     * Sets the value of the $boardIndex field. Keeping old values (0-3) for backwards compatibility
-     *
-     * @param string|int $boardIndex
-     *
-     * @return Config
-     */
-    public function setBoardIndex($boardIndex)
-    {
-        $this->boardIndex = $boardIndex;
 
         return $this;
     }

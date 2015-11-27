@@ -51,8 +51,11 @@ class Generator
             throw new InvalidConfigException($errors->__toString());
         }
 
+        if ($config->getTexture()) {
+            $this->validateBoardTexture($config->getTexture());
+        }
+
         $this->setConfigSize($config);
-        $this->setConfigBoardTexture($config);
         $this->setConfigPieceTheme($config);
 
         $config->setHighlightSquares(
@@ -115,20 +118,21 @@ class Generator
     }
 
     /**
-     * Set the config board texture
+     * @param DiagramGenerator\Config\Texture $textureForValidation
      *
-     * @param Config $config
+     * @throws InvalidArgumentException
      */
-    protected function setConfigBoardTexture(Config $config)
+    protected function validateBoardTexture(Texture $textureForValidation)
     {
-        $boardTexture = $config->getBoardIndex();
-
-        if ($boardTexture && !in_array($boardTexture, $this->boardTextures)) {
-            throw new \InvalidArgumentException(sprintf('Board texture %s does not exist', $boardTexture));
+        foreach ($this->boardTextures as $boardTexture) {
+            if ($boardTexture->is($textureForValidation)) {
+                return;
+            }
         }
 
-        $texture = new Texture();
-        $config->setTexture($texture->setBoard($boardTexture));
+        throw new \InvalidArgumentException(
+            sprintf('Board texture %s does not exist', $textureForValidation->getName())
+        );
     }
 
     /**

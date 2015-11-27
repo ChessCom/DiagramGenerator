@@ -3,6 +3,7 @@
 namespace DiagramGenerator\Diagram;
 
 use DiagramGenerator\Config;
+use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Exception\CachedFileInvalidException;
 use DiagramGenerator\Generator;
 use DiagramGenerator\Fen;
@@ -70,15 +71,10 @@ class Board
     protected $pieceThemeUrl;
 
     /**
-     * @var string $imagesExtension
-     */
-    protected $imagesExtension;
-
-    /**
      * @param Config $config
      * @param string $rootCacheDir
-     * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__.png
-     * @param string $pieceThemeUrl   ex. /pieces/__PIECE_THEME__/__SIZE__/__PIECE__.png
+     * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__
+     * @param string $pieceThemeUrl   ex. /pieces/__PIECE_THEME__/__SIZE__/__PIECE__
      */
     public function __construct(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
@@ -86,9 +82,6 @@ class Board
         $this->rootCacheDir = $rootCacheDir;
         $this->boardTextureUrl = $boardTextureUrl;
         $this->pieceThemeUrl = $pieceThemeUrl;
-
-        $boardTextureUrlExploded = explode('.', $boardTextureUrl);
-        $this->imagesExtension = $boardTextureUrlExploded[count($boardTextureUrlExploded) - 1];
 
         $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
 
@@ -129,7 +122,7 @@ class Board
         );
 
         // Add board texture
-        if ($this->getBoardTexture()) {
+        if ($this->config->getTexture()) {
             // leaving exception uncaught, because that's unexpected behavior, and should be logged by rollbar
             $background = $this->getBackgroundTexture();
 
@@ -216,7 +209,7 @@ class Board
      */
     public function draw()
     {
-        $this->image->setImageFormat('png');
+        $this->image->setImageFormat(Texture::IMAGE_FORMAT_PNG);
 
         return $this;
     }
@@ -278,14 +271,6 @@ class Board
     }
 
     /**
-     * @return \DiagramGenerator\Config\ThemeTexture
-     */
-    protected function getBoardTexture()
-    {
-        return $this->config->getTexture() ? $this->config->getTexture()->getBoard() : null;
-    }
-
-    /**
      * Returns piece image path
      * @param  \DiagramGenerator\Fen\Piece $piece
      *
@@ -306,6 +291,7 @@ class Board
             $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
             $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
             $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
+            $pieceThemeUrl .= '.' . Texture::IMAGE_FORMAT_PNG;
 
             $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
 
@@ -327,10 +313,13 @@ class Board
         try {
             return new \Imagick($boardCachedPath);
         } catch (\ImagickException $exception) {
-            @mkdir($this->cacheDir . '/board/' . $this->getBoardTexture(), 0777, true);
+            @mkdir($this->cacheDir . '/board/' . $this->config->getTexture()->getImageUrlFolderName(), 0777, true);
 
-            $boardTextureUrl = str_replace('__BOARD_TEXTURE__', $this->getBoardTexture(), $this->boardTextureUrl);
+            $boardTextureUrl = str_replace(
+                '__BOARD_TEXTURE__', $this->config->getTexture()->getImageUrlFolderName(), $this->boardTextureUrl
+            );
             $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
+            $boardTextureUrl .= '.' . $this->config->getTexture()->getImageFormat();
 
             $this->cacheImage($boardTextureUrl, $boardCachedPath);
 
@@ -445,7 +434,7 @@ class Board
      */
     protected function drawCellStandard(ImagickDraw $cell, $x, $y, $colorIndex)
     {
-        if ($this->getBoardTexture()) {
+        if ($this->config->getTexture()) {
             return;
         }
 
@@ -506,9 +495,9 @@ class Board
         return sprintf(
             '%s/board/%s/%d.%s',
             $this->cacheDir,
-            $this->getBoardTexture(),
+            $this->config->getTexture()->getImageUrlFolderName(),
             $this->getCellSize(),
-            $this->imagesExtension
+            $this->config->getTexture()->getImageFormat()
         );
     }
 
@@ -525,7 +514,7 @@ class Board
             $pieceThemeName,
             $cellSize,
             $piece,
-            $this->imagesExtension
+            Texture::IMAGE_FORMAT_PNG
         );
     }
 }
