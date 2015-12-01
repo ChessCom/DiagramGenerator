@@ -3,6 +3,7 @@
 namespace DiagramGenerator\Config;
 
 use JMS\Serializer\Annotation\Type;
+use InvalidArgumentException;
 
 /**
  * Class to keep texture config
@@ -11,34 +12,78 @@ use JMS\Serializer\Annotation\Type;
  */
 class Texture
 {
-    /**
-     * Boards filename
-     * @Type("string")
-     * @var string
-     */
-    protected $board;
+    const IMAGE_FORMAT_PNG = 'png';
+    const IMAGE_FORMAT_JPG = 'jpg';
+
+    /** @var string $name */
+    protected $name;
+
+    /** @var string $imageUrlFolderName */
+    protected $imageUrlFolderName;
+
+    /** @var string $imageFormat */
+    protected $imageFormat;
+
+    /** @var string $highlightSquaresColor The default highlight squares color for the board texture */
+    protected $highlightSquaresColor;
 
     /**
-     * Gets the Boards filename.
-     *
-     * @return string
+     * @param string      $name
+     * @param string      $imageUrlFolderName
+     * @param string      $imageFormat
+     * @param string|null $highlightSquaresColor
      */
-    public function getBoard()
+    public function __construct($name, $imageUrlFolderName, $imageFormat, $highlightSquaresColor = null)
     {
-        return $this->board;
+        if (!in_array($imageFormat, array(self::IMAGE_FORMAT_PNG, self::IMAGE_FORMAT_JPG))) {
+            throw new InvalidArgumentException(sprintf('Invalid image format: %s', $imageFormat));
+        }
+
+        $this->name = $name;
+        $this->imageUrlFolderName = $imageUrlFolderName;
+        $this->imageFormat = $imageFormat;
+        $this->highlightSquaresColor = $highlightSquaresColor;
     }
 
     /**
-     * Sets the Boards filename.
-     *
-     * @param string $board the board
-     *
-     * @return self
+     * @return string
      */
-    public function setBoard($board)
+    public function getName()
     {
-        $this->board = $board;
+        return $this->name;
+    }
 
-        return $this;
+    /**
+     * @return string
+     */
+    public function getImageUrlFolderName()
+    {
+        return $this->imageUrlFolderName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImageFormat()
+    {
+        return $this->imageFormat;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHighlightSquaresColor()
+    {
+        return $this->highlightSquaresColor;
+    }
+
+    /**
+     * @param DiagramGenerator\Config\Texture $texture
+     *
+     * @return boolean
+     */
+    public function is(Texture $texture)
+    {
+        return $this->name === $texture->getName() && $this->imageUrlFolderName === $texture->getImageUrlFolderName();
     }
 }

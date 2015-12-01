@@ -4,6 +4,7 @@ namespace DiagramGenerator\Tests;
 
 use Symfony\Component\Validator\ConstraintViolationList;
 use DiagramGenerator\Config;
+use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Generator;
 
 /**
@@ -106,7 +107,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->config->setSizeIndex('200px')
             ->setPieceIndex('3d_chesskid')
-            ->setBoardIndex('non-existent');
+            ->setTexture(new Texture('non-existent', 'non-existent', 'png'));
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
