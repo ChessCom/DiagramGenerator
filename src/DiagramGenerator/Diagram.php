@@ -7,6 +7,7 @@ use DiagramGenerator\Config\ThemeColor;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Diagram\Caption;
 use DiagramGenerator\Diagram\Coordinate;
+use DiagramGenerator\Config\Texture;
 
 /**
  * Class which represents diagram image
@@ -14,6 +15,7 @@ use DiagramGenerator\Diagram\Coordinate;
  */
 class Diagram
 {
+    const COMPRESSION_QUALITY_JPG = 80;
     /**
      * @var \DiagramGenerator\Config
      */
@@ -150,7 +152,10 @@ class Diagram
             $this->image = $this->image->appendImages(true);
         }
 
-        $this->image->setImageFormat('png');
+        $this->image->setImageFormat($this->board->getImageFormat());
+        if ($this->image->getImageFormat() === Texture::IMAGE_FORMAT_JPG) {
+            $this->image->setImageCompressionQuality(self::COMPRESSION_QUALITY_JPG);
+        }
 
         return $this;
     }
@@ -189,7 +194,7 @@ class Diagram
 
         // Add text
         $coordinate->getImage()->annotateImage($draw, 0, 0, 0, $text);
-        $coordinate->getImage()->setImageFormat('png');
+        $coordinate->getImage()->setImageFormat($this->board->getImageFormat());
 
         return $coordinate;
     }
