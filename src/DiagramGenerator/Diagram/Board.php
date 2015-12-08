@@ -9,6 +9,7 @@ use DiagramGenerator\Generator;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
 use ImagickDraw;
+use Imagick;
 use RuntimeException;
 
 /**
@@ -209,7 +210,7 @@ class Board
      */
     public function draw()
     {
-        $this->image->setImageFormat(Texture::IMAGE_FORMAT_PNG);
+        $this->image->setImageFormat($this->getImageFormat());
 
         return $this;
     }
@@ -226,6 +227,20 @@ class Board
     public function getPaddingTop()
     {
         return $this->paddingTop;
+    }
+
+    /**
+     * Get the board's image format. The whole dynboard image format is dependent on the board image format.
+     *
+     * @return string
+     */
+    public function getImageFormat()
+    {
+        if ($this->config->getTexture()) {
+            return $this->config->getTexture()->getImageFormat();
+        }
+
+        return Texture::IMAGE_FORMAT_PNG;
     }
 
     /**
