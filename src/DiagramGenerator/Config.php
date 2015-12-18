@@ -124,6 +124,14 @@ class Config
     protected $highlightSquaresColor;
 
     /**
+     * @Type("integer")
+     * @Integer
+     * @Range(min = 0, max = 100)
+     * @var integer $compressionQualityJpg
+     */
+    protected $compressionQualityJpg;
+
+    /**
      * Gets the value of fen.
      *
      * @return string
@@ -407,6 +415,18 @@ class Config
     public function setHighlightSquaresColor($highlightSquaresColor)
     {
         $this->highlightSquaresColor = $highlightSquaresColor;
+
+        return $this;
+    }
+
+    public function getCompressionQualityJpg()
+    {
+        return $this->compressionQualityJpg;
+    }
+
+    public function setCompressionQualityJpg($compressionQualityJpg)
+    {
+        $this->compressionQualityJpg = $compressionQualityJpg;
 
         return $this;
     }

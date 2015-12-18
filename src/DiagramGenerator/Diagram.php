@@ -15,7 +15,8 @@ use DiagramGenerator\Config\Texture;
  */
 class Diagram
 {
-    const COMPRESSION_QUALITY_JPG = 80;
+    const COMPRESSION_QUALITY_DEFAULT_JPG = 70;
+
     /**
      * @var \DiagramGenerator\Config
      */
@@ -154,7 +155,10 @@ class Diagram
 
         $this->image->setImageFormat($this->board->getImageFormat());
         if ($this->image->getImageFormat() === Texture::IMAGE_FORMAT_JPG) {
-            $this->image->setImageCompressionQuality(self::COMPRESSION_QUALITY_JPG);
+            $compressionQualityJpg = is_null($this->config->getCompressionQualityJpg()) ?
+                self::COMPRESSION_QUALITY_DEFAULT_JPG : $this->config->getCompressionQualityJpg();
+
+            $this->image->setImageCompressionQuality($compressionQualityJpg);
         }
 
         return $this;
