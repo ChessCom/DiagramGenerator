@@ -72,6 +72,13 @@ class Board
     protected $pieceThemeUrl;
 
     /**
+     * Cached Imagick pieces
+     *
+     * @var array
+     */
+    protected $pieces = array();
+
+    /**
      * @param Config $config
      * @param string $rootCacheDir
      * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__
@@ -293,25 +300,33 @@ class Board
      */
     protected function getPieceImage(Piece $piece)
     {
-        $pieceThemeName = $this->config->getTheme()->getName();
-        $cellSize = $this->getCellSize();
-        $piece = substr($piece->getColor(), 0, 1) . $piece->getKey();
-        $pieceCachedPath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece);
+        $key = $piece->getColor().'.'.$piece->getKey().'.'.$piece->getColumn().'.'.$piece->getRow();
 
-        try {
-            return new \Imagick($pieceCachedPath);
-        } catch (\ImagickException $exception) {
-            @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
+        if (!isset($this->pieces[$key])) {
+            $pieceThemeName = $this->config->getTheme()->getName();
+            $cellSize = $this->getCellSize();
+            $piece = substr($piece->getColor(), 0, 1) . $piece->getKey();
+            $pieceCachedPath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece);
 
-            $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
-            $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
-            $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
-            $pieceThemeUrl .= '.' . Texture::IMAGE_FORMAT_PNG;
+            try {
+                $image = new \Imagick($pieceCachedPath);
+            } catch (\ImagickException $exception) {
+                @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
 
-            $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
+                $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
+                $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
+                $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
+                $pieceThemeUrl .= '.' . Texture::IMAGE_FORMAT_PNG;
 
-            return new \Imagick($pieceCachedPath);
+                $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
+
+                $image = new \Imagick($pieceCachedPath);
+            }
+
+            $this->pieces[$key] = $image;
         }
+
+        return $this->pieces[$key];
     }
 
     /**
