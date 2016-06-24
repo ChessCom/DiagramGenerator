@@ -7,8 +7,6 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * Class to keep theme color config
- *
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
  */
 class ThemeColor
 {
