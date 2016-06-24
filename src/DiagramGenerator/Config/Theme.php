@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Class to keep all theme config
- *
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
  */
 class Theme
 {
@@ -24,7 +22,7 @@ class Theme
     /**
      * @Type("DiagramGenerator\Config\ThemeColor")
      * @Valid()
-     * @var \DiagramGenerator\Config\ThemeColor
+     * @var ThemeColor
      */
     protected $color;
 
@@ -60,7 +58,7 @@ class Theme
     /**
      * Gets the value of color.
      *
-     * @return \DiagramGenerator\Config\ThemeColor
+     * @return ThemeColor
      */
     public function getColor()
     {
@@ -70,7 +68,7 @@ class Theme
     /**
      * Sets the value of color.
      *
-     * @param \DiagramGenerator\Config\ThemeColor $color the color
+     * @param ThemeColor $color the color
      *
      * @return self
      */

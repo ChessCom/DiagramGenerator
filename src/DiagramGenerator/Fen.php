@@ -20,13 +20,16 @@ class Fen
 
     /**
      * Array of all board pieces, excluding empty
+     *
      * @var array
      */
     protected $pieces = array();
 
     /**
      * Creates Fen object from the string
-     * @param  string  $fenString
+     *
+     * @param  string $fenString
+     *
      * @return self
      */
     public static function createFromString($fenString)
@@ -56,7 +59,9 @@ class Fen
 
     /**
      * Returns piece by piece key or null if its empty piece
+     *
      * @param  string  $key
+     *
      * @return mixed
      */
     public static function getPieceByKey($key)
@@ -88,6 +93,7 @@ class Fen
 
     /**
      * @param  string $fen
+     *
      * @return string
      */
     public static function sanitizeFenString($fen)
@@ -129,8 +135,10 @@ class Fen
 
     /**
      * Fills Fen row with values
+     *
      * @param array   $row
      * @param integer
+     *
      * @throws \InvalidArgumentException
      */
     public function setRow(array $row, $rowIndex)
@@ -146,9 +154,9 @@ class Fen
 
     /**
      * Set piece at position
-     * @param integer                     $row
-     * @param integer                     $column
-     * @param \DiagramGenerator\Fen\Piece $piece
+     * @param integer $row
+     * @param integer $column
+     * @param Piece   $piece
      */
     public function setAtPosition($row, $column, Piece $piece = null)
     {

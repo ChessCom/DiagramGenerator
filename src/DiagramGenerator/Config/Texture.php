@@ -7,8 +7,6 @@ use InvalidArgumentException;
 
 /**
  * Class to keep texture config
- *
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
  */
 class Texture
 {
@@ -78,7 +76,7 @@ class Texture
     }
 
     /**
-     * @param DiagramGenerator\Config\Texture $texture
+     * @param Texture $texture
      *
      * @return boolean
      */
