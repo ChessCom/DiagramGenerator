@@ -5,10 +5,8 @@ namespace DiagramGenerator;
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
-use DiagramGenerator\Fen;
 use JMS\Serializer\Annotation\Exclude;
 use JMS\Serializer\Annotation\ExclusionPolicy;
-use JMS\Serializer\Annotation\PostDeserialize;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\Type;
 use Symfony\Component\Validator\Constraints\Length;
@@ -31,46 +29,53 @@ class Config
     /**
      * @Type("string")
      * @NotBlank()
+     *
      * @var string
      */
     protected $fen;
 
     /**
+     * keeping deprecated int values (0-3) for backwards compatibility
+     * TODO [lackovic10]: rename to size, once the library is refactored and the size field is removed from this class
+     * the same action with boardTexture and pieceTheme
+     *
      * @Type("string")
      * @CustomCellSize(min=0, max=3)
      * @SerializedName("size")
+     *
      * @var string
      */
-    // keeping deprecated int values (0-3) for backwards compatibility
-    // TODO [lackovic10]: rename to size, once the library is refactored and the size field is removed from this class
-    // the same action with boardTexture and pieceTheme
     protected $sizeIndex;
 
     /**
      * @Exclude()
+     *
      * @var \DiagramGenerator\Config\Size
      */
     protected $size;
 
     /**
+     * [lackovic10]: these are piece theme folder names from the image url
+     * TODO: future idea - pass the whole urls to the library instead of generating the url inside the library based on parameters
+     *
      * @Type("string")
      * @StringOrInteger(min=0, max=5)
      * @SerializedName("piece")
-     * @var integer
+     *
+     * @var int
      */
-    // [lackovic10]: these are piece theme folder names from the image url
-    // TODO: future idea - pass the whole urls to the library instead of generating the url inside the library based
-    // on parameters
     protected $pieceIndex;
 
     /**
      * @Exclude()
+     *
      * @var \DiagramGenerator\Config\Texture
      */
     protected $texture;
 
     /**
      * @Exclude()
+     *
      * @var \DiagramGenerator\Config\Theme
      */
     protected $theme;
@@ -78,19 +83,22 @@ class Config
     /**
      * @Type("string")
      * @Length(max=30)
+     *
      * @var string
      */
     protected $caption;
 
     /**
      * @Type("boolean")
-     * @var boolean
+     *
+     * @var bool
      */
     protected $coordinates;
 
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Light color should be in hex format")
+     *
      * @var string
      */
     protected $light;
@@ -98,13 +106,15 @@ class Config
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Dark color should be in hex format")
+     *
      * @var string
      */
     protected $dark;
 
     /**
      * @Type("boolean")
-     * @var boolean
+     *
+     * @var bool
      */
     protected $flip;
 
@@ -112,6 +122,7 @@ class Config
      * @Type("string")
      * @SquareList()
      * @Length(max=128)
+     *
      * @var string
      */
     protected $highlightSquares;
@@ -119,6 +130,7 @@ class Config
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Highlight squares color should be in hex format")
+     *
      * @var string
      */
     protected $highlightSquaresColor;
@@ -127,7 +139,8 @@ class Config
      * @Type("integer")
      * @Integer
      * @Range(min = 0, max = 100)
-     * @var integer $compressionQualityJpg
+     *
+     * @var int
      */
     protected $compressionQualityJpg;
 
@@ -158,7 +171,7 @@ class Config
     /**
      * Gets the value of sizeIndex.
      *
-     * @return integer
+     * @return int
      */
     public function getSizeIndex()
     {
@@ -168,7 +181,7 @@ class Config
     /**
      * Sets the value of sizeIndex.
      *
-     * @param integer $sizeIndex the sizeIndex
+     * @param int $sizeIndex the sizeIndex
      *
      * @return self
      */
@@ -206,7 +219,7 @@ class Config
     /**
      * Gets the value of pieceIndex.
      *
-     * @return integer
+     * @return int
      */
     public function getPieceIndex()
     {
@@ -214,7 +227,7 @@ class Config
     }
 
     /**
-     * Sets the value of the piece index field. Preserving old values (0-6) for backwards compatibility
+     * Sets the value of the piece index field. Preserving old values (0-6) for backwards compatibility.
      *
      * @param string|int $piece
      *
@@ -278,7 +291,7 @@ class Config
     /**
      * Gets the value of coordinates.
      *
-     * @return boolean
+     * @return bool
      */
     public function getCoordinates()
     {
@@ -288,7 +301,7 @@ class Config
     /**
      * Sets the value of coordinates.
      *
-     * @param boolean $coordinates the coordinates
+     * @param bool $coordinates the coordinates
      *
      * @return self
      */
@@ -306,7 +319,7 @@ class Config
      */
     public function getLight()
     {
-        return sprintf("#%s", ltrim($this->light, '#'));
+        return sprintf('#%s', ltrim($this->light, '#'));
     }
 
     /**
@@ -330,7 +343,7 @@ class Config
      */
     public function getDark()
     {
-        return sprintf("#%s", ltrim($this->dark, '#'));
+        return sprintf('#%s', ltrim($this->dark, '#'));
     }
 
     /**
@@ -374,7 +387,7 @@ class Config
     /**
      * Gets the value of flip.
      *
-     * @return boolean
+     * @return bool
      */
     public function getFlip()
     {
@@ -384,7 +397,7 @@ class Config
     /**
      * Sets the value of flip.
      *
-     * @param boolean $flip the flip
+     * @param bool $flip the flip
      *
      * @return self
      */
@@ -409,7 +422,7 @@ class Config
 
     public function getHighlightSquaresColor()
     {
-        return sprintf("#%s", ltrim($this->highlightSquaresColor, '#'));
+        return sprintf('#%s', ltrim($this->highlightSquaresColor, '#'));
     }
 
     public function setHighlightSquaresColor($highlightSquaresColor)

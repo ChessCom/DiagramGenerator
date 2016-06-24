@@ -2,19 +2,16 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Config;
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\InvalidConfigException;
-use DiagramGenerator\Exception\UnsupportedConfigException;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\ValidatorInterface;
 use InvalidArgumentException;
 
 /**
- * Generator class
+ * Generator class.
  */
 class Generator
 {
@@ -96,7 +93,7 @@ class Generator
     }
 
     /**
-     * Set the config size
+     * Set the config size.
      *
      * @param Config $config
      */
@@ -142,7 +139,7 @@ class Generator
     }
 
     /**
-     * Set the config piece theme
+     * Set the config piece theme.
      *
      * @param Config $config
      */
@@ -159,7 +156,7 @@ class Generator
     }
 
     /**
-     * Parse the highlightSquares string into an array of squares
+     * Parse the highlightSquares string into an array of squares.
      *
      * @param string $highlightSquares
      *
@@ -168,8 +165,8 @@ class Generator
     protected function parseHighlightSquaresString($highlightSquares)
     {
         $highlightSquaresParsed = array();
-        for ($i = 0; $i < strlen($highlightSquares); $i+=2) {
-            $highlightSquaresParsed[] = $highlightSquares[$i] . $highlightSquares[$i+1];
+        for ($i = 0; $i < strlen($highlightSquares); $i += 2) {
+            $highlightSquaresParsed[] = $highlightSquares[$i].$highlightSquares[$i + 1];
         }
 
         return $highlightSquaresParsed;

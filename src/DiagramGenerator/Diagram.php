@@ -2,15 +2,14 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Config;
-use DiagramGenerator\Config\ThemeColor;
+
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Diagram\Caption;
 use DiagramGenerator\Diagram\Coordinate;
 use DiagramGenerator\Config\Texture;
 
 /**
- * Class which represents diagram image
+ * Class which represents diagram image.
  */
 class Diagram
 {
@@ -34,7 +33,7 @@ class Diagram
     public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->image  = new \Imagick();
+        $this->image = new \Imagick();
     }
 
     /**
@@ -82,11 +81,11 @@ class Diagram
     }
 
     /**
-     * Draw diagram
+     * Draw diagram.
+     * TODO [lackovic10]: move this to the Board class
      *
      * @return self
      */
-    // TODO [lackovic10]: move this to the Board class
     public function draw()
     {
         if (!$this->board) {
@@ -165,7 +164,7 @@ class Diagram
     }
 
     /**
-     * Draws the image border
+     * Draws the image border.
      */
     protected function drawBorder()
     {
@@ -182,16 +181,16 @@ class Diagram
     }
 
     /**
-     * @param  integer $width
-     * @param  integer $height
-     * @param  string  $text
+     * @param int    $width
+     * @param int    $height
+     * @param string $text
      *
      * @return Coordinate
      */
     protected function createCoordinate($width, $height, $text)
     {
         $coordinate = new Coordinate($this->config);
-        $draw       = $coordinate->getDraw();
+        $draw = $coordinate->getDraw();
 
         // Create image
         $coordinate->getImage()->newImage($width, $height, $this->getBackgroundColor());
@@ -204,14 +203,14 @@ class Diagram
     }
 
     /**
-     * Creates caption
+     * Creates caption.
      *
      * @return Caption
      */
     protected function createCaption()
     {
         $caption = new Caption($this->config);
-        $draw    = $caption->getDraw();
+        $draw = $caption->getDraw();
         $metrics = $caption->getMetrics($draw);
 
         // Create image
@@ -229,7 +228,7 @@ class Diagram
     }
 
     /**
-     * Returns caption text
+     * Returns caption text.
      *
      * @return string
      */
@@ -239,15 +238,15 @@ class Diagram
     }
 
     /**
-     * Returns font path by font filename
+     * Returns font path by font filename.
      *
-     * @param  string $filename
+     * @param string $filename
      *
      * @return string
      */
     protected function getFont($filename)
     {
-        return realpath(sprintf("%s/Resources/fonts/%s", __DIR__, $filename));
+        return realpath(sprintf('%s/Resources/fonts/%s', __DIR__, $filename));
     }
 
     /**
@@ -259,7 +258,7 @@ class Diagram
     }
 
     /**
-     * @return integer
+     * @return int
      */
     protected function getBorderThickness()
     {

@@ -2,4 +2,6 @@
 
 namespace DiagramGenerator\Exception;
 
-class UnsupportedConfigException extends \Exception {}
+class UnsupportedConfigException extends \Exception
+{
+}

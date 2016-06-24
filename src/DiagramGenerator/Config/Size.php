@@ -13,37 +13,45 @@ class Size
     const COORDINATES_COEFFICIENT = .25;
 
     /**
-     * Cell size
+     * Cell size.
+     *
      * @Type("integer")
-     * @var integer
+     *
+     * @var int
      */
     protected $cell;
 
     /**
-     * Border thickness
+     * Border thickness.
+     *
      * @Type("integer")
-     * @var integer
+     *
+     * @var int
      */
     protected $border;
 
     /**
-     * Caption font size
+     * Caption font size.
+     *
      * @Type("integer")
-     * @var integer
+     *
+     * @var int
      */
     protected $caption;
 
     /**
-     * Coordinates fonts size
+     * Coordinates fonts size.
+     *
      * @Type("integer")
-     * @var integer
+     *
+     * @var int
      */
     protected $coordinates;
 
     /**
      * Gets the value of cell.
      *
-     * @return integer
+     * @return int
      */
     public function getCell()
     {
@@ -53,7 +61,7 @@ class Size
     /**
      * Sets the value of cell.
      *
-     * @param integer $cell the cell
+     * @param int $cell the cell
      *
      * @return self
      */
@@ -67,7 +75,7 @@ class Size
     /**
      * Gets the Border thickness.
      *
-     * @return integer
+     * @return int
      */
     public function getBorder()
     {
@@ -77,7 +85,7 @@ class Size
     /**
      * Sets the Border thickness.
      *
-     * @param integer $border the border
+     * @param int $border the border
      *
      * @return self
      */
@@ -91,7 +99,7 @@ class Size
     /**
      * Gets the Caption font size.
      *
-     * @return integer
+     * @return int
      */
     public function getCaption()
     {
@@ -101,7 +109,7 @@ class Size
     /**
      * Sets the Caption font size.
      *
-     * @param integer $caption the caption
+     * @param int $caption the caption
      *
      * @return self
      */
@@ -115,7 +123,7 @@ class Size
     /**
      * Gets the Coordinates fonts size.
      *
-     * @return integer
+     * @return int
      */
     public function getCoordinates()
     {
@@ -125,7 +133,7 @@ class Size
     /**
      * Sets the Coordinates fonts size.
      *
-     * @param integer $coordinates the coordinates
+     * @param int $coordinates the coordinates
      *
      * @return self
      */
