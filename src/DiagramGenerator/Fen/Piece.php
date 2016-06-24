@@ -2,11 +2,6 @@
 
 namespace DiagramGenerator\Fen;
 
-/**
- * Interface all pieces should implement
- * TODO: probably should be a part of chess-game library
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
- */
 abstract class Piece
 {
     const WHITE = 'white';

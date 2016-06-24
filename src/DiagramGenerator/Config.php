@@ -182,7 +182,7 @@ class Config
     /**
      * Gets the value of size.
      *
-     * @return \DiagramGenerator\Config\Size
+     * @return Size
      */
     public function getSize()
     {
@@ -192,7 +192,7 @@ class Config
     /**
      * Sets the value of size.
      *
-     * @param \DiagramGenerator\Config\Size $size the size
+     * @param Size $size the size
      *
      * @return self
      */
@@ -230,7 +230,7 @@ class Config
     /**
      * Gets the value of theme.
      *
-     * @return \DiagramGenerator\Config\Theme
+     * @return Theme
      */
     public function getTheme()
     {
@@ -240,7 +240,7 @@ class Config
     /**
      * Sets the value of theme.
      *
-     * @param \DiagramGenerator\Config\Theme $theme the theme
+     * @param Theme $theme the theme
      *
      * @return self
      */
@@ -360,7 +360,7 @@ class Config
     /**
      * Sets the value of texture.
      *
-     * @param \DiagramGenerator\Config\Texture $texture the texture
+     * @param Texture $texture the texture
      *
      * @return self
      */

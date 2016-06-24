@@ -11,14 +11,13 @@ use DiagramGenerator\Config\Texture;
 
 /**
  * Class which represents diagram image
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
  */
 class Diagram
 {
     const COMPRESSION_QUALITY_DEFAULT_JPG = 70;
 
     /**
-     * @var \DiagramGenerator\Config
+     * @var Config
      */
     protected $config;
 
@@ -28,7 +27,7 @@ class Diagram
     protected $image;
 
     /**
-     * @var \DiagramGenerator\Diagram\Board
+     * @var Board
      */
     protected $board;
 
@@ -51,7 +50,7 @@ class Diagram
     /**
      * Gets the value of config.
      *
-     * @return \DiagramGenerator\Config
+     * @return Config
      */
     public function getConfig()
     {
@@ -61,7 +60,7 @@ class Diagram
     /**
      * Gets the value of board.
      *
-     * @return \DiagramGenerator\Diagram\Board
+     * @return Board
      */
     public function getBoard()
     {
@@ -71,7 +70,7 @@ class Diagram
     /**
      * Sets the value of board.
      *
-     * @param \DiagramGenerator\Diagram\Board $board the board
+     * @param Board $board the board
      *
      * @return self
      */
@@ -84,6 +83,7 @@ class Diagram
 
     /**
      * Draw diagram
+     *
      * @return self
      */
     // TODO [lackovic10]: move this to the Board class
@@ -166,7 +166,6 @@ class Diagram
 
     /**
      * Draws the image border
-     * @return null
      */
     protected function drawBorder()
     {
@@ -186,7 +185,8 @@ class Diagram
      * @param  integer $width
      * @param  integer $height
      * @param  string  $text
-     * @return \DiagramGenerator\Diagram\Coordinate
+     *
+     * @return Coordinate
      */
     protected function createCoordinate($width, $height, $text)
     {
@@ -205,7 +205,8 @@ class Diagram
 
     /**
      * Creates caption
-     * @return \DiagramGenerator\Diagram\Caption
+     *
+     * @return Caption
      */
     protected function createCaption()
     {
@@ -229,6 +230,7 @@ class Diagram
 
     /**
      * Returns caption text
+     *
      * @return string
      */
     protected function getCaptionText()
@@ -238,7 +240,9 @@ class Diagram
 
     /**
      * Returns font path by font filename
+     *
      * @param  string $filename
+     *
      * @return string
      */
     protected function getFont($filename)
