@@ -13,7 +13,7 @@ class IntegerValidator extends ConstraintValidator
             return;
         }
 
-        if ($constraint->positive && !preg_match('/' . Integer::POSITIVE_REGEX . '/', $value)) {
+        if ($constraint->positive && !preg_match('/'.Integer::POSITIVE_REGEX.'/', $value)) {
             $this->context->addViolation($constraint->invalidPositiveMessage, array(
                 '{{ value }}' => $value,
             ));
@@ -21,7 +21,7 @@ class IntegerValidator extends ConstraintValidator
             return;
         }
 
-        if ($constraint->unsigned && !preg_match('/' . Integer::UNSIGNED_REGEX . '/', $value)) {
+        if ($constraint->unsigned && !preg_match('/'.Integer::UNSIGNED_REGEX.'/', $value)) {
             $this->context->addViolation($constraint->invalidUnsignedMessage, array(
                 '{{ value }}' => $value,
             ));
@@ -29,7 +29,7 @@ class IntegerValidator extends ConstraintValidator
             return;
         }
 
-        if (!preg_match('/' . Integer::REGEX . '/', $value)) {
+        if (!preg_match('/'.Integer::REGEX.'/', $value)) {
             $this->context->addViolation($constraint->invalidMessage, array(
                 '{{ value }}' => $value,
             ));

@@ -2,19 +2,19 @@
 
 namespace DiagramGenerator\Config;
 
-use DiagramGenerator\Config\ThemeColor;
-use DiagramGenerator\Config\ThemeTexture;
 use JMS\Serializer\Annotation\Type;
 use Symfony\Component\Validator\Constraints\Valid;
 
 /**
- * Class to keep all theme config
+ * Class to keep all theme config.
  */
 class Theme
 {
     /**
-     * Theme name
+     * Theme name.
+     *
      * @Type("string")
+     *
      * @var string
      */
     protected $name;
@@ -22,6 +22,7 @@ class Theme
     /**
      * @Type("DiagramGenerator\Config\ThemeColor")
      * @Valid()
+     *
      * @var ThemeColor
      */
     protected $color;

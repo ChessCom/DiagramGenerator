@@ -4,8 +4,6 @@ namespace DiagramGenerator\Diagram;
 
 use DiagramGenerator\Config;
 use DiagramGenerator\Config\Texture;
-use DiagramGenerator\Exception\CachedFileInvalidException;
-use DiagramGenerator\Generator;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
 use ImagickDraw;
@@ -13,9 +11,7 @@ use Imagick;
 use RuntimeException;
 
 /**
- * Class responsible for drawing the board
- *
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * Class responsible for drawing the board.
  */
 class Board
 {
@@ -37,12 +33,12 @@ class Board
     protected $config;
 
     /**
-     * @var \DiagramGenerator\Fen $fen
+     * @var \DiagramGenerator\Fen
      */
     protected $fen;
 
     /**
-     * @var int $paddingTop
+     * @var int
      */
     protected $paddingTop = 0;
 
@@ -62,17 +58,17 @@ class Board
     protected $cacheDir;
 
     /**
-     * @var string $boardTextureUrl
+     * @var string
      */
     protected $boardTextureUrl;
 
     /**
-     * @var string $piece
+     * @var string
      */
     protected $pieceThemeUrl;
 
     /**
-     * Cached Imagick pieces
+     * Cached Imagick pieces.
      *
      * @var array
      */
@@ -91,11 +87,11 @@ class Board
         $this->boardTextureUrl = $boardTextureUrl;
         $this->pieceThemeUrl = $pieceThemeUrl;
 
-        $this->cacheDir = $this->rootCacheDir . '/' . $this->cacheDirName;
+        $this->cacheDir = $this->rootCacheDir.'/'.$this->cacheDirName;
 
-        @mkdir($this->rootCacheDir . '/' . $this->cacheDirName, 0777);
+        @mkdir($this->rootCacheDir.'/'.$this->cacheDirName, 0777);
 
-        $this->image  = new \Imagick();
+        $this->image = new \Imagick();
         $this->fen = Fen::createFromString($this->config->getFen());
 
         if ($this->config->getFlip()) {
@@ -114,7 +110,7 @@ class Board
     }
 
     /**
-     * Draws board itself
+     * Draws board itself.
      *
      * @return self
      *
@@ -143,7 +139,7 @@ class Board
     }
 
     /**
-     * Draws cells on the board
+     * Draws cells on the board.
      *
      * @return self
      */
@@ -159,7 +155,7 @@ class Board
     }
 
     /**
-     * Draw a single cell
+     * Draw a single cell.
      *
      * @param int  $x
      * @param int  $y
@@ -174,7 +170,8 @@ class Board
     }
 
     /**
-     * Add figures to the board
+     * Add figures to the board.
+     *
      * @return self
      */
     public function drawFigures()
@@ -195,7 +192,8 @@ class Board
     }
 
     /**
-     * Draws border. Must be called last
+     * Draws border. Must be called last.
+     *
      * @deprecated
      * needs to be updated to handle boards with 3d pieces correctly
      */
@@ -212,7 +210,8 @@ class Board
     }
 
     /**
-     * Draws the board image
+     * Draws the board image.
+     *
      * @return self
      */
     public function draw()
@@ -223,8 +222,9 @@ class Board
     }
 
     /**
-     * Shortcut to get cell size
-     * @return integer
+     * Shortcut to get cell size.
+     *
+     * @return int
      */
     public function getCellSize()
     {
@@ -275,7 +275,8 @@ class Board
     }
 
     /**
-     * Returns light cell color
+     * Returns light cell color.
+     *
      * @return \ImagickPixel
      */
     protected function getLightCellColor()
@@ -284,7 +285,8 @@ class Board
     }
 
     /**
-     * Returns dark cell color
+     * Returns dark cell color.
+     *
      * @return \ImagickPixel
      */
     protected function getDarkCellColor()
@@ -293,8 +295,9 @@ class Board
     }
 
     /**
-     * Returns piece image path
-     * @param  \DiagramGenerator\Fen\Piece $piece
+     * Returns piece image path.
+     *
+     * @param Piece $piece
      *
      * @return \Imagick
      */
@@ -305,18 +308,18 @@ class Board
         if (!isset($this->pieces[$key])) {
             $pieceThemeName = $this->config->getTheme()->getName();
             $cellSize = $this->getCellSize();
-            $piece = substr($piece->getColor(), 0, 1) . $piece->getKey();
+            $piece = substr($piece->getColor(), 0, 1).$piece->getKey();
             $pieceCachedPath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece);
 
             try {
                 $image = new \Imagick($pieceCachedPath);
             } catch (\ImagickException $exception) {
-                @mkdir($this->cacheDir . '/' . $pieceThemeName . '/' . $cellSize, 0777, true);
+                @mkdir($this->cacheDir.'/'.$pieceThemeName.'/'.$cellSize, 0777, true);
 
                 $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
                 $pieceThemeUrl = str_replace('__SIZE__', $cellSize, $pieceThemeUrl);
                 $pieceThemeUrl = str_replace('__PIECE__', $piece, $pieceThemeUrl);
-                $pieceThemeUrl .= '.' . Texture::IMAGE_FORMAT_PNG;
+                $pieceThemeUrl .= '.'.Texture::IMAGE_FORMAT_PNG;
 
                 $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
 
@@ -330,7 +333,7 @@ class Board
     }
 
     /**
-     * Returns board background image path
+     * Returns board background image path.
      *
      * @return \Imagick
      *
@@ -343,13 +346,13 @@ class Board
         try {
             return new \Imagick($boardCachedPath);
         } catch (\ImagickException $exception) {
-            @mkdir($this->cacheDir . '/board/' . $this->config->getTexture()->getImageUrlFolderName(), 0777, true);
+            @mkdir($this->cacheDir.'/board/'.$this->config->getTexture()->getImageUrlFolderName(), 0777, true);
 
             $boardTextureUrl = str_replace(
                 '__BOARD_TEXTURE__', $this->config->getTexture()->getImageUrlFolderName(), $this->boardTextureUrl
             );
             $boardTextureUrl = str_replace('__SIZE__', $this->getCellSize(), $boardTextureUrl);
-            $boardTextureUrl .= '.' . $this->config->getTexture()->getImageFormat();
+            $boardTextureUrl .= '.'.$this->config->getTexture()->getImageFormat();
 
             $this->cacheImage($boardTextureUrl, $boardCachedPath);
 
@@ -358,7 +361,7 @@ class Board
     }
 
     /**
-     * Return the square for the coordinates passed (starting from 0)
+     * Return the square for the coordinates passed (starting from 0).
      *
      * @param int $x
      * @param int $y
@@ -367,11 +370,11 @@ class Board
      */
     protected function getSquare($x, $y)
     {
-        return $this->squares[$x-1] . (count($this->squares) - $y + 1);
+        return $this->squares[$x - 1].(count($this->squares) - $y + 1);
     }
 
     /**
-     * Get the largest piece height
+     * Get the largest piece height.
      *
      * @return int
      */
@@ -392,14 +395,14 @@ class Board
     }
 
     /**
-     * Cache an image from a remote url to a local cache file
+     * Cache an image from a remote url to a local cache file.
      *
      * @param string $remoteImageUrl
      * @param string $cachedFilePath
      */
     protected function cacheImage($remoteImageUrl, $cachedFilePath)
     {
-        $cachedFilePathTmp = $cachedFilePath . uniqid('', true);
+        $cachedFilePathTmp = $cachedFilePath.uniqid('', true);
         $ch = curl_init($remoteImageUrl);
         $destinationFileHandle = fopen($cachedFilePathTmp, 'wb');
 
@@ -417,7 +420,7 @@ class Board
     }
 
     /**
-     * Get the highlighted squares for the board (considering the flip parameter)
+     * Get the highlighted squares for the board (considering the flip parameter).
      *
      * @param Config $config
      *
@@ -438,7 +441,7 @@ class Board
     }
 
     /**
-     * Return the flipped representation of a square
+     * Return the flipped representation of a square.
      *
      * @param int $x
      * @param int $y
@@ -449,13 +452,13 @@ class Board
     {
         foreach ($this->squares as $index => $square) {
             if ($square == $x) {
-                return $this->flippedSquares[$index] . (count($this->squares) - $y + 1);
+                return $this->flippedSquares[$index].(count($this->squares) - $y + 1);
             }
         }
     }
 
     /**
-     * Draw a non-highlighted square
+     * Draw a non-highlighted square.
      *
      * @param ImagickDraw $cell
      * @param int         $x
@@ -474,7 +477,7 @@ class Board
     }
 
     /**
-     * Draw a highlighted cell
+     * Draw a highlighted cell.
      *
      * @param ImagickDraw $cell
      * @param int         $x
@@ -497,7 +500,7 @@ class Board
     }
 
     /**
-     * Draw a cell rectangle
+     * Draw a cell rectangle.
      *
      * @param ImagickDraw $cell
      * @param int         $x
@@ -516,7 +519,7 @@ class Board
     }
 
     /**
-     * Cached texture file path
+     * Cached texture file path.
      *
      * @return string
      */
@@ -532,7 +535,7 @@ class Board
     }
 
     /**
-     * Cached piece file path
+     * Cached piece file path.
      *
      * @return string
      */

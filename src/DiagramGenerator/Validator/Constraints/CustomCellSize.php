@@ -3,7 +3,6 @@
 namespace DiagramGenerator\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
  * @Annotation
