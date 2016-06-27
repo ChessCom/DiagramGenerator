@@ -13,8 +13,8 @@ class StringOrIntegerValidator extends ConstraintValidator
             return;
         }
 
-        $isInteger = preg_match('/' . Integer::REGEX . '/', $value);
-        if (!$isInteger && !($constraint->regex && preg_match('/' . $constraint->regex . '/', $value))) {
+        $isInteger = preg_match('/'.Integer::REGEX.'/', $value);
+        if (!$isInteger && !($constraint->regex && preg_match('/'.$constraint->regex.'/', $value))) {
             $this->context->addViolation($constraint->invalidMessage);
 
             return;
@@ -23,7 +23,7 @@ class StringOrIntegerValidator extends ConstraintValidator
         if ($isInteger) {
             if (null !== $constraint->max && $value > $constraint->max) {
                 $this->context->addViolation($constraint->maxMessage, array(
-                    '{{ limit }}' => $constraint->max
+                    '{{ limit }}' => $constraint->max,
                 ));
 
                 return;
@@ -31,7 +31,7 @@ class StringOrIntegerValidator extends ConstraintValidator
 
             if (null !== $constraint->min && $value < $constraint->min) {
                 $this->context->addViolation($constraint->minMessage, array(
-                    '{{ limit }}' => $constraint->min
+                    '{{ limit }}' => $constraint->min,
                 ));
 
                 return;

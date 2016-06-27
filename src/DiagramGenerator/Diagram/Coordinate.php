@@ -15,7 +15,7 @@ class Coordinate
     public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->image  = new \Imagick();
+        $this->image = new \Imagick();
     }
 
     /**
@@ -46,7 +46,8 @@ class Coordinate
 
     /**
      * Draw object which with caption text ready
-     * to be added into the image
+     * to be added into the image.
+     *
      * @return \ImagickDraw
      */
     public function getDraw()
@@ -60,7 +61,7 @@ class Coordinate
     }
 
     /**
-     * @return integer
+     * @return int
      */
     protected function getCoordinatesSize()
     {
@@ -69,11 +70,12 @@ class Coordinate
 
     /**
      * Path to the font
-     * TODO: move coordinate font to config
+     * TODO: move coordinate font to config.
+     *
      * @return string
      */
     protected function getFont()
     {
-        return sprintf("%s/fonts/%s", Generator::getResourcesDir(), 'tahoma.ttf');
+        return sprintf('%s/fonts/%s', Generator::getResourcesDir(), 'tahoma.ttf');
     }
 }

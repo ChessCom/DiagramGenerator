@@ -2,11 +2,8 @@
 
 namespace DiagramGenerator\Fen;
 
-use DiagramGenerator\Fen\Piece;
-
 /**
- * TODO: probably should be a part of chess-game library
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * TODO: probably should be a part of chess-game library.
  */
 class Knight extends Piece
 {

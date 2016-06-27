@@ -2,23 +2,21 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Config;
-use DiagramGenerator\Config\ThemeColor;
+
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Diagram\Caption;
 use DiagramGenerator\Diagram\Coordinate;
 use DiagramGenerator\Config\Texture;
 
 /**
- * Class which represents diagram image
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * Class which represents diagram image.
  */
 class Diagram
 {
     const COMPRESSION_QUALITY_DEFAULT_JPG = 70;
 
     /**
-     * @var \DiagramGenerator\Config
+     * @var Config
      */
     protected $config;
 
@@ -28,14 +26,14 @@ class Diagram
     protected $image;
 
     /**
-     * @var \DiagramGenerator\Diagram\Board
+     * @var Board
      */
     protected $board;
 
     public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->image  = new \Imagick();
+        $this->image = new \Imagick();
     }
 
     /**
@@ -51,7 +49,7 @@ class Diagram
     /**
      * Gets the value of config.
      *
-     * @return \DiagramGenerator\Config
+     * @return Config
      */
     public function getConfig()
     {
@@ -61,7 +59,7 @@ class Diagram
     /**
      * Gets the value of board.
      *
-     * @return \DiagramGenerator\Diagram\Board
+     * @return Board
      */
     public function getBoard()
     {
@@ -71,7 +69,7 @@ class Diagram
     /**
      * Sets the value of board.
      *
-     * @param \DiagramGenerator\Diagram\Board $board the board
+     * @param Board $board the board
      *
      * @return self
      */
@@ -83,10 +81,11 @@ class Diagram
     }
 
     /**
-     * Draw diagram
+     * Draw diagram.
+     * TODO [lackovic10]: move this to the Board class
+     *
      * @return self
      */
-    // TODO [lackovic10]: move this to the Board class
     public function draw()
     {
         if (!$this->board) {
@@ -165,8 +164,7 @@ class Diagram
     }
 
     /**
-     * Draws the image border
-     * @return null
+     * Draws the image border.
      */
     protected function drawBorder()
     {
@@ -183,15 +181,16 @@ class Diagram
     }
 
     /**
-     * @param  integer $width
-     * @param  integer $height
-     * @param  string  $text
-     * @return \DiagramGenerator\Diagram\Coordinate
+     * @param int    $width
+     * @param int    $height
+     * @param string $text
+     *
+     * @return Coordinate
      */
     protected function createCoordinate($width, $height, $text)
     {
         $coordinate = new Coordinate($this->config);
-        $draw       = $coordinate->getDraw();
+        $draw = $coordinate->getDraw();
 
         // Create image
         $coordinate->getImage()->newImage($width, $height, $this->getBackgroundColor());
@@ -204,13 +203,14 @@ class Diagram
     }
 
     /**
-     * Creates caption
-     * @return \DiagramGenerator\Diagram\Caption
+     * Creates caption.
+     *
+     * @return Caption
      */
     protected function createCaption()
     {
         $caption = new Caption($this->config);
-        $draw    = $caption->getDraw();
+        $draw = $caption->getDraw();
         $metrics = $caption->getMetrics($draw);
 
         // Create image
@@ -228,7 +228,8 @@ class Diagram
     }
 
     /**
-     * Returns caption text
+     * Returns caption text.
+     *
      * @return string
      */
     protected function getCaptionText()
@@ -237,13 +238,15 @@ class Diagram
     }
 
     /**
-     * Returns font path by font filename
-     * @param  string $filename
+     * Returns font path by font filename.
+     *
+     * @param string $filename
+     *
      * @return string
      */
     protected function getFont($filename)
     {
-        return realpath(sprintf("%s/Resources/fonts/%s", __DIR__, $filename));
+        return realpath(sprintf('%s/Resources/fonts/%s', __DIR__, $filename));
     }
 
     /**
@@ -255,7 +258,7 @@ class Diagram
     }
 
     /**
-     * @return integer
+     * @return int
      */
     protected function getBorderThickness()
     {

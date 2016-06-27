@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * Note [lackovic10]: the two currently supported size formats are:
  * 1. a size index - an integer value
- * 2. cell size - {number}px
+ * 2. cell size - {number}px.
  *
  * These two size formats are exclusive, which means a value passed can't be valid for both formats
  */
@@ -22,9 +22,9 @@ class CustomCellSizeValidator extends ConstraintValidator
 
         $isBoardSizeIndexFormat = $this->isValidBoardSizeIndexFormat($value);
         $boardCellSize = $this->isValidBoardCellSizeFormat($value);
-        if (!$isBoardSizeIndexFormat && !$boardCellSize ) {
+        if (!$isBoardSizeIndexFormat && !$boardCellSize) {
             $this->context->addViolation($constraint->invalidMessage, array(
-                '{{ value }}' => $value
+                '{{ value }}' => $value,
             ));
 
             return;
@@ -72,16 +72,16 @@ class CustomCellSizeValidator extends ConstraintValidator
     }
 
     /**
-     * Check if the value is in the valid board size index format (an integer)
+     * Check if the value is in the valid board size index format (an integer).
      */
     protected function isValidBoardSizeIndexFormat($value)
     {
-        return preg_match('/' . Integer::UNSIGNED_REGEX .'/', $value);
+        return preg_match('/'.Integer::UNSIGNED_REGEX.'/', $value);
     }
 
     /**
      * Check if the size passed is in the valid board size format - {number}px
-     * If valid, return the size
+     * If valid, return the size.
      *
      * @param string $value
      *
@@ -95,7 +95,7 @@ class CustomCellSizeValidator extends ConstraintValidator
 
         $size = substr($value, 0, -2);
 
-        if (!preg_match('/' . Integer::POSITIVE_REGEX . '/', $size)) {
+        if (!preg_match('/'.Integer::POSITIVE_REGEX.'/', $size)) {
             return false;
         }
 

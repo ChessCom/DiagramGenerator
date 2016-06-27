@@ -2,13 +2,10 @@
 
 namespace DiagramGenerator\Config;
 
-use JMS\Serializer\Annotation\Type;
 use InvalidArgumentException;
 
 /**
- * Class to keep texture config
- *
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * Class to keep texture config.
  */
 class Texture
 {
@@ -78,9 +75,9 @@ class Texture
     }
 
     /**
-     * @param DiagramGenerator\Config\Texture $texture
+     * @param Texture $texture
      *
-     * @return boolean
+     * @return bool
      */
     public function is(Texture $texture)
     {

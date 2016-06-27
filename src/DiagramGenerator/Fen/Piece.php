@@ -2,42 +2,42 @@
 
 namespace DiagramGenerator\Fen;
 
-/**
- * Interface all pieces should implement
- * TODO: probably should be a part of chess-game library
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
- */
 abstract class Piece
 {
     const WHITE = 'white';
     const BLACK = 'black';
 
     /**
-     * Piece color
+     * Piece color.
+     *
      * @var string
      */
     protected $color;
 
     /**
-     * Row index of piece position
-     * @var integer
+     * Row index of piece position.
+     *
+     * @var int
      */
     protected $row;
 
     /**
-     * Column index of piece position
-     * @var integer
+     * Column index of piece position.
+     *
+     * @var int
      */
     protected $column;
 
     /**
-     * Returns name of the piece
+     * Returns name of the piece.
+     *
      * @return string
      */
     abstract public function getName();
 
     /**
-     * Returns piece key (one letter, e.g. "r" or "p")
+     * Returns piece key (one letter, e.g. "r" or "p").
+     *
      * @return string
      */
     abstract public function getKey();
@@ -48,7 +48,7 @@ abstract class Piece
     }
 
     /**
-     * Gets the Piece color
+     * Gets the Piece color.
      *
      * @return string
      */
@@ -58,7 +58,7 @@ abstract class Piece
     }
 
     /**
-     * Sets the Piece color
+     * Sets the Piece color.
      *
      * @param string $color the color
      *
@@ -78,7 +78,7 @@ abstract class Piece
     /**
      * Gets the Row index of piece position.
      *
-     * @return integer
+     * @return int
      */
     public function getRow()
     {
@@ -88,7 +88,7 @@ abstract class Piece
     /**
      * Sets the Row index of piece position.
      *
-     * @param integer $row the row
+     * @param int $row the row
      *
      * @return self
      */
@@ -106,7 +106,7 @@ abstract class Piece
     /**
      * Gets the Column index of piece position.
      *
-     * @return integer
+     * @return int
      */
     public function getColumn()
     {
@@ -116,7 +116,7 @@ abstract class Piece
     /**
      * Sets the Column index of piece position.
      *
-     * @param integer $column the column
+     * @param int $column the column
      *
      * @return self
      */

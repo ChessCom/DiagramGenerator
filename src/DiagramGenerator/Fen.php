@@ -11,27 +11,29 @@ use DiagramGenerator\Fen\Queen;
 use DiagramGenerator\Fen\Rook;
 
 /**
- * TODO: probably should be a part of chess-game library
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * TODO: probably should be a part of chess-game library.
  */
 class Fen
 {
     const DEFAULT_FEN_PIECES = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 
     /**
-     * Array of all board pieces, excluding empty
+     * Array of all board pieces, excluding empty.
+     *
      * @var array
      */
     protected $pieces = array();
 
     /**
-     * Creates Fen object from the string
-     * @param  string  $fenString
+     * Creates Fen object from the string.
+     *
+     * @param string $fenString
+     *
      * @return self
      */
     public static function createFromString($fenString)
     {
-        $fen  = new Fen();
+        $fen = new self();
         $rows = explode('/', self::sanitizeFenString($fenString));
         if (count($rows) != 8) {
             throw new \InvalidArgumentException('Fen should have exactly 8 rows');
@@ -44,7 +46,7 @@ class Fen
                     $row[] = $pieceKey;
                 } else {
                     $emptyPieces = array_fill(count($row), $pieceKey, null);
-                    $row         = array_merge($row, $emptyPieces);
+                    $row = array_merge($row, $emptyPieces);
                 }
             }
 
@@ -55,14 +57,16 @@ class Fen
     }
 
     /**
-     * Returns piece by piece key or null if its empty piece
-     * @param  string  $key
+     * Returns piece by piece key or null if its empty piece.
+     *
+     * @param string $key
+     *
      * @return mixed
      */
     public static function getPieceByKey($key)
     {
         $color = 'white';
-        if (preg_match("/[A-Z]/", $key) === 0) {
+        if (preg_match('/[A-Z]/', $key) === 0) {
             $color = 'black';
         }
 
@@ -87,7 +91,8 @@ class Fen
     }
 
     /**
-     * @param  string $fen
+     * @param string $fen
+     *
      * @return string
      */
     public static function sanitizeFenString($fen)
@@ -98,7 +103,7 @@ class Fen
     }
 
     /**
-     * Flips pieces
+     * Flips pieces.
      */
     public function flip()
     {
@@ -128,15 +133,17 @@ class Fen
     }
 
     /**
-     * Fills Fen row with values
-     * @param array   $row
-     * @param integer
+     * Fills Fen row with values.
+     *
+     * @param array $row
+     * @param int
+     *
      * @throws \InvalidArgumentException
      */
     public function setRow(array $row, $rowIndex)
     {
         if (count($row) != 8) {
-            throw new \InvalidArgumentException("Row should have exactly 8 columns");
+            throw new \InvalidArgumentException('Row should have exactly 8 columns');
         }
 
         foreach ($row as $columnIndex => $value) {
@@ -145,10 +152,11 @@ class Fen
     }
 
     /**
-     * Set piece at position
-     * @param integer                     $row
-     * @param integer                     $column
-     * @param \DiagramGenerator\Fen\Piece $piece
+     * Set piece at position.
+     *
+     * @param int   $row
+     * @param int   $column
+     * @param Piece $piece
      */
     public function setAtPosition($row, $column, Piece $piece = null)
     {
@@ -161,7 +169,7 @@ class Fen
                 ->setRow($row)
                 ->setColumn($column)
             ;
-            $this->pieces[sprintf("%u:%u", $row, $column)] = $piece;
+            $this->pieces[sprintf('%u:%u', $row, $column)] = $piece;
         }
     }
 }

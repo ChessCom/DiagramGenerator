@@ -15,7 +15,7 @@ class Caption
     public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->image  = new \Imagick();
+        $this->image = new \Imagick();
     }
 
     /**
@@ -30,7 +30,8 @@ class Caption
 
     /**
      * Draw object which with caption text ready
-     * to be added into the image
+     * to be added into the image.
+     *
      * @return \ImagickDraw
      */
     public function getDraw()
@@ -45,9 +46,10 @@ class Caption
     }
 
     /**
-     * @param  \ImagickPixel $color
-     * @param  integer       $width
-     * @param  integer       $height
+     * @param \ImagickPixel $color
+     * @param int           $width
+     * @param int           $height
+     *
      * @return self
      */
     public function drawBorder(\ImagickPixel $color, $width, $height)
@@ -58,7 +60,8 @@ class Caption
     }
 
     /**
-     * @param  \ImagickDraw $draw
+     * @param \ImagickDraw $draw
+     *
      * @return array
      */
     public function getMetrics(\ImagickDraw $draw)
@@ -67,7 +70,7 @@ class Caption
     }
 
     /**
-     * @return integer
+     * @return int
      */
     protected function getCaptionSize()
     {
@@ -76,11 +79,12 @@ class Caption
 
     /**
      * Path to the font
-     * TODO: move caption font to config
+     * TODO: move caption font to config.
+     *
      * @return string
      */
     protected function getFont()
     {
-        return sprintf("%s/fonts/%s", Generator::getResourcesDir(), 'arialbd.ttf');
+        return sprintf('%s/fonts/%s', Generator::getResourcesDir(), 'arialbd.ttf');
     }
 }

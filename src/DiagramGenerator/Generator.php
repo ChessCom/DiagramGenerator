@@ -2,23 +2,20 @@
 
 namespace DiagramGenerator;
 
-use DiagramGenerator\Config;
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\InvalidConfigException;
-use DiagramGenerator\Exception\UnsupportedConfigException;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\ValidatorInterface;
+use InvalidArgumentException;
 
 /**
- * Generator class
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * Generator class.
  */
 class Generator
 {
-    /** @var \Symfony\Component\Validator\ValidatorInterface */
+    /** @var ValidatorInterface */
     protected $validator;
 
     /** @var array $boardTextures */
@@ -41,8 +38,14 @@ class Generator
     }
 
     /**
-     * @param  Config $config
-     * @return \DiagramGenerator\Diagram
+     * @param Config $config
+     * @param $rootCacheDir
+     * @param $boardTextureUrl
+     * @param $pieceThemeUrl
+     *
+     * @return Diagram
+     *
+     * @throws InvalidConfigException
      */
     public function buildDiagram(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
@@ -90,7 +93,7 @@ class Generator
     }
 
     /**
-     * Set the config size
+     * Set the config size.
      *
      * @param Config $config
      */
@@ -118,7 +121,7 @@ class Generator
     }
 
     /**
-     * @param DiagramGenerator\Config\Texture $textureForValidation
+     * @param Texture $textureForValidation
      *
      * @throws InvalidArgumentException
      */
@@ -130,13 +133,13 @@ class Generator
             }
         }
 
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
             sprintf('Board texture %s does not exist', $textureForValidation->getName())
         );
     }
 
     /**
-     * Set the config piece theme
+     * Set the config piece theme.
      *
      * @param Config $config
      */
@@ -145,7 +148,7 @@ class Generator
         $pieceTheme = $config->getPieceIndex();
 
         if (!in_array($pieceTheme, $this->pieceThemes)) {
-            throw new \InvalidArgumentException(sprintf('Piece theme %s does not exist', $pieceTheme));
+            throw new InvalidArgumentException(sprintf('Piece theme %s does not exist', $pieceTheme));
         }
 
         $theme = new Theme();
@@ -153,15 +156,17 @@ class Generator
     }
 
     /**
-     * Parse the highlightSquares string into an array of squares
+     * Parse the highlightSquares string into an array of squares.
      *
      * @param string $highlightSquares
+     *
+     * @return array
      */
     protected function parseHighlightSquaresString($highlightSquares)
     {
         $highlightSquaresParsed = array();
-        for ($i = 0; $i < strlen($highlightSquares); $i+=2) {
-            $highlightSquaresParsed[] = $highlightSquares[$i] . $highlightSquares[$i+1];
+        for ($i = 0; $i < strlen($highlightSquares); $i += 2) {
+            $highlightSquaresParsed[] = $highlightSquares[$i].$highlightSquares[$i + 1];
         }
 
         return $highlightSquaresParsed;

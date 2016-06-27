@@ -2,4 +2,6 @@
 
 namespace DiagramGenerator\Exception;
 
-class CachedFileInvalidException extends \Exception {}
+class CachedFileInvalidException extends \Exception
+{
+}

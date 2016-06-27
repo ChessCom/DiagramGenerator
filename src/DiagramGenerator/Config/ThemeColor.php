@@ -6,15 +6,14 @@ use JMS\Serializer\Annotation\Type;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
- * Class to keep theme color config
- *
- * @author Alex Kovalevych <alexkovalevych@gmail.com>
+ * Class to keep theme color config.
  */
 class ThemeColor
 {
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Background color should be in hex format")
+     *
      * @var string
      */
     protected $background = 'FFFFFF';
@@ -22,6 +21,7 @@ class ThemeColor
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Caption color should be in hex format")
+     *
      * @var string
      */
     protected $caption = '000000';
@@ -29,6 +29,7 @@ class ThemeColor
     /**
      * @Type("string")
      * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Border color should be in hex format")
+     *
      * @var string
      */
     protected $border = '777777';
@@ -40,7 +41,7 @@ class ThemeColor
      */
     public function getBackground()
     {
-        return sprintf("#%s", $this->background);
+        return sprintf('#%s', $this->background);
     }
 
     /**
@@ -64,7 +65,7 @@ class ThemeColor
      */
     public function getCaption()
     {
-        return sprintf("#%s", $this->caption);
+        return sprintf('#%s', $this->caption);
     }
 
     /**
@@ -88,7 +89,7 @@ class ThemeColor
      */
     public function getBorder()
     {
-        return sprintf("#%s", $this->border);
+        return sprintf('#%s', $this->border);
     }
 
     /**
