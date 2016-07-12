@@ -43,11 +43,11 @@ class Generator
      * @param $boardTextureUrl
      * @param $pieceThemeUrl
      *
-     * @return Diagram
+     * @return Board
      *
      * @throws InvalidConfigException
      */
-    public function buildDiagram(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
+    public function buildBoard(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
         $errors = $this->validator->validate($config);
         if (count($errors) > 0) {
@@ -66,16 +66,8 @@ class Generator
         );
 
         $board = new Board($config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl);
-        $board->drawBoard()
-            ->drawCells()
-            ->drawFigures()
-            ->draw();
 
-        $diagram = new Diagram($config);
-        $diagram->setBoard($board)
-            ->draw();
-
-        return $diagram;
+        return $board;
     }
 
     public function setBoardTextures(array $boardTextures)

@@ -20,7 +20,7 @@ class Fen
     /**
      * Array of all board pieces, excluding empty.
      *
-     * @var array
+     * @var Piece[]
      */
     protected $pieces = array();
 
@@ -125,7 +125,7 @@ class Fen
     /**
      * Gets the Fen pieces.
      *
-     * @return array
+     * @return Piece[]
      */
     public function getPieces()
     {

@@ -18,7 +18,9 @@
         "jms/serializer": "~0.12",
         "symfony/routing": "~2.1",
         "symfony/yaml": "~2.1",
-        "symfony/validator": "~2.1"
+        "symfony/validator": "~2.1",
+        "symfony/validator": "~2.1",
+        "intervention/image": "^2.3"
     },
     "autoload": {
         "psr-0": {"DiagramGenerator": "src/"}

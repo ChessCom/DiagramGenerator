@@ -8,6 +8,10 @@ use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
 use ImagickDraw;
 use Imagick;
+use Intervention\Image\Exception\NotReadableException;
+use Intervention\Image\Gd\Decoder;
+use Intervention\Image\Image;
+use Intervention\Image\ImageManagerStatic;
 use RuntimeException;
 
 /**
@@ -15,51 +19,35 @@ use RuntimeException;
  */
 class Board
 {
-    const HIGHLIGHTED_DARK_SQUARE_OPACITY = .5;
-    const HIGHLIGHTED_LIGHT_SQUARE_OPACITY = .5;
+    const HIGHLIGHTED_OPACITY = .5;
+    const DRAW_POSITION = 'top-left';
 
     protected $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
 
     protected $flippedSquares = array('h', 'g', 'f', 'e', 'd', 'c', 'b', 'a');
 
-    /**
-     * @var \Imagick
-     */
+    /** @var Image */
     protected $image;
 
-    /**
-     * @var \DiagramGenerator\Diagram\Config
-     */
+    /** @var Config */
     protected $config;
 
-    /**
-     * @var \DiagramGenerator\Fen
-     */
+    /** @var Fen */
     protected $fen;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $paddingTop = 0;
 
-    /**
-     * @var
-     */
+    /** @var */
     protected $rootCacheDir;
 
-    /**
-     * @var
-     */
+    /** @var */
     protected $cacheDirName = 'diagram_generator';
 
-    /**
-     * @var
-     */
+    /** @var */
     protected $cacheDir;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $boardTextureUrl;
 
     /**
@@ -68,7 +56,7 @@ class Board
     protected $pieceThemeUrl;
 
     /**
-     * Cached Imagick pieces.
+     * Cached Image pieces.
      *
      * @var array
      */
@@ -91,49 +79,62 @@ class Board
 
         @mkdir($this->rootCacheDir.'/'.$this->cacheDirName, 0777);
 
-        $this->image = new \Imagick();
         $this->fen = Fen::createFromString($this->config->getFen());
 
         if ($this->config->getFlip()) {
             $this->fen->flip();
         }
+
+        $this->drawBoardImage();
     }
 
     /**
      * Gets the value of image.
      *
-     * @return \Imagick
+     * @return Image
      */
     public function getImage()
     {
         return $this->image;
     }
 
+    public function getImageStream()
+    {
+        ob_start();
+
+        imagepng($this->getImage()->getCore(), null);
+        $stream = ob_get_contents();
+
+        ob_end_clean();
+
+        return $stream;
+    }
+
+    /**
+     * Get the board's image format. The whole dynboard image format is dependent on the board image format.
+     *
+     * @return string
+     */
+    public function getImageFormat()
+    {
+        if ($this->config->getTexture()) {
+            return $this->config->getTexture()->getImageFormat();
+        }
+
+        return Texture::IMAGE_FORMAT_PNG;
+    }
+
     /**
      * Draws board itself.
      *
      * @return self
-     *
-     * @throws \ImagickException When cache file is invalid even after fetching from remote host
      */
-    public function drawBoard()
+    protected function drawBoard()
     {
         $this->paddingTop = $this->getMaxPieceHeight() - $this->getCellSize();
-        $this->image->newImage(
-            $this->getCellSize() * count($this->squares),
-            $this->getCellSize() * count($this->squares) + $this->paddingTop,
-            new \ImagickPixel('none')
-        );
 
-        // Add board texture
-        if ($this->config->getTexture()) {
-            // leaving exception uncaught, because that's unexpected behavior, and should be logged by rollbar
-            $background = $this->getBackgroundTexture();
-
-            $this->image->compositeImage(
-                $background, \Imagick::COMPOSITE_DEFAULT, 0, $this->paddingTop
-            );
-        }
+        $image = new Decoder();
+        $this->image = $image->initFromGdResource($this->getBaseBoard());
 
         return $this;
     }
@@ -143,8 +144,13 @@ class Board
      *
      * @return self
      */
-    public function drawCells()
+    protected function drawCells()
     {
+        // if we have a texture set, we don't draw cells
+        if ($this->config->getTexture()) {
+            return $this;
+        }
+
         for ($x = 1; $x <= count($this->squares); $x++) {
             for ($y = 1; $y <= count($this->squares); $y++) {
                 $this->drawCell($x, $y, ($x + $y) % 2);
@@ -161,12 +167,10 @@ class Board
      * @param int  $y
      * @param bool $colorIndex
      */
-    public function drawCell($x, $y, $colorIndex)
+    protected function drawCell($x, $y, $colorIndex)
     {
-        $cell = new ImagickDraw();
-
-        $this->drawCellStandard($cell, $x, $y, $colorIndex);
-        $this->drawCellHighlighted($cell, $x, $y, $colorIndex);
+        $this->drawCellStandard($x, $y, $colorIndex);
+        $this->drawCellHighlighted($x, $y);
     }
 
     /**
@@ -174,49 +178,18 @@ class Board
      *
      * @return self
      */
-    public function drawFigures()
+    protected function drawFigures()
     {
         foreach ($this->fen->getPieces() as $piece) {
             $pieceImage = $this->getPieceImage($piece);
 
-            $this->image->compositeImage(
+            $this->image = $this->image->insert(
                 $pieceImage,
-                \Imagick::COMPOSITE_DEFAULT,
+                self::DRAW_POSITION,
                 $this->getCellSize() * $piece->getColumn(),
-                // some pieces are not the same hight as the cell and they need to be adjusted
-                $this->getCellSize() * ($piece->getRow() + 1) - $pieceImage->getImageHeight() + $this->paddingTop
+                $this->getCellSize() * ($piece->getRow() + 1) - $pieceImage->getHeight() + $this->paddingTop
             );
         }
-
-        return $this;
-    }
-
-    /**
-     * Draws border. Must be called last.
-     *
-     * @deprecated
-     * needs to be updated to handle boards with 3d pieces correctly
-     */
-    public function drawBorder()
-    {
-        /*
-        $this->image->borderImage(
-            new \ImagickPixel($this->getBorderColor()),
-            $this->getBorderSize(),
-            $this->getBorderSize()
-        );*/
-
-        return $this;
-    }
-
-    /**
-     * Draws the board image.
-     *
-     * @return self
-     */
-    public function draw()
-    {
-        $this->image->setImageFormat($this->getImageFormat());
 
         return $this;
     }
@@ -226,28 +199,14 @@ class Board
      *
      * @return int
      */
-    public function getCellSize()
+    protected function getCellSize()
     {
         return $this->config->getSize()->getCell();
     }
 
-    public function getPaddingTop()
+    protected function getPaddingTop()
     {
         return $this->paddingTop;
-    }
-
-    /**
-     * Get the board's image format. The whole dynboard image format is dependent on the board image format.
-     *
-     * @return string
-     */
-    public function getImageFormat()
-    {
-        if ($this->config->getTexture()) {
-            return $this->config->getTexture()->getImageFormat();
-        }
-
-        return Texture::IMAGE_FORMAT_PNG;
     }
 
     /**
@@ -299,7 +258,7 @@ class Board
      *
      * @param Piece $piece
      *
-     * @return \Imagick
+     * @return Image
      */
     protected function getPieceImage(Piece $piece)
     {
@@ -312,8 +271,8 @@ class Board
             $pieceCachedPath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece);
 
             try {
-                $image = new \Imagick($pieceCachedPath);
-            } catch (\ImagickException $exception) {
+                $image = ImageManagerStatic::make($pieceCachedPath);
+            } catch (\Exception $exception) {
                 @mkdir($this->cacheDir.'/'.$pieceThemeName.'/'.$cellSize, 0777, true);
 
                 $pieceThemeUrl = str_replace('__PIECE_THEME__', $pieceThemeName, $this->pieceThemeUrl);
@@ -323,7 +282,7 @@ class Board
 
                 $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
 
-                $image = new \Imagick($pieceCachedPath);
+                $image = ImageManagerStatic::make($pieceCachedPath);
             }
 
             $this->pieces[$key] = $image;
@@ -335,17 +294,17 @@ class Board
     /**
      * Returns board background image path.
      *
-     * @return \Imagick
+     * @return Image
      *
-     * @throws \ImagickException
+     * @throws NotReadableException
      */
     protected function getBackgroundTexture()
     {
         $boardCachedPath = $this->getCachedTextureFilePath();
 
         try {
-            return new \Imagick($boardCachedPath);
-        } catch (\ImagickException $exception) {
+            return ImageManagerStatic::make($boardCachedPath);
+        } catch (NotReadableException $exception) {
             @mkdir($this->cacheDir.'/board/'.$this->config->getTexture()->getImageUrlFolderName(), 0777, true);
 
             $boardTextureUrl = str_replace(
@@ -356,7 +315,7 @@ class Board
 
             $this->cacheImage($boardTextureUrl, $boardCachedPath);
 
-            return new \Imagick($boardCachedPath);
+            return ImageManagerStatic::make($boardCachedPath);
         }
     }
 
@@ -384,8 +343,8 @@ class Board
         foreach ($this->fen->getPieces() as $piece) {
             $pieceImage = $this->getPieceImage($piece);
 
-            if ($pieceImage->getImageHeight() > $maxHeight) {
-                $maxHeight = $pieceImage->getImageHeight();
+            if ($pieceImage->getHeight() > $maxHeight) {
+                $maxHeight = $pieceImage->getHeight();
             }
 
             unset($pieceImage);
@@ -460,62 +419,53 @@ class Board
     /**
      * Draw a non-highlighted square.
      *
-     * @param ImagickDraw $cell
-     * @param int         $x
-     * @param int         $y
-     * @param int         $colorIndex
+     * @param int $x
+     * @param int $y
+     * @param int $colorIndex
      */
-    protected function drawCellStandard(ImagickDraw $cell, $x, $y, $colorIndex)
+    protected function drawCellStandard($x, $y, $colorIndex)
     {
-        if ($this->config->getTexture()) {
-            return;
-        }
+        $fillColor = $colorIndex ? $this->config->getDark() : $this->config->getLight();
+        list($r, $g, $b) = sscanf($fillColor, "#%02x%02x%02x");
 
-        $cell->setFillColor($colorIndex ? $this->getDarkCellColor() : $this->getLightCellColor());
+        $cell = imagecreatetruecolor($this->getCellSize(), $this->getCellSize());
+        $fillColor = imagecolorallocate($cell, $r, $g, $b);
+        imagefill($cell, 0, 0, $fillColor);
 
-        $this->drawCellRectangle($cell, $x, $y);
+        $this->image = $this->image->insert(
+            $cell,
+            self::DRAW_POSITION,
+            ($x - 1) * $this->getCellSize(),
+            ($y - 1) * $this->getCellSize() + $this->paddingTop
+        );
     }
 
     /**
      * Draw a highlighted cell.
      *
-     * @param ImagickDraw $cell
-     * @param int         $x
-     * @param int         $y
-     * @param int         $colorIndex
+     * @param int $x
+     * @param int $y
      */
-    protected function drawCellHighlighted(ImagickDraw $cell, $x, $y, $colorIndex)
+    protected function drawCellHighlighted($x, $y)
     {
         if (!is_array($this->getHighlightSquares($this->config)) ||
             !in_array($this->getSquare($x, $y), $this->getHighlightSquares($this->config))) {
             return;
         }
 
-        $cell->setFillColor($this->config->getHighlightSquaresColor());
-        $cell->setFillOpacity(
-            $colorIndex ? self::HIGHLIGHTED_DARK_SQUARE_OPACITY : self::HIGHLIGHTED_LIGHT_SQUARE_OPACITY
-        );
+        list($r, $g, $b) = sscanf($this->config->getHighlightSquaresColor(), "#%02x%02x%02x");
 
-        $this->drawCellRectangle($cell, $x, $y);
-    }
+        $cell = imagecreatetruecolor($this->getCellSize(), $this->getCellSize());
+        $fillColor = imagecolorallocate($cell, $r, $g, $b);
+        imagefill($cell, 0, 0, $fillColor);
 
-    /**
-     * Draw a cell rectangle.
-     *
-     * @param ImagickDraw $cell
-     * @param int         $x
-     * @param int         $y
-     */
-    protected function drawCellRectangle(ImagickDraw $cell, $x, $y)
-    {
-        $cell->rectangle(
+        // test highlighting
+        $this->image = $this->image->insert(
+            $cell,
+            self::DRAW_POSITION,
             ($x - 1) * $this->getCellSize(),
-            ($y - 1) * $this->getCellSize() + $this->paddingTop,
-            $x * $this->getCellSize() - 1,
-            $y * $this->getCellSize() + $this->paddingTop - 1
+            ($y - 1) * $this->getCellSize() + $this->paddingTop
         );
-
-        $this->image->drawImage($cell);
     }
 
     /**
@@ -549,5 +499,195 @@ class Board
             $piece,
             Texture::IMAGE_FORMAT_PNG
         );
+    }
+
+    protected function getBaseBoard()
+    {
+        $board = imagecreatetruecolor(
+            $this->getCellSize() * count($this->squares),
+            $this->getCellSize() * count($this->squares) + $this->paddingTop
+        );
+
+        $background = $this->getBackgroundTexture();
+
+        imagecopyresampled(
+            $board, $background->getCore(),
+            0, 0, 0, 0,
+            $this->getCellSize() * count($this->squares), $this->getCellSize() * count($this->squares) + $this->paddingTop,
+            $this->getCellSize() * count($this->squares), $this->getCellSize() * count($this->squares) + $this->paddingTop
+        );
+
+        return $board;
+    }
+
+    /**
+     * Draw all the things!
+     */
+    protected function drawBoardImage()
+    {
+        $this->drawBoard()->drawCells()->drawFigures();
+
+//        TODO [lackovic10]: move this to the Board class
+//        $this->image->addImage($this->board->getImage());
+//        if ($this->config->getCoordinates()) {
+//            // Add border to diagram
+//            $this->drawBorder();
+//
+//            // Add vertical coordinates
+//            foreach (Coordinate::getVerticalCoordinates() as $index => $x) {
+//                $coordinate = $this->createCoordinate(
+//                    $this->getBorderThickness(), $this->board->getCellSize(), abs($x - 9)
+//                );
+//
+//                $coordinateY = $this->getBorderThickness() + $this->board->getPaddingTop() +
+//                    $this->board->getCellSize() * $index;
+//
+//                $this->image->compositeImage(
+//                    $coordinate->getImage(),
+//                    \Imagick::COMPOSITE_DEFAULT,
+//                    0,
+//                    $coordinateY
+//                );
+//            }
+//
+//            // Add horizontal coordinates
+//            foreach (Coordinate::getHorizontalCoordinates() as $index => $y) {
+//                $coordinate = $this->createCoordinate($this->board->getCellSize(), $this->getBorderThickness(), $y);
+//                $this->image->compositeImage(
+//                    $coordinate->getImage(),
+//                    \Imagick::COMPOSITE_DEFAULT,
+//                    $this->getBorderThickness() + $this->board->getCellSize() * $index,
+//                    $this->getBorderThickness() + $this->board->getImage()->getImageHeight()
+//                );
+//            }
+//        }
+//
+//        if ($this->getCaptionText()) {
+//            // Add border to diagram
+//            $this->drawBorder();
+//
+//            // Create and add caption to image
+//            $caption = $this->createCaption();
+//
+//            // Additional padding if coordinates were added
+//            if ($this->config->getCoordinates()) {
+//                $caption->drawBorder($this->getBackgroundColor(), 0, $caption->getImage()->getImageHeight() / 2);
+//            }
+//
+//            $this->image->addImage($caption->getImage());
+//
+//            // Add bottom padding
+//            if (!$this->config->getCoordinates()) {
+//                $this->image->newImage(
+//                    $this->image->getImageWidth(),
+//                    $this->getBorderThickness(),
+//                    $this->getBackgroundColor()
+//                );
+//            }
+//            $this->image->resetIterator();
+//            $this->image = $this->image->appendImages(true);
+//        }
+//
+//        $this->image->setImageFormat($this->board->getImageFormat());
+//        if ($this->image->getImageFormat() === Texture::IMAGE_FORMAT_JPG) {
+//            $compressionQualityJpg = is_null($this->config->getCompressionQualityJpg()) ?
+//                self::COMPRESSION_QUALITY_DEFAULT_JPG : $this->config->getCompressionQualityJpg();
+//
+//            $this->image->setImageCompressionQuality($compressionQualityJpg);
+//        }
+    }
+
+    /**
+     * Draws the image border.
+     */
+    protected function drawBorder()
+    {
+        // Check if border has been already drawn
+        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
+            return;
+        }
+
+        $this->image->borderImage(
+            $this->getBackgroundColor(),
+            $this->getBorderThickness(),
+            $this->getBorderThickness()
+        );
+    }
+
+    /**
+     * @param int    $width
+     * @param int    $height
+     * @param string $text
+     *
+     * @return Coordinate
+     */
+    protected function createCoordinate($width, $height, $text)
+    {
+        $coordinate = new Coordinate($this->config);
+        $draw = $coordinate->getDraw();
+
+        // Create image
+        $coordinate->getImage()->newImage($width, $height, $this->getBackgroundColor());
+
+        // Add text
+        $coordinate->getImage()->annotateImage($draw, 0, 0, 0, $text);
+        $coordinate->getImage()->setImageFormat($this->board->getImageFormat());
+
+        return $coordinate;
+    }
+
+    /**
+     * Creates caption.
+     *
+     * @return Caption
+     */
+    protected function createCaption()
+    {
+        $caption = new Caption($this->config);
+        $draw = $caption->getDraw();
+        $metrics = $caption->getMetrics($draw);
+
+        // Create image
+        $caption->getImage()->newImage(
+            $this->image->getImageWidth(),
+            $metrics['textHeight'],
+            $this->getBackgroundColor()
+        );
+
+        // Add text
+        $caption->getImage()->annotateImage($draw, 0, 0, 0, $this->getCaptionText());
+        $caption->getImage()->setImageFormat('png');
+
+        return $caption;
+    }
+
+    /**
+     * Returns caption text.
+     *
+     * @return string
+     */
+    protected function getCaptionText()
+    {
+        return $this->config->getCaption();
+    }
+
+    /**
+     * Returns font path by font filename.
+     *
+     * @param string $filename
+     *
+     * @return string
+     */
+    protected function getFont($filename)
+    {
+        return realpath(sprintf('%s/Resources/fonts/%s', __DIR__, $filename));
+    }
+
+    /**
+     * @return int
+     */
+    protected function getBorderThickness()
+    {
+        return $this->board->getCellSize() / 2;
     }
 }
