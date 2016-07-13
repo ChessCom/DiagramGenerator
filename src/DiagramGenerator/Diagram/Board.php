@@ -6,10 +6,12 @@ use DiagramGenerator\Config;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
+use DiagramGenerator\Generator;
 use ImagickDraw;
 use Imagick;
 use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Gd\Decoder;
+use Intervention\Image\Gd\Font;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManagerStatic;
 use RuntimeException;
@@ -19,7 +21,7 @@ use RuntimeException;
  */
 class Board
 {
-    const HIGHLIGHTED_OPACITY = .5;
+    const HIGHLIGHTED_OPACITY = 63; // alpha, semi transparent
     const DRAW_POSITION = 'top-left';
 
     protected $squares = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
@@ -146,11 +148,6 @@ class Board
      */
     protected function drawCells()
     {
-        // if we have a texture set, we don't draw cells
-        if ($this->config->getTexture()) {
-            return $this;
-        }
-
         for ($x = 1; $x <= count($this->squares); $x++) {
             for ($y = 1; $y <= count($this->squares); $y++) {
                 $this->drawCell($x, $y, ($x + $y) % 2);
@@ -169,7 +166,11 @@ class Board
      */
     protected function drawCell($x, $y, $colorIndex)
     {
-        $this->drawCellStandard($x, $y, $colorIndex);
+        // if we have a texture set, we don't draw cells
+        if (!$this->config->getTexture()) {
+            $this->drawCellStandard($x, $y, $colorIndex);
+        }
+
         $this->drawCellHighlighted($x, $y);
     }
 
@@ -231,26 +232,6 @@ class Board
     protected function getBorderColor()
     {
         return $this->config->getTheme()->getColor()->getBorder();
-    }
-
-    /**
-     * Returns light cell color.
-     *
-     * @return \ImagickPixel
-     */
-    protected function getLightCellColor()
-    {
-        return new \ImagickPixel($this->config->getLight());
-    }
-
-    /**
-     * Returns dark cell color.
-     *
-     * @return \ImagickPixel
-     */
-    protected function getDarkCellColor()
-    {
-        return new \ImagickPixel($this->config->getDark());
     }
 
     /**
@@ -425,12 +406,9 @@ class Board
      */
     protected function drawCellStandard($x, $y, $colorIndex)
     {
-        $fillColor = $colorIndex ? $this->config->getDark() : $this->config->getLight();
-        list($r, $g, $b) = sscanf($fillColor, "#%02x%02x%02x");
+        list($red, $green, $blue) = $this->colorHexToRedGreenBlue($colorIndex ? $this->config->getDark() : $this->config->getLight());
 
-        $cell = imagecreatetruecolor($this->getCellSize(), $this->getCellSize());
-        $fillColor = imagecolorallocate($cell, $r, $g, $b);
-        imagefill($cell, 0, 0, $fillColor);
+        $cell = $this->drawCellRectangle($red, $green, $blue);
 
         $this->image = $this->image->insert(
             $cell,
@@ -453,11 +431,8 @@ class Board
             return;
         }
 
-        list($r, $g, $b) = sscanf($this->config->getHighlightSquaresColor(), "#%02x%02x%02x");
-
-        $cell = imagecreatetruecolor($this->getCellSize(), $this->getCellSize());
-        $fillColor = imagecolorallocate($cell, $r, $g, $b);
-        imagefill($cell, 0, 0, $fillColor);
+        list($red, $green, $blue) = $this->colorHexToRedGreenBlue($this->config->getHighlightSquaresColor());
+        $cell = $this->drawCellRectangle($red, $green, $blue, self::HIGHLIGHTED_OPACITY);
 
         // test highlighting
         $this->image = $this->image->insert(
@@ -466,6 +441,22 @@ class Board
             ($x - 1) * $this->getCellSize(),
             ($y - 1) * $this->getCellSize() + $this->paddingTop
         );
+    }
+
+    protected function drawCellRectangle($red, $green, $blue, $opacity = 0)
+    {
+        $cell = imagecreatetruecolor($this->getCellSize(), $this->getCellSize());
+        $fillColor = imagecolorallocatealpha($cell, $red, $green, $blue, $opacity);
+        imagefill($cell, 0, 0, $fillColor);
+
+        return $cell;
+    }
+
+    protected function colorHexToRedGreenBlue($hex)
+    {
+        list($red, $green, $blue) = sscanf($hex, "#%02x%02x%02x");
+
+        return [$red, $green, $blue];
     }
 
     /**
@@ -525,69 +516,17 @@ class Board
      */
     protected function drawBoardImage()
     {
+        // the standard stuff
         $this->drawBoard()->drawCells()->drawFigures();
 
-//        TODO [lackovic10]: move this to the Board class
-//        $this->image->addImage($this->board->getImage());
-//        if ($this->config->getCoordinates()) {
-//            // Add border to diagram
-//            $this->drawBorder();
+        if ($this->config->getCoordinates()) {
+            $this->drawCoordinates();
+        }
 //
-//            // Add vertical coordinates
-//            foreach (Coordinate::getVerticalCoordinates() as $index => $x) {
-//                $coordinate = $this->createCoordinate(
-//                    $this->getBorderThickness(), $this->board->getCellSize(), abs($x - 9)
-//                );
-//
-//                $coordinateY = $this->getBorderThickness() + $this->board->getPaddingTop() +
-//                    $this->board->getCellSize() * $index;
-//
-//                $this->image->compositeImage(
-//                    $coordinate->getImage(),
-//                    \Imagick::COMPOSITE_DEFAULT,
-//                    0,
-//                    $coordinateY
-//                );
-//            }
-//
-//            // Add horizontal coordinates
-//            foreach (Coordinate::getHorizontalCoordinates() as $index => $y) {
-//                $coordinate = $this->createCoordinate($this->board->getCellSize(), $this->getBorderThickness(), $y);
-//                $this->image->compositeImage(
-//                    $coordinate->getImage(),
-//                    \Imagick::COMPOSITE_DEFAULT,
-//                    $this->getBorderThickness() + $this->board->getCellSize() * $index,
-//                    $this->getBorderThickness() + $this->board->getImage()->getImageHeight()
-//                );
-//            }
-//        }
-//
-//        if ($this->getCaptionText()) {
-//            // Add border to diagram
-//            $this->drawBorder();
-//
-//            // Create and add caption to image
-//            $caption = $this->createCaption();
-//
-//            // Additional padding if coordinates were added
-//            if ($this->config->getCoordinates()) {
-//                $caption->drawBorder($this->getBackgroundColor(), 0, $caption->getImage()->getImageHeight() / 2);
-//            }
-//
-//            $this->image->addImage($caption->getImage());
-//
-//            // Add bottom padding
-//            if (!$this->config->getCoordinates()) {
-//                $this->image->newImage(
-//                    $this->image->getImageWidth(),
-//                    $this->getBorderThickness(),
-//                    $this->getBackgroundColor()
-//                );
-//            }
-//            $this->image->resetIterator();
-//            $this->image = $this->image->appendImages(true);
-//        }
-//
+        if ($this->getCaptionText()) {
+            $this->drawCaption();
+        }
+
 //        $this->image->setImageFormat($this->board->getImageFormat());
 //        if ($this->image->getImageFormat() === Texture::IMAGE_FORMAT_JPG) {
 //            $compressionQualityJpg = is_null($this->config->getCompressionQualityJpg()) ?
@@ -602,85 +541,128 @@ class Board
      */
     protected function drawBorder()
     {
-        // Check if border has been already drawn
-        if ($this->image->getImageWidth() > $this->board->getImage()->getImageWidth()) {
-            return;
-        }
-
-        $this->image->borderImage(
-            $this->getBackgroundColor(),
-            $this->getBorderThickness(),
-            $this->getBorderThickness()
+        $this->image->resizeCanvas(
+            $this->getImage()->width() + $this->getBorderThickness(),
+            $this->getImage()->height() + $this->getBorderThickness(),
+            'top-right',
+            false,
+            $this->getBackgroundColor()
         );
     }
 
-    /**
-     * @param int    $width
-     * @param int    $height
-     * @param string $text
-     *
-     * @return Coordinate
-     */
-    protected function createCoordinate($width, $height, $text)
+    protected function drawCaption()
     {
-        $coordinate = new Coordinate($this->config);
-        $draw = $coordinate->getDraw();
+        $preResizeImageHeight = $this->image->height();
 
-        // Create image
-        $coordinate->getImage()->newImage($width, $height, $this->getBackgroundColor());
-
-        // Add text
-        $coordinate->getImage()->annotateImage($draw, 0, 0, 0, $text);
-        $coordinate->getImage()->setImageFormat($this->board->getImageFormat());
-
-        return $coordinate;
-    }
-
-    /**
-     * Creates caption.
-     *
-     * @return Caption
-     */
-    protected function createCaption()
-    {
-        $caption = new Caption($this->config);
-        $draw = $caption->getDraw();
-        $metrics = $caption->getMetrics($draw);
-
-        // Create image
-        $caption->getImage()->newImage(
-            $this->image->getImageWidth(),
-            $metrics['textHeight'],
+        $this->image->resizeCanvas(
+            0,
+            $this->getImage()->height() + $this->getBorderThickness() * 2,
+            'top',
+            false,
             $this->getBackgroundColor()
         );
 
-        // Add text
-        $caption->getImage()->annotateImage($draw, 0, 0, 0, $this->getCaptionText());
-        $caption->getImage()->setImageFormat('png');
-
-        return $caption;
+        $this->image->text(
+            $this->getCaptionText(),
+            $this->image->width() / 2,
+            $preResizeImageHeight + $this->getBorderThickness() / 2,
+            function (Font $font) {
+                $font->file(sprintf('%s/fonts/%s', Generator::getResourcesDir(), 'arialbd.ttf'));
+                $font->size($this->config->getSize()->getCaption());
+                $font->align('center');
+                $font->valign('top');
+            }
+        );
     }
 
-    /**
-     * Returns caption text.
-     *
-     * @return string
-     */
+    protected function drawCoordinates()
+    {
+        // coordinates need a border
+        $this->drawBorder();
+
+        $fontSetup = function (Font $font) {
+            $font->file(sprintf('%s/fonts/%s', Generator::getResourcesDir(), 'tahoma.ttf'));
+            $font->size($this->config->getSize()->getCoordinates());
+            $font->align('center');
+            $font->valign('middle');
+        };
+
+        // Add vertical coordinates
+        foreach (Coordinate::getVerticalCoordinates() as $index => $x) {
+            $this->image->text(
+                abs($x - 9),
+                $this->getBorderThickness() / 2, // cell size is split to both sides of the board. we need to split that half into 2, to get the center
+                $this->getBorderThickness() + $this->getPaddingTop() + $this->getCellSize() * $index,
+                $fontSetup
+            );
+        }
+
+        // Add horizontal coordinates
+        foreach (Coordinate::getHorizontalCoordinates() as $index => $y) {
+            $this->image->text(
+                $y,
+                $this->getCellSize() + $this->getCellSize() * $index,
+                $this->getImage()->height() - $this->getBorderThickness() / 2,
+                $fontSetup
+            );
+        }
+    }
+
+//    /**
+//     * @param int    $width
+//     * @param int    $height
+//     * @param string $text
+//     *
+//     * @return Coordinate
+//     */
+//    protected function createCoordinate($width, $height, $text)
+//    {
+//        $coordinate = new Coordinate($this->config);
+//        $draw = $coordinate->getDraw();
+//
+//        // Create image
+//        $coordinate->getImage()->newImage($width, $height, $this->getBackgroundColor());
+//
+//        // Add text
+//        $coordinate->getImage()->annotateImage($draw, 0, 0, 0, $text);
+//        $coordinate->getImage()->setImageFormat($this->board->getImageFormat());
+//
+//        return $coordinate;
+//    }
+//
+//    /**
+//     * Creates caption.
+//     *
+//     * @return Caption
+//     */
+//    protected function createCaption()
+//    {
+//        $caption = new Caption($this->config);
+//        $draw = $caption->getDraw();
+//        $metrics = $caption->getMetrics($draw);
+//
+//        // Create image
+//        $caption->getImage()->newImage(
+//            $this->image->getImageWidth(),
+//            $metrics['textHeight'],
+//            $this->getBackgroundColor()
+//        );
+//
+//        // Add text
+//        $caption->getImage()->annotateImage($draw, 0, 0, 0, $this->getCaptionText());
+//        $caption->getImage()->setImageFormat('png');
+//
+//        return $caption;
+//    }
+//
+//    /**
+//     * Returns caption text.
+//     *
+//     * @return string
+//     */
     protected function getCaptionText()
     {
         return $this->config->getCaption();
-    }
-
-    /**
-     * Returns font path by font filename.
-     *
-     * @param string $filename
-     *
-     * @return string
-     */
-    protected function getFont($filename)
-    {
-        return realpath(sprintf('%s/Resources/fonts/%s', __DIR__, $filename));
     }
 
     /**
@@ -688,6 +670,6 @@ class Board
      */
     protected function getBorderThickness()
     {
-        return $this->board->getCellSize() / 2;
+        return $this->getCellSize() / 2;
     }
 }
