@@ -4,6 +4,7 @@ namespace DiagramGenerator\Image;
 
 use DiagramGenerator\Config;
 use DiagramGenerator\Config\Texture;
+use DiagramGenerator\Fen;
 use DiagramGenerator\Fen\Piece;
 use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Image;
@@ -23,6 +24,11 @@ class Storage
     /** @var string */
     protected $boardTextureUrl;
 
+    /**
+     * @param string $cacheDirectory
+     * @param string $pieceThemeUrl
+     * @param string $boardTextureUrl
+     */
     public function __construct($cacheDirectory, $pieceThemeUrl, $boardTextureUrl)
     {
         $this->cacheDirectory = sprintf('%s/diagram_generator', $cacheDirectory);
@@ -31,7 +37,7 @@ class Storage
     }
 
     /**
-     * @param Piece $piece
+     * @param Piece  $piece
      * @param Config $config
      *
      * @return Image
@@ -73,6 +79,38 @@ class Storage
         }
     }
 
+    /**
+     * Finds max height of piece image
+     *
+     * @param Fen $fen
+     * @param Config $config
+     *
+     * @return int
+     */
+    public function getMaxPieceHeight(Fen $fen, Config $config)
+    {
+        $maxHeight = $config->getSize()->getCell();
+        foreach ($fen->getPieces() as $piece) {
+            $pieceImage = $this->getPieceImage($piece, $config);
+
+            if ($pieceImage->getHeight() > $maxHeight) {
+                $maxHeight = $pieceImage->getHeight();
+            }
+
+            unset($pieceImage);
+        }
+
+        return $maxHeight;
+    }
+
+    /**
+     * In piece image is not found in local storage, passes control to self::cacheImage()
+     *
+     * @param Piece $piece
+     * @param Config $config
+     *
+     * @return Image
+     */
     protected function fetchRemotePieceImage(Piece $piece, Config $config)
     {
         $pieceThemeName = $config->getTheme()->getName();
@@ -89,7 +127,7 @@ class Storage
                 [
                     '__PIECE_THEME__' => $pieceThemeName,
                     '__SIZE__' => $cellSize,
-                    '__PIECE__' => $piece->getShortName()
+                    '__PIECE__' => $piece->getShortName(),
                 ]
             );
             $pieceThemeUrl .= '.'.Texture::IMAGE_FORMAT_PNG;
@@ -124,6 +162,12 @@ class Storage
         );
     }
 
+    /**
+     * Fetches remove file, and stores it locally
+     *
+     * @param $remoteImageUrl
+     * @param $cachedFilePath
+     */
     protected function cacheImage($remoteImageUrl, $cachedFilePath)
     {
         $cachedFilePathTmp = $cachedFilePath.uniqid('', true);

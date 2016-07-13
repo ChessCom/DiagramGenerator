@@ -5,7 +5,6 @@ namespace DiagramGenerator;
 use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
-use DiagramGenerator\Diagram\Board;
 use DiagramGenerator\Exception\InvalidConfigException;
 use Symfony\Component\Validator\ValidatorInterface;
 use InvalidArgumentException;
@@ -19,10 +18,10 @@ class Generator
     protected $validator;
 
     /** @var array $boardTextures */
-    protected $boardTextures = array();
+    protected $boardTextures = [];
 
     /** @var array $pieceThemes */
-    protected $pieceThemes = array();
+    protected $pieceThemes = [];
 
     public function __construct(ValidatorInterface $validator)
     {
@@ -156,7 +155,7 @@ class Generator
      */
     protected function parseHighlightSquaresString($highlightSquares)
     {
-        $highlightSquaresParsed = array();
+        $highlightSquaresParsed = [];
         for ($i = 0; $i < strlen($highlightSquares); $i += 2) {
             $highlightSquaresParsed[] = $highlightSquares[$i].$highlightSquares[$i + 1];
         }

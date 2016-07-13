@@ -37,7 +37,7 @@ class Config
     /**
      * keeping deprecated int values (0-3) for backwards compatibility
      * TODO [lackovic10]: rename to size, once the library is refactored and the size field is removed from this class
-     * the same action with boardTexture and pieceTheme
+     * the same action with boardTexture and pieceTheme.
      *
      * @Type("string")
      * @CustomCellSize(min=0, max=3)
@@ -56,7 +56,7 @@ class Config
 
     /**
      * [lackovic10]: these are piece theme folder names from the image url
-     * TODO: future idea - pass the whole urls to the library instead of generating the url inside the library based on parameters
+     * TODO: future idea - pass the whole urls to the library instead of generating the url inside the library based on parameters.
      *
      * @Type("string")
      * @StringOrInteger(min=0, max=5)
@@ -442,5 +442,20 @@ class Config
         $this->compressionQualityJpg = $compressionQualityJpg;
 
         return $this;
+    }
+
+    public function getBorderThickness()
+    {
+        return $this->getSize()->getCell() / 2;
+    }
+
+    public function getBackgroundColor()
+    {
+        return $this->getTheme()->getColor()->getBackground();
+    }
+
+    public function getCellSize()
+    {
+        return $this->getSize()->getCell();
     }
 }
