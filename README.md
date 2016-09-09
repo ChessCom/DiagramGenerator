@@ -85,7 +85,7 @@ blackwhite, blue, brown, bubblegum, burled_wood, dark_wood, glass, graffiti, gre
 Its as simple as just call one method and set appropriate header:
 
 ```php
-$diagram = $generator->buildDiagram($diagramConfig);
+$diagram = $generator->buildBoard($diagramConfig);
 header('Content-Type: image/jpeg');
 echo $diagram->getImage();
 ```

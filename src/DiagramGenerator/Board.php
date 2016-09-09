@@ -69,8 +69,6 @@ class Board
         if ($this->config->getFlip()) {
             $this->fen->flip();
         }
-
-        $this->image = $this->generateImage();
     }
 
     /**
@@ -80,6 +78,10 @@ class Board
      */
     public function getImage()
     {
+        if ($this->image === null) {
+            $this->image = $this->generateImage();
+        }
+
         return $this->image;
     }
 
