@@ -11,7 +11,6 @@ use Intervention\Image\Gd\Decoder;
 use Intervention\Image\Gd\Font;
 use Intervention\Image\Image as BaseImage;
 
-// TODO FLIPPING
 class Image
 {
     const HIGHLIGHTED_OPACITY = 63; // alpha, semi transparent

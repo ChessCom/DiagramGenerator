@@ -31,7 +31,7 @@ class Storage
      */
     public function __construct($cacheDirectory, $pieceThemeUrl, $boardTextureUrl)
     {
-        $this->cacheDirectory = sprintf('%s/diagram_generator', $cacheDirectory);
+        $this->cacheDirectory = $cacheDirectory;
         $this->pieceThemeUrl = $pieceThemeUrl;
         $this->boardTextureUrl = $boardTextureUrl;
     }

@@ -61,8 +61,7 @@ class Board
         $this->pieceThemeUrl = $pieceThemeUrl;
 
         $this->cacheDir = $this->rootCacheDir.'/'.$this->cacheDirName;
-
-        @mkdir($this->rootCacheDir.'/'.$this->cacheDirName, 0777);
+        @mkdir($this->cacheDir, 0777);
 
         $this->fen = Fen::createFromString($this->config->getFen());
 
@@ -92,7 +91,7 @@ class Board
      */
     protected function generateImage()
     {
-        $storage = new Storage($this->rootCacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
+        $storage = new Storage($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
         $image = new Image($storage, $this->config);
         $topPadding = $storage->getMaxPieceHeight($this->fen, $this->config) - $this->config->getSize()->getCell();
 
