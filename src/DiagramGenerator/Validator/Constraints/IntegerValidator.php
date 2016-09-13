@@ -14,25 +14,25 @@ class IntegerValidator extends ConstraintValidator
         }
 
         if ($constraint->positive && !preg_match('/'.Integer::POSITIVE_REGEX.'/', $value)) {
-            $this->context->addViolation($constraint->invalidPositiveMessage, array(
+            $this->context->addViolation($constraint->invalidPositiveMessage, [
                 '{{ value }}' => $value,
-            ));
+            ]);
 
             return;
         }
 
         if ($constraint->unsigned && !preg_match('/'.Integer::UNSIGNED_REGEX.'/', $value)) {
-            $this->context->addViolation($constraint->invalidUnsignedMessage, array(
+            $this->context->addViolation($constraint->invalidUnsignedMessage, [
                 '{{ value }}' => $value,
-            ));
+            ]);
 
             return;
         }
 
         if (!preg_match('/'.Integer::REGEX.'/', $value)) {
-            $this->context->addViolation($constraint->invalidMessage, array(
+            $this->context->addViolation($constraint->invalidMessage, [
                 '{{ value }}' => $value,
-            ));
+            ]);
 
             return;
         }

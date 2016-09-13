@@ -22,17 +22,17 @@ class StringOrIntegerValidator extends ConstraintValidator
 
         if ($isInteger) {
             if (null !== $constraint->max && $value > $constraint->max) {
-                $this->context->addViolation($constraint->maxMessage, array(
+                $this->context->addViolation($constraint->maxMessage, [
                     '{{ limit }}' => $constraint->max,
-                ));
+                ]);
 
                 return;
             }
 
             if (null !== $constraint->min && $value < $constraint->min) {
-                $this->context->addViolation($constraint->minMessage, array(
+                $this->context->addViolation($constraint->minMessage, [
                     '{{ limit }}' => $constraint->min,
-                ));
+                ]);
 
                 return;
             }

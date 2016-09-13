@@ -20,9 +20,9 @@ class Fen
     /**
      * Array of all board pieces, excluding empty.
      *
-     * @var array
+     * @var Piece[]
      */
-    protected $pieces = array();
+    protected $pieces = [];
 
     /**
      * Creates Fen object from the string.
@@ -40,7 +40,7 @@ class Fen
         }
 
         foreach ($rows as $index => $rowString) {
-            $row = array();
+            $row = [];
             foreach (str_split($rowString) as $pieceKey) {
                 if (!is_numeric($pieceKey)) {
                     $row[] = $pieceKey;
@@ -107,7 +107,7 @@ class Fen
      */
     public function flip()
     {
-        $flipped = array();
+        $flipped = [];
         foreach ($this->pieces as $key => $piece) {
             list($row, $column) = explode(':', $key);
             $flippedRow = 7 - $row;
@@ -125,7 +125,7 @@ class Fen
     /**
      * Gets the Fen pieces.
      *
-     * @return array
+     * @return Piece[]
      */
     public function getPieces()
     {

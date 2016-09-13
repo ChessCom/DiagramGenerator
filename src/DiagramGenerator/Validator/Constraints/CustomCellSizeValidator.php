@@ -23,28 +23,28 @@ class CustomCellSizeValidator extends ConstraintValidator
         $isBoardSizeIndexFormat = $this->isValidBoardSizeIndexFormat($value);
         $boardCellSize = $this->isValidBoardCellSizeFormat($value);
         if (!$isBoardSizeIndexFormat && !$boardCellSize) {
-            $this->context->addViolation($constraint->invalidMessage, array(
+            $this->context->addViolation($constraint->invalidMessage, [
                 '{{ value }}' => $value,
-            ));
+            ]);
 
             return;
         }
 
         if ($isBoardSizeIndexFormat) {
             if (null !== $constraint->max && $value > $constraint->max) {
-                $this->context->addViolation($constraint->maxIndexMessage, array(
+                $this->context->addViolation($constraint->maxIndexMessage, [
                     '{{ value }}' => $value,
                     '{{ limit }}' => $constraint->max,
-                ));
+                ]);
 
                 return;
             }
 
             if (null !== $constraint->min && $value < $constraint->min) {
-                $this->context->addViolation($constraint->minIndexMessage, array(
+                $this->context->addViolation($constraint->minIndexMessage, [
                     '{{ value }}' => $value,
                     '{{ limit }}' => $constraint->min,
-                ));
+                ]);
 
                 return;
             }
@@ -52,19 +52,19 @@ class CustomCellSizeValidator extends ConstraintValidator
 
         if ($boardCellSize) {
             if (null !== $constraint->maxPx && $value > $constraint->maxPx) {
-                $this->context->addViolation($constraint->maxMessage, array(
+                $this->context->addViolation($constraint->maxMessage, [
                     '{{ value }}' => $value,
                     '{{ limit }}' => $constraint->maxPx,
-                ));
+                ]);
 
                 return;
             }
 
             if (null !== $constraint->minPx && $value < $constraint->minPx) {
-                $this->context->addViolation($constraint->minMessage, array(
+                $this->context->addViolation($constraint->minMessage, [
                     '{{ value }}' => $value,
                     '{{ limit }}' => $constraint->minPx,
-                ));
+                ]);
 
                 return;
             }

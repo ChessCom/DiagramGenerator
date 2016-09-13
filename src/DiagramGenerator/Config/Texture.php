@@ -32,7 +32,7 @@ class Texture
      */
     public function __construct($name, $imageUrlFolderName, $imageFormat, $highlightSquaresColor = null)
     {
-        if (!in_array($imageFormat, array(self::IMAGE_FORMAT_PNG, self::IMAGE_FORMAT_JPG))) {
+        if (!in_array($imageFormat, [self::IMAGE_FORMAT_PNG, self::IMAGE_FORMAT_JPG])) {
             throw new InvalidArgumentException(sprintf('Invalid image format: %s', $imageFormat));
         }
 
@@ -82,5 +82,15 @@ class Texture
     public function is(Texture $texture)
     {
         return $this->name === $texture->getName() && $this->imageUrlFolderName === $texture->getImageUrlFolderName();
+    }
+
+    public function isJpg()
+    {
+        return $this->imageFormat === self::IMAGE_FORMAT_JPG;
+    }
+
+    public function isPng()
+    {
+        return $this->imageFormat === self::IMAGE_FORMAT_PNG;
     }
 }

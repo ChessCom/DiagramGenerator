@@ -44,11 +44,11 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Exception
      */
-    public function testBuildDiagramValidateError()
+    public function testBuildBoardValidateError()
     {
         $this->assertValidatorMockWithErrors($this->config);
 
-        $this->generator->buildDiagram(
+        $this->generator->buildBoard(
             $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
         );
     }
@@ -57,13 +57,13 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Size should be 20px or more
      */
-    public function testBuildDiagramSmallSize()
+    public function testBuildBoardSmallSize()
     {
         $this->config->setSizeIndex('19px');
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram(
+        $this->generator->buildBoard(
             $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
         );
     }
@@ -72,13 +72,13 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Size should be 200px or less
      */
-    public function testBuildDiagramLargeSize()
+    public function testBuildBoardLargeSize()
     {
         $this->config->setSizeIndex('201px');
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram(
+        $this->generator->buildBoard(
             $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
         );
     }
@@ -87,14 +87,14 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Piece theme non-existent does not exist
      */
-    public function testBuldDiagramNonExistingPieceTheme()
+    public function testBuldBoardNonExistingPieceTheme()
     {
         $this->config->setSizeIndex('200px')
             ->setPieceIndex('non-existent');
 
         $this->assertValidatorMockWithNoErrors($this->config);
 
-        $this->generator->buildDiagram(
+        $this->generator->buildBoard(
             $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
         );
     }
@@ -103,7 +103,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Board texture non-existent does not exist
      */
-    public function testBuildDiagramNonExistingBoardTexture()
+    public function testBuildBoardNonExistingBoardTexture()
     {
         $this->config->setSizeIndex('200px')
             ->setPieceIndex('3d_chesskid')
@@ -113,7 +113,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->generator->setPieceThemes(array('3d_chesskid'));
 
-        $this->generator->buildDiagram(
+        $this->generator->buildBoard(
             $this->config, $this->rootCacheDir, $this->boardTextureUrl, $this->pieceThemeUrl
         );
     }

@@ -130,4 +130,12 @@ abstract class Piece
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getShortName()
+    {
+        return substr($this->getColor(), 0, 1).$this->getKey();
+    }
 }
