@@ -167,28 +167,30 @@ class Image
         );
     }
 
-    protected function drawBoard(BaseImage $backgroundTexture, $cellSize, $topPaddingOfCell)
+    protected function drawBoard(BaseImage $backgroundTexture = null, $cellSize, $topPaddingOfCell)
     {
         $baseBoard = $this->getBaseBoard($backgroundTexture, $cellSize, $topPaddingOfCell);
 
         return (new Decoder())->initFromGdResource($baseBoard);
     }
 
-    protected function getBaseBoard(BaseImage $backgroundTexture, $cellSize, $topPaddingOfCell)
+    protected function getBaseBoard(BaseImage $backgroundTexture = null, $cellSize, $topPaddingOfCell)
     {
         $board = imagecreatetruecolor(
             $cellSize * Board::SQUARES_IN_ROW,
             $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell
         );
 
-        imagecopyresampled(
-            $board, $backgroundTexture->getCore(),
-            0, 0, 0, 0,
-            $cellSize * Board::SQUARES_IN_ROW,
-            $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell,
-            $cellSize * Board::SQUARES_IN_ROW,
-            $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell
-        );
+        if ($backgroundTexture) {
+            imagecopyresampled(
+                $board, $backgroundTexture->getCore(),
+                0, 0, 0, 0,
+                $cellSize * Board::SQUARES_IN_ROW,
+                $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell,
+                $cellSize * Board::SQUARES_IN_ROW,
+                $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell
+            );
+        }
 
         return $board;
     }
