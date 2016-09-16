@@ -56,10 +56,14 @@ class Storage
     /**
      * @param Config $config
      *
-     * @return Image
+     * @return Image|null
      */
     public function getBackgroundTextureImage(Config $config)
     {
+        if (!$config->getTexture()) {
+            return null;
+        }
+
         $boardCachedPath = $this->getCachedTextureFilePath($config);
 
         try {
