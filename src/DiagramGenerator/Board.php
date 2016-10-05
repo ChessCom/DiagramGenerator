@@ -24,12 +24,6 @@ class Board
     protected $fen;
 
     /** @var */
-    protected $rootCacheDir;
-
-    /** @var */
-    protected $cacheDirName = 'diagram_generator';
-
-    /** @var */
     protected $cacheDir;
 
     /** @var string */
@@ -41,13 +35,6 @@ class Board
     protected $pieceThemeUrl;
 
     /**
-     * Cached Image pieces.
-     *
-     * @var array
-     */
-    protected $pieces = [];
-
-    /**
      * @param Config $config
      * @param string $rootCacheDir
      * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__
@@ -56,11 +43,10 @@ class Board
     public function __construct(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
     {
         $this->config = $config;
-        $this->rootCacheDir = $rootCacheDir;
         $this->boardTextureUrl = $boardTextureUrl;
         $this->pieceThemeUrl = $pieceThemeUrl;
 
-        $this->cacheDir = $this->rootCacheDir.'/'.$this->cacheDirName;
+        $this->cacheDir = $rootCacheDir.'/diagram_generator';
         @mkdir($this->cacheDir, 0777);
 
         $this->fen = Fen::createFromString($this->config->getFen());
