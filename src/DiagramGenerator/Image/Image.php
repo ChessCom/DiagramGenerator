@@ -182,6 +182,8 @@ class Image
         );
 
         if ($backgroundTexture) {
+            $this->addTransparencyIfNeeded($board, $backgroundTexture->getCore());
+
             imagecopyresampled(
                 $board, $backgroundTexture->getCore(),
                 0, 0, 0, 0,
@@ -289,5 +291,19 @@ class Image
         }
 
         return $coordinates;
+    }
+
+    protected function addTransparencyIfNeeded($board, $textureCore)
+    {
+        $rgba = imagecolorat($textureCore, 1, 1);
+        $alpha = ($rgba & 0x7F000000) >> 24;
+        $isTransparent = $alpha > 0;
+
+        if ($isTransparent) {
+            imagealphablending($board, false);
+            imagesavealpha($board, true);
+            $color = imagecolorallocatealpha($board, 255, 255, 255, 127);
+            imagefill($board, 0, 0, $color);
+        }
     }
 }
