@@ -14,8 +14,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "jms/serializer": "~0.12",
+        "php": ">=5.5",
+        "jms/serializer": "~1.4",
         "symfony/routing": "~2.1",
         "symfony/yaml": "~2.1",
         "symfony/validator": "~2.1",
