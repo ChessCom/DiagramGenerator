@@ -15,10 +15,10 @@
     ],
     "require": {
         "php": ">=5.5",
-        "jms/serializer": "~1.4",
-        "symfony/routing": "~2.1",
-        "symfony/yaml": "~2.1",
-        "symfony/validator": "~2.1",
+        "jms/serializer": "~1.5",
+        "symfony/routing": "~2.8|~3.0",
+        "symfony/yaml": "~2.8|~3.0",
+        "symfony/validator": "~2.8|~3.0",
         "intervention/image": "^2.3",
         "ext-curl": "*"
     },
