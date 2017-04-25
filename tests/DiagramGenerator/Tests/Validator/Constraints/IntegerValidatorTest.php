@@ -13,7 +13,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Validator\Constraints\Integer $integer */
     protected $integer;
 
-    /** @var \Symfony\Component\Validator\ExecutionContext $contextMock */
+    /** @var \Symfony\Component\Validator\Context\ExecutionContext $contextMock */
     protected $contextMock;
 
     /** @var \DiagramGenerator\Validator\Constraints\IntegerValidator $integerValidator */
@@ -22,7 +22,7 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->contextMock = $this->getMock(
-            'Symfony\Component\Validator\ExecutionContext', array(), array(), '', false
+            'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 
         $this->integer = new Integer();
