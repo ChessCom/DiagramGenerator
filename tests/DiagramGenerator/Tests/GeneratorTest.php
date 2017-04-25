@@ -12,7 +12,7 @@ use DiagramGenerator\Generator;
  */
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Symfony\Component\Validator\ValidatorInterface $validator */
+    /** @var \Symfony\Component\Validator\Validator\ValidatorInterface $validator */
     protected $validatorMock;
 
     /** @var \DiagramGenerator\Generator $generator */
@@ -32,7 +32,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\ValidatorInterface')
+        $this->validatorMock = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -142,4 +142,3 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($constraintViolationList));
     }
 }
-

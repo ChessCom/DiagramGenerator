@@ -6,7 +6,7 @@ use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Exception\InvalidConfigException;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use InvalidArgumentException;
 
 /**
