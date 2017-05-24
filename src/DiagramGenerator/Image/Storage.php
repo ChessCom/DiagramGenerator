@@ -124,19 +124,7 @@ class Storage
         try {
             $image = ImageManagerStatic::make($pieceCachedPath);
         } catch (NotReadableException $exception) {
-            @mkdir($this->cacheDirectory.'/'.$pieceThemeName.'/'.$cellSize, 0777, true);
-
-            $pieceThemeUrl = strtr(
-                $this->pieceThemeUrl,
-                [
-                    '__PIECE_THEME__' => $pieceThemeName,
-                    '__SIZE__' => $cellSize,
-                    '__PIECE__' => $piece->getShortName(),
-                ]
-            );
-            $pieceThemeUrl .= '.'.Texture::IMAGE_FORMAT_PNG;
-
-            $this->cacheImage($pieceThemeUrl, $pieceCachedPath);
+            $this->downloadPieceImages($config);
             $image = ImageManagerStatic::make($pieceCachedPath);
         }
 
@@ -189,5 +177,66 @@ class Storage
         fclose($destinationFileHandle);
 
         rename($cachedFilePathTmp, $cachedFilePath);
+    }
+
+    private function downloadPieceImages(Config $config)
+    {
+        $pieces = Piece::generateAllPieces();
+
+        $pieceThemeName = $config->getTheme()->getName();
+        $cellSize = $config->getSize()->getCell();
+        @mkdir($this->cacheDirectory.'/'.$pieceThemeName.'/'.$cellSize, 0777, true);
+
+        $handles = [];
+        $fileHandles = [];
+        $multiHandle = curl_multi_init();
+
+        foreach ($pieces as $piece) {
+            $pieceUrl = $this->generatePieceUrl($piece, $config);
+            $handles[$piece->getShortName()] = curl_init($pieceUrl);
+            $filePath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece->getShortName());
+            $uniqid = uniqid();
+            $fileHandles[$piece->getShortName()] = [
+                'handle' => fopen($filePath . $uniqid, 'wb'),
+                'tmpPath' => $filePath . $uniqid,
+                'realPath' => $filePath,
+            ];
+        }
+
+        foreach($handles as $key => $handle) {
+            curl_setopt($handle, CURLOPT_FILE, $fileHandles[$key]['handle']);
+            curl_setopt($handle, CURLOPT_HEADER, 0);
+
+            curl_multi_add_handle($multiHandle, $handle);
+        }
+
+        do {
+            curl_multi_exec($multiHandle, $running);
+            curl_multi_select($multiHandle);
+        } while ($running > 0);
+
+        foreach ($fileHandles as $fileHandle) {
+            rename($fileHandle['tmpPath'], $fileHandle['realPath']);
+        }
+
+        curl_multi_close($multiHandle);
+    }
+
+    private function generatePieceUrl(Piece $piece, Config $config)
+    {
+        $pieceThemeName = $config->getTheme()->getName();
+        $cellSize = $config->getSize()->getCell();
+
+        $pieceThemeUrl = strtr(
+            $this->pieceThemeUrl,
+            [
+                '__PIECE_THEME__' => $pieceThemeName,
+                '__SIZE__' => $cellSize,
+                '__PIECE__' => $piece->getShortName(),
+            ]
+        );
+        $pieceThemeUrl .= '.'.Texture::IMAGE_FORMAT_PNG;
+
+        return $pieceThemeUrl;
     }
 }
