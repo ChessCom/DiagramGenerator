@@ -138,4 +138,22 @@ abstract class Piece
     {
         return substr($this->getColor(), 0, 1).$this->getKey();
     }
+
+    /**
+     * @return Piece[]
+     */
+    public static function generateAllPieces()
+    {
+        $white = [];
+        $black = [];
+
+        $pieceClasses = [Bishop::class, King::class, Knight::class, Pawn::class, Queen::class, Rook::class];
+
+        foreach ($pieceClasses as $piece) {
+            $white[] = new $piece(self::WHITE);
+            $black[] = new $piece(self::BLACK);
+        }
+
+        return array_merge($white, $black);
+    }
 }

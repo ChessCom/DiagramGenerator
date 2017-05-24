@@ -65,9 +65,9 @@ class Fen
      */
     public static function getPieceByKey($key)
     {
-        $color = 'white';
+        $color = Piece::WHITE;
         if (preg_match('/[A-Z]/', $key) === 0) {
-            $color = 'black';
+            $color = Piece::BLACK;
         }
 
         switch (strtolower($key)) {
