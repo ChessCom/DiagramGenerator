@@ -191,18 +191,20 @@ class Storage
         $fileHandles = [];
         $multiHandle = curl_multi_init();
 
-        $pieceThemeName = $config->getTheme()->getName();
-        $cellSize = $config->getSize()->getCell();
-
         foreach ($pieces as $piece) {
             $pieceUrl = $this->generatePieceUrl($piece, $config);
             $handles[$piece->getShortName()] = curl_init($pieceUrl);
-            $fileUrl = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece->getShortName());
-            $fileHandles[$piece->getShortName()] = fopen($fileUrl, 'wb');
+            $filePath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece->getShortName());
+            $uniqid = uniqid();
+            $fileHandles[$piece->getShortName()] = [
+                'handle' => fopen($filePath . $uniqid, 'wb'),
+                'tmpPath' => $filePath . $uniqid,
+                'realPath' => $filePath,
+            ];
         }
 
         foreach($handles as $key => $handle) {
-            curl_setopt($handle, CURLOPT_FILE, $fileHandles[$key]);
+            curl_setopt($handle, CURLOPT_FILE, $fileHandles[$key]['handle']);
             curl_setopt($handle, CURLOPT_HEADER, 0);
 
             curl_multi_add_handle($multiHandle, $handle);
@@ -212,6 +214,10 @@ class Storage
             curl_multi_exec($multiHandle, $running);
             curl_multi_select($multiHandle);
         } while ($running > 0);
+
+        foreach ($fileHandles as $fileHandle) {
+            rename($fileHandle['tmpPath'], $fileHandle['realPath']);
+        }
 
         curl_multi_close($multiHandle);
     }
