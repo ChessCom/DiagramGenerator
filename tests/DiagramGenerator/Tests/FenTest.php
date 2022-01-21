@@ -17,11 +17,10 @@ class FenTest extends TestCase
         $this->defaultFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testGetPieceByKey()
     {
+        $this->expectException('InvalidArgumentException');
+
         $piece = Fen::getPieceByKey('r');
         $this->assertInstanceOf('DiagramGenerator\Fen\Rook', $piece);
         $this->assertEquals('black', $piece->getColor());
@@ -87,11 +86,10 @@ class FenTest extends TestCase
         $this->assertCount(count(array_filter($row, function($piece){ return $piece != null; })), $fen->getPieces());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testSetRowException()
     {
+        $this->expectException('InvalidArgumentException');
+
         $fen = new Fen();
         $fen->setRow(array(), 0);
     }
