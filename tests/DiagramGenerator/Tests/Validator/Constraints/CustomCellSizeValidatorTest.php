@@ -21,7 +21,7 @@ class CustomCellSizeValidatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->contextMock = $this->getMock(
+        $this->contextMock = $this->createMock(
             'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 

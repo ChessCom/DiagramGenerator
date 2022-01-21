@@ -22,7 +22,7 @@ class IntegerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMock(
+        $this->contextMock = $this->createMock(
             'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 
