@@ -3,11 +3,12 @@
 namespace DiagramGenerator\Tests\Fen;
 
 use DiagramGenerator\Fen\Piece;
+use PHPUnit\Framework\TestCase;
 
 /**
  * PieceTest
  */
-class PieceTest extends \PHPUnit_Framework_TestCase
+class PieceTest extends TestCase
 {
     public function testSetColor()
     {

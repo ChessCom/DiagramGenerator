@@ -4,8 +4,9 @@ namespace DiagramGenerator\Tests\Validator\Constraints;
 
 use DiagramGenerator\Validator\Constraints\CustomCellSize;
 use DiagramGenerator\Validator\Constraints\CustomCellSizeValidator;
+use PHPUnit\Framework\TestCase;
 
-class CustomCellSizeValidatorTest extends \PHPUnit_Framework_TestCase
+class CustomCellSizeValidatorTest extends TestCase
 {
     /** @var \DiagramGenerator\Validator\Constraints\CustomCellSize $customCellSize */
     protected $customCellSize;

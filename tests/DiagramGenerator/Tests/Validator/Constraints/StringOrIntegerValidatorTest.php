@@ -4,8 +4,9 @@ namespace DiagramGenerator\Tests\Validator\Constraints;
 
 use DiagramGenerator\Validator\Constraints\StringOrInteger;
 use DiagramGenerator\Validator\Constraints\StringOrIntegerValidator;
+use PHPUnit\Framework\TestCase;
 
-class StringOrIntegerValidatorTest extends \PHPUnit_Framework_TestCase
+class StringOrIntegerValidatorTest extends TestCase
 {
     /** @var \DiagramGenerator\Validator\Constraints\StringOrInteger $stringOrInteger */
     protected $stringOrInteger;

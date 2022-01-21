@@ -3,11 +3,12 @@
 namespace DiagramGenerator\Tests;
 
 use DiagramGenerator\Fen;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FenTest
  */
-class FenTest extends \PHPUnit_Framework_TestCase
+class FenTest extends TestCase
 {
     protected $defaultFen;
 

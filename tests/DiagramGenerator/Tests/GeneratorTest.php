@@ -6,11 +6,12 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use DiagramGenerator\Config;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Generator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * GeneratorTest
  */
-class GeneratorTest extends \PHPUnit_Framework_TestCase
+class GeneratorTest extends TestCase
 {
     /** @var \Symfony\Component\Validator\Validator\ValidatorInterface $validator */
     protected $validatorMock;

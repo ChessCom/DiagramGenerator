@@ -4,11 +4,12 @@ namespace DiagramGenerator\Tests\Validator\Constraints;
 
 use DiagramGenerator\Validator\Constraints\Integer;
 use DiagramGenerator\Validator\Constraints\IntegerValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * IntegerTest
  */
-class IntegerTest extends \PHPUnit_Framework_TestCase
+class IntegerTest extends TestCase
 {
     /** @var \DiagramGenerator\Validator\Constraints\Integer $integer */
     protected $integer;
