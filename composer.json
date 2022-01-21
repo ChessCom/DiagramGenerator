@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.2|^8.0",
         "jms/serializer": "^2.0|^3.0",
         "symfony/routing": "^3.0|^4.0",
         "symfony/yaml": "^3.0|^4.0",
