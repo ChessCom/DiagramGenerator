@@ -55,11 +55,7 @@ class FenTest extends TestCase
 
     public function testSetAtPosition()
     {
-        $piece = $this
-            ->getMockBuilder('DiagramGenerator\Fen\Piece')
-            ->disableOriginalConstructor()
-            ->setMethods(array('setColumn', 'setRow'))
-            ->getMockForAbstractClass();
+        $piece = $this->createMock('DiagramGenerator\Fen\Piece');
         $piece
             ->expects($this->once())
             ->method('setRow')
