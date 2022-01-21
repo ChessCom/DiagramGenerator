@@ -2,6 +2,7 @@
 
 namespace DiagramGenerator\Tests\Fen;
 
+use DiagramGenerator\Fen\Pawn;
 use DiagramGenerator\Fen\Piece;
 use PHPUnit\Framework\TestCase;
 
@@ -45,9 +46,17 @@ class PieceTest extends TestCase
 
     protected function getPiece()
     {
-        return $this
-            ->getMockBuilder('DiagramGenerator\Fen\Piece')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        return new class(Piece::WHITE) extends Piece
+        {
+            public function getName()
+            {
+                return Pawn::class;
+            }
+
+            public function getKey()
+            {
+                return 'p';
+            }
+        };
     }
 }
