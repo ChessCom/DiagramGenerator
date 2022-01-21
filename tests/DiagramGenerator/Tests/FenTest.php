@@ -17,6 +17,9 @@ class FenTest extends TestCase
         $this->defaultFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testGetPieceByKey()
     {
         $piece = Fen::getPieceByKey('r');
@@ -42,7 +45,6 @@ class FenTest extends TestCase
         $piece = Fen::getPieceByKey(null);
         $this->assertNull($piece);
 
-        $this->setExpectedException('InvalidArgumentException');
         $piece = Fen::getPieceByKey(0);
     }
 
