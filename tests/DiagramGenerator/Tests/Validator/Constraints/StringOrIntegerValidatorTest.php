@@ -17,7 +17,7 @@ class StringOrIntegerValidatorTest extends TestCase
     /** @var \DiagramGenerator\Validator\Constraints\StringOrIntegerValidator $stringOrIntegerValidator */
     protected $stringOrIntegerValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

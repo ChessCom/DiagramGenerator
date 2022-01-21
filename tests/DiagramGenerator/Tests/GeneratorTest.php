@@ -29,7 +29,7 @@ class GeneratorTest extends TestCase
 
     protected $pieceThemeUrl = 'test.png';
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

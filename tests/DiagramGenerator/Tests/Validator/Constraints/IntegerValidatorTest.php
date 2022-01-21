@@ -20,7 +20,7 @@ class IntegerTest extends TestCase
     /** @var \DiagramGenerator\Validator\Constraints\IntegerValidator $integerValidator */
     protected $integerValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->contextMock = $this->getMock(
             'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false

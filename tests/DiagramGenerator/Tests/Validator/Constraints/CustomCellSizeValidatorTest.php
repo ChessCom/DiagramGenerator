@@ -17,7 +17,7 @@ class CustomCellSizeValidatorTest extends TestCase
     /** @var \DiagramGenerator\Validator\Constraints\CustomCellSizeValidator $customCellSizeValidator */
     protected $customCellSizeValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

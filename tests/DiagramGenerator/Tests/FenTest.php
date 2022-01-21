@@ -12,7 +12,7 @@ class FenTest extends TestCase
 {
     protected $defaultFen;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->defaultFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     }
