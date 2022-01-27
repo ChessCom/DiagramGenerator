@@ -2,12 +2,14 @@
 
 namespace DiagramGenerator\Tests\Fen;
 
+use DiagramGenerator\Fen\Pawn;
 use DiagramGenerator\Fen\Piece;
+use PHPUnit\Framework\TestCase;
 
 /**
  * PieceTest
  */
-class PieceTest extends \PHPUnit_Framework_TestCase
+class PieceTest extends TestCase
 {
     public function testSetColor()
     {
@@ -18,7 +20,7 @@ class PieceTest extends \PHPUnit_Framework_TestCase
         $piece->setColor(Piece::BLACK);
         $this->assertEquals(Piece::BLACK, $piece->getColor());
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $piece->setColor('invalid');
     }
 
@@ -28,7 +30,7 @@ class PieceTest extends \PHPUnit_Framework_TestCase
         $piece->setRow(2);
         $this->assertEquals(2, $piece->getRow());
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $piece->setRow(-1);
     }
 
@@ -38,15 +40,23 @@ class PieceTest extends \PHPUnit_Framework_TestCase
         $piece->setColumn(5);
         $this->assertEquals(5, $piece->getColumn());
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $piece->setColumn(20);
     }
 
     protected function getPiece()
     {
-        return $this
-            ->getMockBuilder('DiagramGenerator\Fen\Piece')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        return new class(Piece::WHITE) extends Piece
+        {
+            public function getName()
+            {
+                return Pawn::class;
+            }
+
+            public function getKey()
+            {
+                return 'p';
+            }
+        };
     }
 }

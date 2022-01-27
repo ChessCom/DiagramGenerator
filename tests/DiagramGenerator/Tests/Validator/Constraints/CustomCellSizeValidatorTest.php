@@ -4,8 +4,9 @@ namespace DiagramGenerator\Tests\Validator\Constraints;
 
 use DiagramGenerator\Validator\Constraints\CustomCellSize;
 use DiagramGenerator\Validator\Constraints\CustomCellSizeValidator;
+use PHPUnit\Framework\TestCase;
 
-class CustomCellSizeValidatorTest extends \PHPUnit_Framework_TestCase
+class CustomCellSizeValidatorTest extends TestCase
 {
     /** @var \DiagramGenerator\Validator\Constraints\CustomCellSize $customCellSize */
     protected $customCellSize;
@@ -16,11 +17,11 @@ class CustomCellSizeValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Validator\Constraints\CustomCellSizeValidator $customCellSizeValidator */
     protected $customCellSizeValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->contextMock = $this->getMock(
+        $this->contextMock = $this->createMock(
             'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 

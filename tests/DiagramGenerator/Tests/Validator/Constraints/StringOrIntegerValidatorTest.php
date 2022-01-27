@@ -4,8 +4,9 @@ namespace DiagramGenerator\Tests\Validator\Constraints;
 
 use DiagramGenerator\Validator\Constraints\StringOrInteger;
 use DiagramGenerator\Validator\Constraints\StringOrIntegerValidator;
+use PHPUnit\Framework\TestCase;
 
-class StringOrIntegerValidatorTest extends \PHPUnit_Framework_TestCase
+class StringOrIntegerValidatorTest extends TestCase
 {
     /** @var \DiagramGenerator\Validator\Constraints\StringOrInteger $stringOrInteger */
     protected $stringOrInteger;
@@ -16,11 +17,11 @@ class StringOrIntegerValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Validator\Constraints\StringOrIntegerValidator $stringOrIntegerValidator */
     protected $stringOrIntegerValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->contextMock = $this->getMock(
+        $this->contextMock = $this->createMock(
             'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 

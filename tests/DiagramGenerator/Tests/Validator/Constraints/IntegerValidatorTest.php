@@ -4,11 +4,12 @@ namespace DiagramGenerator\Tests\Validator\Constraints;
 
 use DiagramGenerator\Validator\Constraints\Integer;
 use DiagramGenerator\Validator\Constraints\IntegerValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * IntegerTest
  */
-class IntegerTest extends \PHPUnit_Framework_TestCase
+class IntegerTest extends TestCase
 {
     /** @var \DiagramGenerator\Validator\Constraints\Integer $integer */
     protected $integer;
@@ -19,9 +20,9 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     /** @var \DiagramGenerator\Validator\Constraints\IntegerValidator $integerValidator */
     protected $integerValidator;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->contextMock = $this->getMock(
+        $this->contextMock = $this->createMock(
             'Symfony\Component\Validator\Context\ExecutionContext', array(), array(), '', false
         );
 

@@ -3,21 +3,24 @@
 namespace DiagramGenerator\Tests;
 
 use DiagramGenerator\Fen;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FenTest
  */
-class FenTest extends \PHPUnit_Framework_TestCase
+class FenTest extends TestCase
 {
     protected $defaultFen;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->defaultFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     }
 
     public function testGetPieceByKey()
     {
+        $this->expectException('InvalidArgumentException');
+
         $piece = Fen::getPieceByKey('r');
         $this->assertInstanceOf('DiagramGenerator\Fen\Rook', $piece);
         $this->assertEquals('black', $piece->getColor());
@@ -41,7 +44,6 @@ class FenTest extends \PHPUnit_Framework_TestCase
         $piece = Fen::getPieceByKey(null);
         $this->assertNull($piece);
 
-        $this->setExpectedException('InvalidArgumentException');
         $piece = Fen::getPieceByKey(0);
     }
 
@@ -53,11 +55,7 @@ class FenTest extends \PHPUnit_Framework_TestCase
 
     public function testSetAtPosition()
     {
-        $piece = $this
-            ->getMockBuilder('DiagramGenerator\Fen\Piece')
-            ->disableOriginalConstructor()
-            ->setMethods(array('setColumn', 'setRow'))
-            ->getMockForAbstractClass();
+        $piece = $this->createMock('DiagramGenerator\Fen\Piece');
         $piece
             ->expects($this->once())
             ->method('setRow')
@@ -84,11 +82,10 @@ class FenTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(count(array_filter($row, function($piece){ return $piece != null; })), $fen->getPieces());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testSetRowException()
     {
+        $this->expectException('InvalidArgumentException');
+
         $fen = new Fen();
         $fen->setRow(array(), 0);
     }

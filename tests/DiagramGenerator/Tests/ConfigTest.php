@@ -3,11 +3,12 @@
 namespace DiagramGenerator\Tests;
 
 use DiagramGenerator\Config;
+use PHPUnit\Framework\TestCase;
 
 /**
  * ConfigTest
  */
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     public function testGetFen()
     {

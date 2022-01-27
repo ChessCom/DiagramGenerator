@@ -6,11 +6,12 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use DiagramGenerator\Config;
 use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Generator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * GeneratorTest
  */
-class GeneratorTest extends \PHPUnit_Framework_TestCase
+class GeneratorTest extends TestCase
 {
     /** @var \Symfony\Component\Validator\Validator\ValidatorInterface $validator */
     protected $validatorMock;
@@ -28,7 +29,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected $pieceThemeUrl = 'test.png';
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -41,11 +42,10 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->config = new Config();
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testBuildBoardValidateError()
     {
+        $this->expectException('Exception');
+
         $this->assertValidatorMockWithErrors($this->config);
 
         $this->generator->buildBoard(
@@ -53,12 +53,11 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Size should be 20px or more
-     */
     public function testBuildBoardSmallSize()
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Size should be 20px or more');
+
         $this->config->setSizeIndex('19px');
 
         $this->assertValidatorMockWithNoErrors($this->config);
@@ -68,12 +67,11 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Size should be 200px or less
-     */
     public function testBuildBoardLargeSize()
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Size should be 200px or less');
+
         $this->config->setSizeIndex('201px');
 
         $this->assertValidatorMockWithNoErrors($this->config);
@@ -83,12 +81,11 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Piece theme non-existent does not exist
-     */
     public function testBuldBoardNonExistingPieceTheme()
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Piece theme non-existent does not exist');
+
         $this->config->setSizeIndex('200px')
             ->setPieceIndex('non-existent');
 
@@ -99,12 +96,11 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Board texture non-existent does not exist
-     */
     public function testBuildBoardNonExistingBoardTexture()
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Board texture non-existent does not exist');
+
         $this->config->setSizeIndex('200px')
             ->setPieceIndex('3d_chesskid')
             ->setTexture(new Texture('non-existent', 'non-existent', 'png'));
