@@ -16,9 +16,9 @@
     "require": {
         "php": "^7.2|^8.0",
         "jms/serializer": "^2.0|^3.0",
-        "symfony/routing": "^3.0|^4.0|^5.0",
-        "symfony/yaml": "^3.0|^4.0|^5.0",
-        "symfony/validator": "^3.0|^4.0|^5.0",
+        "symfony/routing": "^5.0|^6.0",
+        "symfony/yaml": "^5.0|^6.0",
+        "symfony/validator": "^5.0|^6.0",
         "intervention/image": "^2.3",
         "ext-curl": "*"
     },
