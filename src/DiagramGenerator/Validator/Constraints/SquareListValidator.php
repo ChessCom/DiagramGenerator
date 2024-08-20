@@ -9,7 +9,7 @@ class SquareListValidator extends ConstraintValidator
 {
     protected $squares = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (null === $value || '' === $value) {
             return;
