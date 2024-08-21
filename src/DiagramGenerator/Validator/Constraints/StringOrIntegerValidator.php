@@ -7,7 +7,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class StringOrIntegerValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (null === $value) {
             return;
