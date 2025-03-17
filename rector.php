@@ -2,6 +2,7 @@
 
 use Rector\Config\RectorConfig;
 use Rector\Symfony\Set\JMSSetList;
+use Rector\Symfony\Set\SymfonySetList;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -9,4 +10,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withPreparedSets(deadCode: true)
-    ->withSets([JMSSetList::ANNOTATIONS_TO_ATTRIBUTES]);
+    ->withSets([
+        JMSSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        SymfonySetList::ANNOTATIONS_TO_ATTRIBUTES,
+    ]);

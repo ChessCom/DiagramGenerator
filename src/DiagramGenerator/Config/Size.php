@@ -15,37 +15,37 @@ class Size
     /**
      * Cell size.
      *
-     * @Type("integer")
      *
      * @var int
      */
+    #[Type('integer')]
     protected $cell;
 
     /**
      * Border thickness.
      *
-     * @Type("integer")
      *
      * @var int
      */
+    #[Type('integer')]
     protected $border;
 
     /**
      * Caption font size.
      *
-     * @Type("integer")
      *
      * @var int
      */
+    #[Type('integer')]
     protected $caption;
 
     /**
      * Coordinates fonts size.
      *
-     * @Type("integer")
      *
      * @var int
      */
+    #[Type('integer')]
     protected $coordinates;
 
     /**

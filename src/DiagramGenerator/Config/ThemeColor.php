@@ -11,27 +11,24 @@ use Symfony\Component\Validator\Constraints\Regex;
 class ThemeColor
 {
     /**
-     * @Type("string")
-     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Background color should be in hex format")
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Regex(pattern: '/^[a-fA-F0-9]{6}$/', message: 'Background color should be in hex format')]
     protected $background = 'FFFFFF';
 
     /**
-     * @Type("string")
-     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Caption color should be in hex format")
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Regex(pattern: '/^[a-fA-F0-9]{6}$/', message: 'Caption color should be in hex format')]
     protected $caption = '000000';
 
     /**
-     * @Type("string")
-     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Border color should be in hex format")
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Regex(pattern: '/^[a-fA-F0-9]{6}$/', message: 'Border color should be in hex format')]
     protected $border = '777777';
 
     /**
