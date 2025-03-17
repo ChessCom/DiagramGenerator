@@ -1,0 +1,11 @@
+<?php
+
+use Rector\Config\RectorConfig;
+use Rector\Symfony\Set\JMSSetList;
+
+return RectorConfig::configure()
+    ->withPaths([
+        __DIR__ . '/src',
+        __DIR__ . '/tests',
+    ])
+    ->withSets([JMSSetList::ANNOTATIONS_TO_ATTRIBUTES]);
