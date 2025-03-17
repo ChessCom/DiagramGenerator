@@ -75,7 +75,6 @@ class UrlHelper
     /**
      * Takes config and converts it to associative array.
      *
-     * @param Config $config
      *
      * @return array
      */

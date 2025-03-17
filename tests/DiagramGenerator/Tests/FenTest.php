@@ -44,7 +44,7 @@ class FenTest extends TestCase
         $piece = Fen::getPieceByKey(null);
         $this->assertNull($piece);
 
-        $piece = Fen::getPieceByKey(0);
+        Fen::getPieceByKey(0);
     }
 
     public function testSanitizeFenString()

@@ -37,8 +37,6 @@ class Storage
     }
 
     /**
-     * @param Piece  $piece
-     * @param Config $config
      *
      * @return Image
      */
@@ -54,8 +52,6 @@ class Storage
     }
 
     /**
-     * @param Config $config
-     *
      * @return Image|null
      */
     public function getBackgroundTextureImage(Config $config)
@@ -86,8 +82,6 @@ class Storage
     /**
      * Finds max height of piece image
      *
-     * @param Fen $fen
-     * @param Config $config
      *
      * @return int
      */
@@ -110,8 +104,6 @@ class Storage
     /**
      * In piece image is not found in local storage, passes control to self::cacheImage()
      *
-     * @param Piece $piece
-     * @param Config $config
      *
      * @return Image
      */
@@ -235,8 +227,7 @@ class Storage
                 '__PIECE__' => $piece->getShortName(),
             ]
         );
-        $pieceThemeUrl .= '.'.Texture::IMAGE_FORMAT_PNG;
 
-        return $pieceThemeUrl;
+        return $pieceThemeUrl . ('.' . Texture::IMAGE_FORMAT_PNG);
     }
 }

@@ -75,8 +75,6 @@ class Texture
     }
 
     /**
-     * @param Texture $texture
-     *
      * @return bool
      */
     public function is(Texture $texture)
