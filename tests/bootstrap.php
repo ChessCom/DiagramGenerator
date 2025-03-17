@@ -7,6 +7,3 @@ if (!is_file($autoloadFile = __DIR__.'/../vendor/autoload.php')) {
 }
 
 $loader = require $autoloadFile;
-
-// Copy Symfony's way of loading doctrine annotations
-AnnotationRegistry::registerLoader(array($loader, 'loadClass'));

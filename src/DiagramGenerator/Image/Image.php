@@ -113,7 +113,6 @@ class Image
     /**
      * Draws basic "usable" board, with pieces
      *
-     * @param Fen $fen
      * @param $cellSize
      * @param $topPaddingOfCell
      */

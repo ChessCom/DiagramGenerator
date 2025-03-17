@@ -18,20 +18,17 @@ use DiagramGenerator\Validator\Constraints\SquareList;
 use DiagramGenerator\Validator\Constraints\Integer;
 use DiagramGenerator\Validator\Constraints\StringOrInteger;
 
-/**
- * @ExclusionPolicy("none")
- */
 // [lackovic10] Type("string")for int values of theme, piece, texture and board need to be to string and not int,
 // so that they can be validated correctly. Invalid int type values are converted to 0, which are valid indexes for
 // piece/theme and board/texture and cause unwanted results
+#[ExclusionPolicy('none')]
 class Config
 {
     /**
-     * @Type("string")
-     * @NotBlank()
-     *
      * @var string
      */
+    #[Type('string')]
+    #[NotBlank]
     protected $fen;
 
     /**
@@ -39,109 +36,98 @@ class Config
      * TODO [lackovic10]: rename to size, once the library is refactored and the size field is removed from this class
      * the same action with boardTexture and pieceTheme.
      *
-     * @Type("string")
      * @CustomCellSize(min=0, max=3)
-     * @SerializedName("size")
      *
      * @var string
      */
+    #[Type('string')]
+    #[SerializedName('size')]
     protected $sizeIndex;
 
     /**
-     * @Exclude()
-     *
      * @var \DiagramGenerator\Config\Size
      */
+    #[Exclude]
     protected $size;
 
     /**
      * [lackovic10]: these are piece theme folder names from the image url
      * TODO: future idea - pass the whole urls to the library instead of generating the url inside the library based on parameters.
      *
-     * @Type("string")
      * @StringOrInteger(min=0, max=5)
-     * @SerializedName("piece")
      *
      * @var int
      */
+    #[Type('string')]
+    #[SerializedName('piece')]
     protected $pieceIndex;
 
     /**
-     * @Exclude()
-     *
      * @var \DiagramGenerator\Config\Texture
      */
+    #[Exclude]
     protected $texture;
 
     /**
-     * @Exclude()
-     *
      * @var \DiagramGenerator\Config\Theme
      */
+    #[Exclude]
     protected $theme;
 
     /**
-     * @Type("string")
-     * @Length(max=30)
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Length(max: 30)]
     protected $caption;
 
     /**
-     * @Type("boolean")
-     *
      * @var bool
      */
+    #[Type('boolean')]
     protected $coordinates;
 
     /**
-     * @Type("string")
-     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Light color should be in hex format")
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Regex(pattern: '/^[a-fA-F0-9]{6}$/', message: 'Light color should be in hex format')]
     protected $light;
 
     /**
-     * @Type("string")
-     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Dark color should be in hex format")
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Regex(pattern: '/^[a-fA-F0-9]{6}$/', message: 'Dark color should be in hex format')]
     protected $dark;
 
     /**
-     * @Type("boolean")
-     *
      * @var bool
      */
+    #[Type('boolean')]
     protected $flip;
 
     /**
-     * @Type("string")
      * @SquareList()
-     * @Length(max=128)
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Length(max: 128)]
     protected $highlightSquares;
 
     /**
-     * @Type("string")
-     * @Regex(pattern="/^[a-fA-F0-9]{6}$/", message="Highlight squares color should be in hex format")
-     *
      * @var string
      */
+    #[Type('string')]
+    #[Regex(pattern: '/^[a-fA-F0-9]{6}$/', message: 'Highlight squares color should be in hex format')]
     protected $highlightSquaresColor;
 
     /**
-     * @Type("integer")
      * @Integer
-     * @Range(min = 0, max = 100)
-     *
      * @var int
      */
+    #[Type('integer')]
+    #[Range(min: 0, max: 100)]
     protected $compressionQualityJpg;
 
     /**

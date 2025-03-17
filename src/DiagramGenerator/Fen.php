@@ -135,9 +135,7 @@ class Fen
     /**
      * Fills Fen row with values.
      *
-     * @param array $row
      * @param int
-     *
      * @throws \InvalidArgumentException
      */
     public function setRow(array $row, $rowIndex)
@@ -156,7 +154,6 @@ class Fen
      *
      * @param int   $row
      * @param int   $column
-     * @param Piece $piece
      */
     public function setAtPosition($row, $column, Piece $piece = null)
     {

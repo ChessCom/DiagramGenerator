@@ -13,18 +13,17 @@ class Theme
     /**
      * Theme name.
      *
-     * @Type("string")
      *
      * @var string
      */
+    #[Type('string')]
     protected $name;
 
     /**
-     * @Type("DiagramGenerator\Config\ThemeColor")
-     * @Valid()
-     *
      * @var ThemeColor
      */
+    #[Type('DiagramGenerator\Config\ThemeColor')]
+    #[Valid]
     protected $color;
 
     public function __construct()

@@ -37,13 +37,11 @@ class Generator
     }
 
     /**
-     * @param Config $config
      * @param $rootCacheDir
      * @param $boardTextureUrl
      * @param $pieceThemeUrl
      *
      * @return Board
-     *
      * @throws InvalidConfigException
      */
     public function buildBoard(Config $config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl)
@@ -64,9 +62,7 @@ class Generator
             $this->parseHighlightSquaresString($config->getHighlightSquares())
         );
 
-        $board = new Board($config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl);
-
-        return $board;
+        return new Board($config, $rootCacheDir, $boardTextureUrl, $pieceThemeUrl);
     }
 
     public function setBoardTextures(array $boardTextures)
@@ -85,8 +81,6 @@ class Generator
 
     /**
      * Set the config size.
-     *
-     * @param Config $config
      */
     protected function setConfigSize(Config $config)
     {
@@ -112,8 +106,6 @@ class Generator
     }
 
     /**
-     * @param Texture $textureForValidation
-     *
      * @throws InvalidArgumentException
      */
     protected function validateBoardTexture(Texture $textureForValidation)
@@ -131,8 +123,6 @@ class Generator
 
     /**
      * Set the config piece theme.
-     *
-     * @param Config $config
      */
     protected function setConfigPieceTheme(Config $config)
     {

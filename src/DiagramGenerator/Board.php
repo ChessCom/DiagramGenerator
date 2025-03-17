@@ -35,7 +35,6 @@ class Board
     protected $pieceThemeUrl;
 
     /**
-     * @param Config $config
      * @param string $rootCacheDir
      * @param string $boardTextureUrl ex. /boards/__BOARD_TEXTURE__/__SIZE__
      * @param string $pieceThemeUrl   ex. /pieces/__PIECE_THEME__/__SIZE__/__PIECE__
