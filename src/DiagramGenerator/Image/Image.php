@@ -77,10 +77,23 @@ class Image
      * Adds coordinates to board image (based on config passed)
      *
      * @param int $topPaddingOfCell
+     * @param bool $isCoordinatesInside
      */
-    public function addCoordinates($topPaddingOfCell)
+    public function addCoordinates(int $topPaddingOfCell, bool $isCoordinatesInside = false): void
     {
-        $this->drawBorder();
+        if (!$isCoordinatesInside) {
+            $this->drawBorder();
+
+            $x1 = (int) ($this->config->getBorderThickness() / 2);
+            $y1 = $this->config->getBorderThickness() + $topPaddingOfCell;
+            $x2 = $this->config->getSize()->getCell();
+            $y2 = (int) ($this->image->getHeight() - $this->config->getBorderThickness() / 2);
+        } else {
+            $x1 = (int) ($this->config->getBorderThickness() * 0.2);
+            $y1 = (int) ($this->config->getBorderThickness() * 0.3);
+            $x2 = (int) ($this->config->getSize()->getCell() * 0.9);
+            $y2 = (int) ($this->image->getHeight() - $this->config->getBorderThickness() * 0.25);
+        }
 
         $fontSetup = function (Font $font) {
             $font->file(sprintf('%s/fonts/%s', Generator::getResourcesDir(), 'tahoma.ttf'));
@@ -93,8 +106,8 @@ class Image
         foreach ($this->getVerticalCoordinates($this->config->getFlip()) as $index => $x) {
             $this->image->text(
                 abs($x - 9),
-                $this->config->getBorderThickness() / 2,
-                $this->config->getBorderThickness() + $topPaddingOfCell + $this->config->getSize()->getCell() * $index,
+                $x1,
+                $y1 + $this->config->getSize()->getCell() * $index,
                 $fontSetup
             );
         }
@@ -103,8 +116,8 @@ class Image
         foreach ($this->getHorizontalCoordinates($this->config->getFlip()) as $index => $y) {
             $this->image->text(
                 $y,
-                $this->config->getSize()->getCell() + $this->config->getSize()->getCell() * $index,
-                $this->image->getHeight() - $this->config->getBorderThickness() / 2,
+                $x2 + $this->config->getSize()->getCell() * $index,
+                $y2,
                 $fontSetup
             );
         }
