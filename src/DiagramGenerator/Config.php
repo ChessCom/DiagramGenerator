@@ -88,6 +88,12 @@ class Config
     protected $coordinates;
 
     /**
+     * @var bool
+     */
+    #[Type('boolean')]
+    protected $coordinatesInside;
+
+    /**
      * @var string
      */
     #[Type('string')]
@@ -299,6 +305,24 @@ class Config
     }
 
     /**
+     * Gets the value of coordinates inside or outside.
+     */
+    public function getCoordinatesInside(): bool
+    {
+        return $this->coordinatesInside ?? false;
+    }
+
+    /**
+     * Sets the value of coordinates inside or outside.
+     */
+    public function setCoordinatesInside(bool $coordinatesInside): self
+    {
+        $this->coordinatesInside = $coordinatesInside;
+
+        return $this;
+    }
+
+    /**
      * Gets the value of light.
      *
      * @return string
@@ -432,7 +456,7 @@ class Config
 
     public function getBorderThickness()
     {
-        return $this->getSize()->getCell() / 2;
+        return (int) round($this->getSize()->getCell() / 2);
     }
 
     public function getBackgroundColor()

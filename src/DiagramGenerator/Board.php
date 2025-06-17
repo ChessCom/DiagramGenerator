@@ -87,7 +87,7 @@ class Board
         );
 
         if ($this->config->getCoordinates()) {
-            $image->addCoordinates($topPadding);
+            $image->addCoordinates($topPadding, $this->config->getCoordinatesInside());
         }
 
         if ($this->config->getCaption()) {
