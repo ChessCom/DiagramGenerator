@@ -315,9 +315,9 @@ class Config
     /**
      * Sets the value of coordinates inside or outside.
      */
-    public function setCoordinatesInside(bool $coordinatesInside): self
+    public function setCoordinatesInside(?bool $coordinatesInside): self
     {
-        $this->coordinatesInside = $coordinatesInside;
+        $this->coordinatesInside = (bool) $coordinatesInside;
 
         return $this;
     }
