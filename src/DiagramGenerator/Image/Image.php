@@ -18,13 +18,17 @@ class Image
     /** @var BaseImage */
     protected $image;
 
-    /** @var Storage */
+    /** @var Storage|StorageLegacy */
     protected $storage;
 
     /** @var Config */
     protected $config;
 
-    public function __construct(Storage $storage, Config $config)
+    /**
+     * @param Storage|StorageLegacy $storage
+     * @param Config $config
+     */
+    public function __construct($storage, Config $config)
     {
         $this->image = (new Decoder())->initFromGdResource(imagecreatetruecolor(1, 1));
         $this->storage = $storage;
@@ -133,13 +137,16 @@ class Image
     {
         $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage($this->config), $cellSize, $topPaddingOfCell);
 
+        $boardHasTexture = !empty($this->config->getTexture()) || 
+                          ($this->config->hasThemeUrls() && isset($this->config->getThemeUrls()['board']));
+
         $this->drawCells(
             $this->config->getSize()->getCell(),
             $this->config->getDark(),
             $this->config->getLight(),
             $this->config->getHighlightSquaresColor(),
             $topPaddingOfCell,
-            !empty($this->config->getTexture()),
+            $boardHasTexture,
             $this->config->getHighlightSquares()
         );
 

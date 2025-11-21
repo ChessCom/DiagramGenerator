@@ -137,6 +137,15 @@ class Config
     protected $compressionQualityJpg;
 
     /**
+     * Custom theme URLs object with board and piece URLs.
+     * Structure: { board: boardUrl, wp: pieceUrl, bp: pieceUrl, ... }
+     *
+     * @var array|null
+     */
+    #[Type('array')]
+    protected $themeUrls;
+
+    /**
      * Gets the value of fen.
      *
      * @return string
@@ -452,6 +461,41 @@ class Config
         $this->compressionQualityJpg = $compressionQualityJpg;
 
         return $this;
+    }
+
+    /**
+     * Gets the theme URLs object.
+     *
+     * @return array|null
+     */
+    public function getThemeUrls()
+    {
+        return $this->themeUrls;
+    }
+
+    /**
+     * Sets the theme URLs object.
+     * Structure: { board: boardUrl, wp: pieceUrl, bp: pieceUrl, ... }
+     *
+     * @param array|null $themeUrls
+     *
+     * @return self
+     */
+    public function setThemeUrls($themeUrls)
+    {
+        $this->themeUrls = $themeUrls;
+
+        return $this;
+    }
+
+    /**
+     * Checks if custom theme URLs are configured.
+     *
+     * @return bool
+     */
+    public function hasThemeUrls()
+    {
+        return !empty($this->themeUrls) && is_array($this->themeUrls);
     }
 
     public function getBorderThickness()

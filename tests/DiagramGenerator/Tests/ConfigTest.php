@@ -57,4 +57,47 @@ class ConfigTest extends TestCase
             array('FFFFFF')
         );
     }
+
+    public function testGetThemeUrlsReturnsNullWhenNotSet()
+    {
+        $config = new Config();
+        $this->assertNull($config->getThemeUrls());
+    }
+
+    public function testSetThemeUrls()
+    {
+        $config = new Config();
+        $themeUrls = [
+            'board' => 'https://example.com/board.png',
+            'wp' => 'https://example.com/wp.png',
+            'bp' => 'https://example.com/bp.png',
+        ];
+
+        $result = $config->setThemeUrls($themeUrls);
+        $this->assertSame($config, $result);
+        $this->assertEquals($themeUrls, $config->getThemeUrls());
+    }
+
+    public function testHasThemeUrlsReturnsFalseWhenNotSet()
+    {
+        $config = new Config();
+        $this->assertFalse($config->hasThemeUrls());
+    }
+
+    public function testHasThemeUrlsReturnsFalseWhenEmptyArray()
+    {
+        $config = new Config();
+        $config->setThemeUrls([]);
+        $this->assertFalse($config->hasThemeUrls());
+    }
+
+    public function testHasThemeUrlsReturnsTrueWhenSet()
+    {
+        $config = new Config();
+        $config->setThemeUrls([
+            'board' => 'https://example.com/board.png',
+            'wp' => 'https://example.com/wp.png',
+        ]);
+        $this->assertTrue($config->hasThemeUrls());
+    }
 }
