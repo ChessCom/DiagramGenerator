@@ -42,28 +42,10 @@ class Storage
      */
     public function getPieceImage(Piece $piece, Config $config)
     {
-        return $this->getPieceImageFromTheme($piece, $config);
-    }
-
-    /**
-     * Gets piece image from theme URLs.
-     *
-     * @return Image
-     */
-    protected function getPieceImageFromTheme(Piece $piece, Config $config)
-    {
-        $themeUrls = $config->getThemeUrls();
-        $pieceShortName = $piece->getShortName();
-
-        if (!isset($themeUrls[$pieceShortName])) {
-            throw new RuntimeException(sprintf('Piece URL not found in theme for piece: %s', $pieceShortName));
-        }
-
-        $pieceUrl = $themeUrls[$pieceShortName];
-        $cacheKey = $pieceUrl;
+        $cacheKey = implode('.', [$piece->getColor(), $piece->getKey(), $piece->getColumn(), $piece->getRow()]);
 
         if (!isset($this->pieces[$cacheKey])) {
-            $this->pieces[$cacheKey] = $this->fetchRemotePieceImageFromTheme($piece, $config);
+            $this->pieces[$cacheKey] = $this->fetchRemotePieceImage($piece, $config);
         }
 
         return $this->pieces[$cacheKey];
@@ -74,30 +56,25 @@ class Storage
      */
     public function getBackgroundTextureImage(Config $config)
     {
-        return $this->getBackgroundTextureImageFromTheme($config);
-    }
-
-    /**
-     * Gets background texture image from theme URL.
-     *
-     * @return Image|null
-     */
-    protected function getBackgroundTextureImageFromTheme(Config $config)
-    {
-        $themeUrls = $config->getThemeUrls();
-
-        if (!isset($themeUrls['board'])) {
+        if (!$config->getTexture()) {
             return null;
         }
 
-        $boardUrl = $themeUrls['board'];
-        $boardCachedPath = $this->getCachedTextureFilePathFromTheme($boardUrl);
+        $boardCachedPath = $this->getCachedTextureFilePath($config);
 
         try {
             return ImageManagerStatic::make($boardCachedPath);
         } catch (NotReadableException $exception) {
-            @mkdir(dirname($boardCachedPath), 0777, true);
-            $this->cacheImage($boardUrl, $boardCachedPath);
+            @mkdir($this->cacheDirectory.'/board/'.$config->getTexture()->getImageUrlFolderName(), 0777, true);
+
+            $boardTextureUrl = str_replace(
+                '__BOARD_TEXTURE__', $config->getTexture()->getImageUrlFolderName(), $this->boardTextureUrl
+            );
+            $boardTextureUrl = str_replace('__SIZE__', $config->getSize()->getCell(), $boardTextureUrl);
+            $boardTextureUrl .= '.'.$config->getTexture()->getImageFormat();
+
+            $this->cacheImage($boardTextureUrl, $boardCachedPath);
+
             return ImageManagerStatic::make($boardCachedPath);
         }
     }
@@ -125,124 +102,47 @@ class Storage
     }
 
     /**
-     * Fetches piece image from theme URL.
+     * In piece image is not found in local storage, passes control to self::cacheImage()
+     *
      *
      * @return Image
      */
-    protected function fetchRemotePieceImageFromTheme(Piece $piece, Config $config)
+    protected function fetchRemotePieceImage(Piece $piece, Config $config)
     {
-        $themeUrls = $config->getThemeUrls();
-        $pieceShortName = $piece->getShortName();
-
-        if (!isset($themeUrls[$pieceShortName])) {
-            throw new RuntimeException(sprintf('Piece URL not found in theme for piece: %s', $pieceShortName));
-        }
-
-        $pieceUrl = $themeUrls[$pieceShortName];
-        $pieceCachedPath = $this->getCachedPieceFilePathFromTheme($pieceUrl, $pieceShortName);
+        $pieceThemeName = $config->getTheme()->getName();
+        $cellSize = $config->getSize()->getCell();
+        $pieceCachedPath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece->getShortName());
 
         try {
             $image = ImageManagerStatic::make($pieceCachedPath);
         } catch (NotReadableException $exception) {
-            $this->downloadPieceImagesFromTheme($config);
+            $this->downloadPieceImages($config);
             $image = ImageManagerStatic::make($pieceCachedPath);
         }
 
         return $image;
     }
 
-    /**
-     * Downloads all piece images from theme URLs.
-     */
-    private function downloadPieceImagesFromTheme(Config $config)
+    protected function getCachedPieceFilePath($pieceThemeName, $cellSize, $piece)
     {
-        $themeUrls = $config->getThemeUrls();
-        $pieces = Piece::generateAllPieces();
-
-        $handles = [];
-        $fileHandles = [];
-        $multiHandle = curl_multi_init();
-
-        foreach ($pieces as $piece) {
-            $pieceShortName = $piece->getShortName();
-
-            if (!isset($themeUrls[$pieceShortName])) {
-                continue; // Skip pieces without URLs
-            }
-
-            $pieceUrl = $themeUrls[$pieceShortName];
-            $filePath = $this->getCachedPieceFilePathFromTheme($pieceUrl, $pieceShortName);
-            @mkdir(dirname($filePath), 0777, true);
-
-            $uniqid = uniqid();
-            $handles[$pieceShortName] = curl_init($pieceUrl);
-            $fileHandles[$pieceShortName] = [
-                'handle' => fopen($filePath . $uniqid, 'wb'),
-                'tmpPath' => $filePath . $uniqid,
-                'realPath' => $filePath,
-            ];
-        }
-
-        foreach($handles as $key => $handle) {
-            curl_setopt($handle, CURLOPT_FILE, $fileHandles[$key]['handle']);
-            curl_setopt($handle, CURLOPT_HEADER, 0);
-
-            curl_multi_add_handle($multiHandle, $handle);
-        }
-
-        do {
-            curl_multi_exec($multiHandle, $running);
-            curl_multi_select($multiHandle);
-        } while ($running > 0);
-
-        foreach ($fileHandles as $fileHandle) {
-            if (isset($fileHandle['tmpPath']) && file_exists($fileHandle['tmpPath'])) {
-                rename($fileHandle['tmpPath'], $fileHandle['realPath']);
-            }
-        }
-
-        curl_multi_close($multiHandle);
-    }
-
-    /**
-     * Gets cached piece file path for theme URLs.
-     * Uses the URL to generate a unique cache key.
-     *
-     * @param string $pieceUrl The URL of the piece image
-     * @param string $piece The piece short name (e.g., 'wp', 'bk')
-     * @return string
-     */
-    protected function getCachedPieceFilePathFromTheme($pieceUrl, $piece)
-    {
-        $urlHash = md5($pieceUrl);
-        $extension = pathinfo(parse_url($pieceUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: Texture::IMAGE_FORMAT_PNG;
-
         return sprintf(
-            '%s/theme/%s/%s.%s',
+            '%s/%s/%d/%s.%s',
             $this->cacheDirectory,
-            $urlHash,
+            $pieceThemeName,
+            $cellSize,
             $piece,
-            $extension
+            Texture::IMAGE_FORMAT_PNG
         );
     }
 
-    /**
-     * Gets cached texture file path for theme URLs.
-     * Uses the URL to generate a unique cache key.
-     *
-     * @param string $boardUrl The URL of the board image
-     * @return string
-     */
-    protected function getCachedTextureFilePathFromTheme($boardUrl)
+    protected function getCachedTextureFilePath(Config $config)
     {
-        $urlHash = md5($boardUrl);
-        $extension = pathinfo(parse_url($boardUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: Texture::IMAGE_FORMAT_PNG;
-
         return sprintf(
-            '%s/board/theme/%s.%s',
+            '%s/board/%s/%d.%s',
             $this->cacheDirectory,
-            $urlHash,
-            $extension
+            $config->getTexture()->getImageUrlFolderName(),
+            $config->getSize()->getCell(),
+            $config->getTexture()->getImageFormat()
         );
     }
 
@@ -269,5 +169,65 @@ class Storage
         fclose($destinationFileHandle);
 
         rename($cachedFilePathTmp, $cachedFilePath);
+    }
+
+    private function downloadPieceImages(Config $config)
+    {
+        $pieces = Piece::generateAllPieces();
+
+        $pieceThemeName = $config->getTheme()->getName();
+        $cellSize = $config->getSize()->getCell();
+        @mkdir($this->cacheDirectory.'/'.$pieceThemeName.'/'.$cellSize, 0777, true);
+
+        $handles = [];
+        $fileHandles = [];
+        $multiHandle = curl_multi_init();
+
+        foreach ($pieces as $piece) {
+            $pieceUrl = $this->generatePieceUrl($piece, $config);
+            $handles[$piece->getShortName()] = curl_init($pieceUrl);
+            $filePath = $this->getCachedPieceFilePath($pieceThemeName, $cellSize, $piece->getShortName());
+            $uniqid = uniqid();
+            $fileHandles[$piece->getShortName()] = [
+                'handle' => fopen($filePath . $uniqid, 'wb'),
+                'tmpPath' => $filePath . $uniqid,
+                'realPath' => $filePath,
+            ];
+        }
+
+        foreach($handles as $key => $handle) {
+            curl_setopt($handle, CURLOPT_FILE, $fileHandles[$key]['handle']);
+            curl_setopt($handle, CURLOPT_HEADER, 0);
+
+            curl_multi_add_handle($multiHandle, $handle);
+        }
+
+        do {
+            curl_multi_exec($multiHandle, $running);
+            curl_multi_select($multiHandle);
+        } while ($running > 0);
+
+        foreach ($fileHandles as $fileHandle) {
+            rename($fileHandle['tmpPath'], $fileHandle['realPath']);
+        }
+
+        curl_multi_close($multiHandle);
+    }
+
+    private function generatePieceUrl(Piece $piece, Config $config)
+    {
+        $pieceThemeName = $config->getTheme()->getName();
+        $cellSize = $config->getSize()->getCell();
+
+        $pieceThemeUrl = strtr(
+            $this->pieceThemeUrl,
+            [
+                '__PIECE_THEME__' => $pieceThemeName,
+                '__SIZE__' => $cellSize,
+                '__PIECE__' => $piece->getShortName(),
+            ]
+        );
+
+        return $pieceThemeUrl . ('.' . Texture::IMAGE_FORMAT_PNG);
     }
 }

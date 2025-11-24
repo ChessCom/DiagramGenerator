@@ -5,7 +5,7 @@ namespace DiagramGenerator;
 use DiagramGenerator\Config;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Image\Storage;
-use DiagramGenerator\Image\StorageLegacy;
+use DiagramGenerator\Image\StorageNew;
 use DiagramGenerator\Image\Image;
 
 /**
@@ -78,9 +78,9 @@ class Board
     protected function generateImage()
     {
         if ($this->config->hasThemeUrls()) {
-            $storage = new Storage($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
+            $storage = new StorageNew($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
         } else {
-            $storage = new StorageLegacy($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
+            $storage = new Storage($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
         }
         $image = new Image($storage, $this->config);
         $topPadding = $storage->getMaxPieceHeight($this->fen, $this->config) - $this->config->getSize()->getCell();

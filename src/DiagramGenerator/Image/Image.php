@@ -18,14 +18,14 @@ class Image
     /** @var BaseImage */
     protected $image;
 
-    /** @var Storage|StorageLegacy */
+    /** @var Storage|StorageNew */
     protected $storage;
 
     /** @var Config */
     protected $config;
 
     /**
-     * @param Storage|StorageLegacy $storage
+     * @param Storage|StorageNew $storage
      * @param Config $config
      */
     public function __construct($storage, Config $config)
