@@ -203,13 +203,18 @@ class Image
         if ($backgroundTexture) {
             $this->addTransparencyIfNeeded($board, $backgroundTexture->getCore());
 
+            $destWidth = $cellSize * Board::SQUARES_IN_ROW;
+            $destHeight = $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell;
+            $srcWidth = $backgroundTexture->getWidth();
+            $srcHeight = $backgroundTexture->getHeight();
+
             imagecopyresampled(
                 $board, $backgroundTexture->getCore(),
                 0, 0, 0, 0,
-                $cellSize * Board::SQUARES_IN_ROW,
-                $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell,
-                $cellSize * Board::SQUARES_IN_ROW,
-                $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell
+                $destWidth,
+                $destHeight,
+                $srcWidth,
+                $srcHeight
             );
         }
 
