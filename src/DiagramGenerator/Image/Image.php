@@ -135,7 +135,7 @@ class Image
      */
     public function drawBoardWithFigures(Fen $fen, $cellSize, $topPaddingOfCell)
     {
-        $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage($this->config), $cellSize, $topPaddingOfCell);
+        $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage(), $cellSize, $topPaddingOfCell);
 
         $boardHasTexture = !empty($this->config->getTexture()) || 
                           ($this->config->hasThemeUrls() && isset($this->config->getThemeUrls()['board']));
@@ -226,7 +226,7 @@ class Image
         $cellSize = $config->getSize()->getCell();
 
         foreach ($fen->getPieces() as $piece) {
-            $pieceImage = $this->storage->getPieceImage($piece, $config);
+            $pieceImage = $this->storage->getPieceImage($piece);
 
             $this->image = $this->image->insert(
                 $pieceImage,

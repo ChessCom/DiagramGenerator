@@ -78,12 +78,12 @@ class Board
     protected function generateImage()
     {
         if ($this->config->hasThemeUrls()) {
-            $storage = new StorageNew($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
+            $storage = new StorageNew($this->cacheDir, $this->config);
         } else {
             $storage = new Storage($this->cacheDir, $this->pieceThemeUrl, $this->boardTextureUrl);
         }
         $image = new Image($storage, $this->config);
-        $topPadding = $storage->getMaxPieceHeight($this->fen, $this->config) - $this->config->getSize()->getCell();
+        $topPadding = $storage->getMaxPieceHeight($this->fen) - $this->config->getSize()->getCell();
 
         $image->drawBoardWithFigures(
             $this->fen,

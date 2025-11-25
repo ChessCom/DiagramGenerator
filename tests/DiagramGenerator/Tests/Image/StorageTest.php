@@ -46,7 +46,7 @@ class StorageTest extends TestCase
     public function testStorageNewGetPieceImageWithThemeUrls()
     {
         $config = $this->createConfigWithThemeUrls();
-        $storage = $this->createStorageNew();
+        $storage = $this->createStorageNew($config);
         $piece = new Pawn('white');
         $piece->setRow(1)->setColumn(0);
 
@@ -54,13 +54,13 @@ class StorageTest extends TestCase
         // It will fail when trying to download/load the image, but that's expected
         $this->expectException(\Intervention\Image\Exception\NotReadableException::class);
 
-        $storage->getPieceImage($piece, $config);
+        $storage->getPieceImage($piece);
     }
 
     public function testStorageNewGetPieceImageThrowsExceptionWhenPieceUrlMissing()
     {
         $config = $this->createConfigWithPartialThemeUrls();
-        $storage = $this->createStorageNew();
+        $storage = $this->createStorageNew($config);
         
         // Create a piece that doesn't have a URL in themeUrls
         $pieceWithoutUrl = new \DiagramGenerator\Fen\King('white');
@@ -70,7 +70,7 @@ class StorageTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Piece URL not found in theme for piece: wk');
         
-        $storage->getPieceImage($pieceWithoutUrl, $config);
+        $storage->getPieceImage($pieceWithoutUrl);
     }
 
     public function testStorageGetPieceImage()
@@ -96,13 +96,13 @@ class StorageTest extends TestCase
     public function testStorageNewGetBackgroundTextureImageWithThemeUrls()
     {
         $config = $this->createConfigWithThemeUrls();
-        $storage = $this->createStorageNew();
+        $storage = $this->createStorageNew($config);
 
         // Should try to load from theme URLs
         // It will fail when trying to download/load the image, but that's expected
         $this->expectException(\Intervention\Image\Exception\NotReadableException::class);
 
-        $storage->getBackgroundTextureImage($config);
+        $storage->getBackgroundTextureImage();
     }
 
     public function testStorageNewGetBackgroundTextureImageReturnsNullWhenBoardUrlMissing()
@@ -110,10 +110,10 @@ class StorageTest extends TestCase
         $config = $this->createConfigWithPartialThemeUrls();
         // Remove board URL
         $config->setThemeUrls(['wp' => 'https://example.com/wp.png']);
-        $storage = $this->createStorageNew();
+        $storage = $this->createStorageNew($config);
 
         // Should return null when board URL is not in themeUrls
-        $result = $storage->getBackgroundTextureImage($config);
+        $result = $storage->getBackgroundTextureImage();
         $this->assertNull($result);
     }
 
@@ -129,7 +129,8 @@ class StorageTest extends TestCase
 
     public function testGetCachedPieceFilePathFromTheme()
     {
-        $storage = $this->createStorageNew();
+        $config = $this->createConfigWithThemeUrls();
+        $storage = $this->createStorageNew($config);
         $pieceUrl = 'https://example.com/pieces/wp.png';
         $piece = 'wp';
 
@@ -152,7 +153,8 @@ class StorageTest extends TestCase
 
     public function testGetCachedPieceFilePathFromThemeWithCustomExtension()
     {
-        $storage = $this->createStorageNew();
+        $config = $this->createConfigWithThemeUrls();
+        $storage = $this->createStorageNew($config);
         $pieceUrl = 'https://example.com/pieces/wp.jpg';
         $piece = 'wp';
 
@@ -175,7 +177,8 @@ class StorageTest extends TestCase
 
     public function testGetCachedTextureFilePathFromTheme()
     {
-        $storage = $this->createStorageNew();
+        $config = $this->createConfigWithThemeUrls();
+        $storage = $this->createStorageNew($config);
         $boardUrl = 'https://example.com/boards/board.png';
 
         $reflection = new \ReflectionClass($storage);
@@ -196,7 +199,8 @@ class StorageTest extends TestCase
 
     public function testGetCachedTextureFilePathFromThemeWithCustomExtension()
     {
-        $storage = $this->createStorageNew();
+        $config = $this->createConfigWithThemeUrls();
+        $storage = $this->createStorageNew($config);
         $boardUrl = 'https://example.com/boards/board.jpg';
 
         $reflection = new \ReflectionClass($storage);
@@ -220,9 +224,9 @@ class StorageTest extends TestCase
         return new Storage($this->cacheDirectory, $this->pieceThemeUrl, $this->boardTextureUrl);
     }
 
-    protected function createStorageNew()
+    protected function createStorageNew(Config $config)
     {
-        return new StorageNew($this->cacheDirectory, $this->pieceThemeUrl, $this->boardTextureUrl);
+        return new StorageNew($this->cacheDirectory, $config);
     }
 
     protected function createConfigWithThemeUrls()
