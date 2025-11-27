@@ -78,7 +78,7 @@ class StorageNew implements StorageInterface
      *
      * @return int
      */
-    public function getMaxPieceHeight(Fen $fen, Config $config)
+    public function getMaxPieceHeight(Fen $fen, Config $config): int
     {
         $maxHeight = $config->getSize()->getCell();
         foreach ($fen->getPieces() as $piece) {
