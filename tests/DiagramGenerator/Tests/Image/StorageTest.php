@@ -54,7 +54,7 @@ class StorageTest extends TestCase
         // It will fail when trying to download/load the image, but that's expected
         $this->expectException(\Intervention\Image\Exception\NotReadableException::class);
 
-        $storage->getPieceImage($piece);
+        $storage->getPieceImage($piece, $config);
     }
 
     public function testStorageNewGetPieceImageThrowsExceptionWhenPieceUrlMissing()
@@ -70,7 +70,7 @@ class StorageTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Piece URL not found in theme for piece: wk');
         
-        $storage->getPieceImage($pieceWithoutUrl);
+        $storage->getPieceImage($pieceWithoutUrl, $config);
     }
 
     public function testStorageGetPieceImage()
@@ -102,7 +102,7 @@ class StorageTest extends TestCase
         // It will fail when trying to download/load the image, but that's expected
         $this->expectException(\Intervention\Image\Exception\NotReadableException::class);
 
-        $storage->getBackgroundTextureImage();
+        $storage->getBackgroundTextureImage($config);
     }
 
     public function testStorageNewGetBackgroundTextureImageReturnsNullWhenBoardUrlMissing()
@@ -113,7 +113,7 @@ class StorageTest extends TestCase
         $storage = $this->createStorageNew($config);
 
         // Should return null when board URL is not in themeUrls
-        $result = $storage->getBackgroundTextureImage();
+        $result = $storage->getBackgroundTextureImage($config);
         $this->assertNull($result);
     }
 
@@ -226,7 +226,7 @@ class StorageTest extends TestCase
 
     protected function createStorageNew(Config $config)
     {
-        return new StorageNew($this->cacheDirectory, $config);
+        return new StorageNew($this->cacheDirectory);
     }
 
     protected function createConfigWithThemeUrls()

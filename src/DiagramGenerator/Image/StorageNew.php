@@ -11,33 +11,19 @@ use Intervention\Image\Image;
 use Intervention\Image\ImageManagerStatic;
 use RuntimeException;
 
-class StorageNew
+class StorageNew implements StorageInterface
 {
     protected $pieces = [];
 
     /** @var string */
     protected $cacheDirectory;
 
-    /** @var Config */
-    protected $config;
-
     /**
      * @param string $cacheDirectory
-     * @param Config $config
      */
-    public function __construct($cacheDirectory, Config $config)
+    public function __construct($cacheDirectory)
     {
         $this->cacheDirectory = $cacheDirectory;
-        $this->config = $config;
-    }
-
-    /**
-     *
-     * @return Image
-     */
-    public function getPieceImage(Piece $piece)
-    {
-        return $this->getPieceImageFromTheme($piece);
     }
 
     /**
@@ -45,9 +31,9 @@ class StorageNew
      *
      * @return Image
      */
-    protected function getPieceImageFromTheme(Piece $piece)
+    public function getPieceImage(Piece $piece, Config $config)
     {
-        $themeUrls = $this->config->getThemeUrls();
+        $themeUrls = $config->getThemeUrls();
         $pieceShortName = $piece->getShortName();
 
         if (!isset($themeUrls[$pieceShortName])) {
@@ -58,18 +44,10 @@ class StorageNew
         $cacheKey = $pieceUrl;
 
         if (!isset($this->pieces[$cacheKey])) {
-            $this->pieces[$cacheKey] = $this->fetchRemotePieceImageFromTheme($piece);
+            $this->pieces[$cacheKey] = $this->fetchRemotePieceImageFromTheme($piece, $config);
         }
 
         return $this->pieces[$cacheKey];
-    }
-
-    /**
-     * @return Image|null
-     */
-    public function getBackgroundTextureImage()
-    {
-        return $this->getBackgroundTextureImageFromTheme();
     }
 
     /**
@@ -77,9 +55,9 @@ class StorageNew
      *
      * @return Image|null
      */
-    protected function getBackgroundTextureImageFromTheme()
+    public function getBackgroundTextureImage(Config $config)
     {
-        $themeUrls = $this->config->getThemeUrls();
+        $themeUrls = $config->getThemeUrls();
 
         if (!isset($themeUrls['board'])) {
             return null;
@@ -103,11 +81,11 @@ class StorageNew
      *
      * @return int
      */
-    public function getMaxPieceHeight(Fen $fen)
+    public function getMaxPieceHeight(Fen $fen, Config $config)
     {
-        $maxHeight = $this->config->getSize()->getCell();
+        $maxHeight = $config->getSize()->getCell();
         foreach ($fen->getPieces() as $piece) {
-            $pieceImage = $this->getPieceImage($piece);
+            $pieceImage = $this->getPieceImage($piece, $config);
 
             if ($pieceImage->getHeight() > $maxHeight) {
                 $maxHeight = $pieceImage->getHeight();
@@ -124,9 +102,9 @@ class StorageNew
      *
      * @return Image
      */
-    protected function fetchRemotePieceImageFromTheme(Piece $piece)
+    protected function fetchRemotePieceImageFromTheme(Piece $piece, Config $config)
     {
-        $themeUrls = $this->config->getThemeUrls();
+        $themeUrls = $config->getThemeUrls();
         $pieceShortName = $piece->getShortName();
 
         if (!isset($themeUrls[$pieceShortName])) {
@@ -139,7 +117,7 @@ class StorageNew
         try {
             $image = ImageManagerStatic::make($pieceCachedPath);
         } catch (NotReadableException $exception) {
-            $this->downloadPieceImagesFromTheme();
+            $this->downloadPieceImagesFromTheme($config);
             $image = ImageManagerStatic::make($pieceCachedPath);
         }
 
@@ -149,9 +127,9 @@ class StorageNew
     /**
      * Downloads all piece images from theme URLs.
      */
-    private function downloadPieceImagesFromTheme()
+    private function downloadPieceImagesFromTheme(Config $config)
     {
-        $themeUrls = $this->config->getThemeUrls();
+        $themeUrls = $config->getThemeUrls();
         $pieces = Piece::generateAllPieces();
 
         $handles = [];

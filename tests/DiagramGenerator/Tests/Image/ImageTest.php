@@ -46,7 +46,7 @@ class ImageTest extends TestCase
     public function testDrawBoardWithFiguresDetectsBoardTextureFromThemeUrls()
     {
         $config = $this->createConfigWithThemeUrls();
-        $storage = new StorageNew($this->cacheDirectory, $config);
+        $storage = new StorageNew($this->cacheDirectory);
         $image = new Image($storage, $config);
 
         // Verify that hasThemeUrls works correctly

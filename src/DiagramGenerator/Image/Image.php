@@ -7,6 +7,7 @@ use DiagramGenerator\Config\Texture;
 use DiagramGenerator\Board;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Generator;
+use DiagramGenerator\Image\StorageInterface;
 use Intervention\Image\Gd\Decoder;
 use Intervention\Image\Gd\Font;
 use Intervention\Image\Image as BaseImage;
@@ -18,14 +19,14 @@ class Image
     /** @var BaseImage */
     protected $image;
 
-    /** @var Storage|StorageNew */
+    /** @var StorageInterface */
     protected $storage;
 
     /** @var Config */
     protected $config;
 
     /**
-     * @param Storage|StorageNew $storage
+     * @param StorageInterface $storage
      * @param Config $config
      */
     public function __construct($storage, Config $config)
@@ -135,10 +136,11 @@ class Image
      */
     public function drawBoardWithFigures(Fen $fen, $cellSize, $topPaddingOfCell)
     {
-        $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage(), $cellSize, $topPaddingOfCell);
+        $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage($this->config), $cellSize, $topPaddingOfCell);
 
-        $boardHasTexture = !empty($this->config->getTexture()) || 
-                          ($this->config->hasThemeUrls() && isset($this->config->getThemeUrls()['board']));
+        $boardHasTexture = $this->config->hasThemeUrls() 
+            ? isset($this->config->getThemeUrls()['board'])
+            : !empty($this->config->getTexture());                  
 
         $this->drawCells(
             $this->config->getSize()->getCell(),
@@ -226,7 +228,7 @@ class Image
         $cellSize = $config->getSize()->getCell();
 
         foreach ($fen->getPieces() as $piece) {
-            $pieceImage = $this->storage->getPieceImage($piece);
+            $pieceImage = $this->storage->getPieceImage($piece, $config);
 
             $this->image = $this->image->insert(
                 $pieceImage,
