@@ -52,7 +52,7 @@ class StorageNew implements StorageInterface
      *
      * @return Image|null
      */
-    public function getBackgroundTextureImage(Config $config)
+    public function getBackgroundTextureImage(Config $config): ?Image
     {
         $themeUrls = $config->getThemeUrls();
 
