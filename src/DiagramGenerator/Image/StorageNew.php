@@ -18,10 +18,7 @@ class StorageNew implements StorageInterface
     /** @var string */
     protected $cacheDirectory;
 
-    /**
-     * @param string $cacheDirectory
-     */
-    public function __construct($cacheDirectory)
+    public function __construct(string $cacheDirectory)
     {
         $this->cacheDirectory = $cacheDirectory;
     }
