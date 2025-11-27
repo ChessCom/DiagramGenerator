@@ -127,7 +127,7 @@ class StorageNew implements StorageInterface
     /**
      * Downloads all piece images from theme URLs.
      */
-    private function downloadPieceImagesFromTheme(Config $config)
+    private function downloadPieceImagesFromTheme(Config $config): void
     {
         $themeUrls = $config->getThemeUrls();
         $pieces = Piece::generateAllPieces();
