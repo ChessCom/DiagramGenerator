@@ -148,10 +148,18 @@ class StorageNew implements StorageInterface
             @mkdir(dirname($filePath), 0777, true);
 
             $uniqid = uniqid();
+            $tmpFilePath = $filePath . $uniqid;
+            $fileHandle = fopen($tmpFilePath, 'wb');
+            
+            if (!$fileHandle) {
+                // Skip this piece if file handle creation failed
+                continue;
+            }
+            
             $handles[$pieceShortName] = curl_init($pieceUrl);
             $fileHandles[$pieceShortName] = [
-                'handle' => fopen($filePath . $uniqid, 'wb'),
-                'tmpPath' => $filePath . $uniqid,
+                'handle' => $fileHandle,
+                'tmpPath' => $tmpFilePath,
                 'realPath' => $filePath,
             ];
         }
@@ -171,6 +179,16 @@ class StorageNew implements StorageInterface
         foreach ($fileHandles as $fileHandle) {
             if (isset($fileHandle['tmpPath']) && file_exists($fileHandle['tmpPath'])) {
                 rename($fileHandle['tmpPath'], $fileHandle['realPath']);
+            }
+        }
+
+        // Clean up all resources
+        foreach ($handles as $key => $handle) {
+            curl_multi_remove_handle($multiHandle, $handle);
+            curl_close($handle);
+            
+            if (isset($fileHandles[$key]['handle'])) {
+                fclose($fileHandles[$key]['handle']);
             }
         }
 
@@ -232,6 +250,7 @@ class StorageNew implements StorageInterface
         $destinationFileHandle = fopen($cachedFilePathTmp, 'wb');
 
         if (!$destinationFileHandle) {
+            curl_close($ch);
             throw new RuntimeException(sprintf('Could not open temporary file: %s', $cachedFilePathTmp));
         }
 
