@@ -102,7 +102,7 @@ class StorageNew implements StorageInterface
      *
      * @return Image
      */
-    protected function fetchRemotePieceImageFromTheme(Piece $piece, Config $config)
+    protected function fetchRemotePieceImageFromTheme(Piece $piece, Config $config): Image
     {
         $themeUrls = $config->getThemeUrls();
         $pieceShortName = $piece->getShortName();
