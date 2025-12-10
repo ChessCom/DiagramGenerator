@@ -11,7 +11,7 @@ use Intervention\Image\Image;
 use Intervention\Image\ImageManagerStatic;
 use RuntimeException;
 
-class StorageNew implements StorageInterface
+class Storage implements StorageInterface
 {
     protected $pieces = [];
 

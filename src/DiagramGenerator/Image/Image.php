@@ -25,11 +25,7 @@ class Image
     /** @var Config */
     protected $config;
 
-    /**
-     * @param StorageInterface $storage
-     * @param Config $config
-     */
-    public function __construct($storage, Config $config)
+    public function __construct(StorageInterface $storage, Config $config)
     {
         $this->image = (new Decoder())->initFromGdResource(imagecreatetruecolor(1, 1));
         $this->storage = $storage;

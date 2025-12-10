@@ -7,8 +7,8 @@ use DiagramGenerator\Config\Size;
 use DiagramGenerator\Config\Theme;
 use DiagramGenerator\Fen;
 use DiagramGenerator\Image\Image;
+use DiagramGenerator\Image\StorageLegacy;
 use DiagramGenerator\Image\Storage;
-use DiagramGenerator\Image\StorageNew;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,7 +46,7 @@ class ImageTest extends TestCase
     public function testDrawBoardWithFiguresDetectsBoardTextureFromThemeUrls()
     {
         $config = $this->createConfigWithThemeUrls();
-        $storage = new StorageNew($this->cacheDirectory);
+        $storage = new Storage($this->cacheDirectory);
         $image = new Image($storage, $config);
 
         // Verify that hasThemeUrls works correctly
@@ -61,7 +61,7 @@ class ImageTest extends TestCase
     public function testDrawBoardWithFiguresUsesLegacyTextureWhenThemeUrlsNotSet()
     {
         $config = $this->createConfigWithoutThemeUrls();
-        $storage = new Storage($this->cacheDirectory, $this->pieceThemeUrl, $this->boardTextureUrl);
+        $storage = new StorageLegacy($this->cacheDirectory, $this->pieceThemeUrl, $this->boardTextureUrl);
         $image = new Image($storage, $config);
 
         // Verify that hasThemeUrls returns false
