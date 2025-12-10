@@ -136,10 +136,10 @@ class Image
      */
     public function drawBoardWithFigures(Fen $fen, $cellSize, $topPaddingOfCell)
     {
-        $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage($this->config), $cellSize, $topPaddingOfCell);
+        $this->image = $this->drawBoard($this->storage->getBackgroundTextureImage($this->config), $cellSize, $topPaddingOfCell, $this->config->hasThemeUrls());
 
         $boardHasTexture = $this->config->hasThemeUrls() 
-            ? isset($this->config->getThemeUrls()['board'])
+            ? isset($this->config->getThemeUrls()['board']) && !empty($this->config->getThemeUrls()['board'])
             : !empty($this->config->getTexture());                  
 
         $this->drawCells(
@@ -188,14 +188,14 @@ class Image
         );
     }
 
-    protected function drawBoard(BaseImage $backgroundTexture = null, $cellSize, $topPaddingOfCell)
+    protected function drawBoard(BaseImage $backgroundTexture = null, $cellSize, $topPaddingOfCell, $hasThemeUrls = false)
     {
-        $baseBoard = $this->getBaseBoard($backgroundTexture, $cellSize, $topPaddingOfCell);
+        $baseBoard = $this->getBaseBoard($backgroundTexture, $cellSize, $topPaddingOfCell, $hasThemeUrls);
 
         return (new Decoder())->initFromGdResource($baseBoard);
     }
 
-    protected function getBaseBoard(BaseImage $backgroundTexture = null, $cellSize, $topPaddingOfCell)
+    protected function getBaseBoard(BaseImage $backgroundTexture = null, $cellSize, $topPaddingOfCell, $hasThemeUrls = false)
     {
         $board = imagecreatetruecolor(
             $cellSize * Board::SQUARES_IN_ROW,
@@ -207,8 +207,8 @@ class Image
 
             $destWidth = $cellSize * Board::SQUARES_IN_ROW;
             $destHeight = $cellSize * Board::SQUARES_IN_ROW + $topPaddingOfCell;
-            $srcWidth = $backgroundTexture->getWidth();
-            $srcHeight = $backgroundTexture->getHeight();
+            $srcWidth = $hasThemeUrls ? $backgroundTexture->getWidth() : $cellSize * Board::SQUARES_IN_ROW;
+            $srcHeight = ($hasThemeUrls ? $backgroundTexture->getHeight() : $cellSize * Board::SQUARES_IN_ROW) + $topPaddingOfCell;
 
             imagecopyresampled(
                 $board, $backgroundTexture->getCore(),
