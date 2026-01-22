@@ -65,14 +65,16 @@ class Fen
      */
     public static function getPieceByKey($key)
     {
+        if ($key === null) {
+            return null;
+        }
+
         $color = Piece::WHITE;
         if (preg_match('/[A-Z]/', $key) === 0) {
             $color = Piece::BLACK;
         }
 
         switch (strtolower($key)) {
-            case null:
-                return $key;
             case 'r':
                 return new Rook($color);
             case 'b':
@@ -155,7 +157,7 @@ class Fen
      * @param int   $row
      * @param int   $column
      */
-    public function setAtPosition($row, $column, Piece $piece = null)
+    public function setAtPosition($row, $column, ?Piece $piece = null)
     {
         if ($row > 7 || $row < 0 || $column > 7 || $column < 0) {
             throw new \InvalidArgumentException(sprintf('Invalid piece position index %d:%d', $row, $column));
